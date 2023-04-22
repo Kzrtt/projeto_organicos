@@ -62,6 +62,8 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      extendBody: true,
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       bottomNavigationBar: bottomNavigationBar,
       body: Center(

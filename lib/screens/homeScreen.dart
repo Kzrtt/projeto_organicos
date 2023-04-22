@@ -11,45 +11,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  /*
-  Widget get bottomNavigationBar {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(40),
-        topLeft: Radius.circular(40),
-      ),
-      child: BottomNavigationBar(
-        elevation: 6,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black,
-        iconSize: 28,
-        unselectedItemColor: Colors.black,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Busca',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Carrinho',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
-    );
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -68,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: SingleChildScrollView(
             child: SizedBox(
-              height: constraints.maxHeight * 1.1,
+              height: constraints.maxHeight * 1.2,
               width: constraints.maxWidth,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,11 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 5,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: constraints.maxHeight * .02),
                         Center(
                           child: Container(
                             height: constraints.maxHeight * .06,
