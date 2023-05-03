@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/screens/cartScreen.dart';
 import 'package:projeto_organicos/screens/homeScreen.dart';
 import 'package:projeto_organicos/screens/homeTab.dart';
+import 'package:projeto_organicos/screens/profileScreen.dart';
 import 'package:projeto_organicos/screens/searchScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:provider/provider.dart';
@@ -25,10 +27,14 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.comfortable,
       ),
       routes: {
+        //rotas para trocar as páginas
+        //Página inicial: HomeTab, as outras páginas são abertas dentro do body dela
         AppRoutes.OPENINGSCREEN: (ctx) => const OpeningScreen(),
         AppRoutes.HOMESCREEN: (ctx) => const HomeScreen(),
         AppRoutes.SEARCHSCREEN: (ctx) => const SearchScreen(),
         AppRoutes.HOMETAB: (ctx) => const HomeTab(),
+        AppRoutes.CARTSCREEN: (ctx) => const CartScreen(),
+        AppRoutes.PROFILESCREEN: (ctx) => const ProfileScreen(),
       },
     );
   }

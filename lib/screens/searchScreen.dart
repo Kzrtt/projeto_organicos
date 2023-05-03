@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:projeto_organicos/components/nameAndIcon.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -31,34 +32,10 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: constraints.maxHeight * .025),
-              Padding(
-                padding: EdgeInsets.all(constraints.maxHeight * .015),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constraints.maxWidth * .02),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.search,
-                            color: Color.fromRGBO(108, 168, 129, 0.7),
-                          ),
-                          SizedBox(width: constraints.maxWidth * .01),
-                          const Text(
-                            "Busca",
-                            style: TextStyle(
-                              color: Color.fromRGBO(18, 18, 18, 0.58),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              NameAndIcon(
+                constraints: constraints,
+                icon: Icons.search,
+                text: "Busca",
               ),
               SizedBox(height: constraints.maxHeight * .02),
               SizedBox(

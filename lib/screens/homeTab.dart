@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:projeto_organicos/screens/cartScreen.dart';
 import 'package:projeto_organicos/screens/homeScreen.dart';
+import 'package:projeto_organicos/screens/profileScreen.dart';
 import 'package:projeto_organicos/screens/searchScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 
@@ -15,9 +17,12 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [
+  //lista com as páginas que irão ser abertas dentro do body deste widget
+  final List<Widget> _screens = const [
     HomeScreen(),
     SearchScreen(),
+    CartScreen(),
+    ProfileScreen(),
   ];
 
   Widget get bottomNavigationBar {
