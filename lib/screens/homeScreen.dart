@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Expanded(
-                    flex: 4,
+                    flex: 5,
                     child: GridView.count(
                       primary: false,
                       padding: EdgeInsets.all(constraints.maxWidth * .1),

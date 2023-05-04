@@ -309,7 +309,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
                           children: [
                             SizedBox(height: constraints.maxHeight * .023),
                             SvgPicture.asset(
-                              'assets/images/undraw_love_it_5nex.svg',
+                              'assets/images/undraw_appreciation_r2a1.svg',
                               height: constraints.maxHeight * .3,
                               width: constraints.maxWidth * .3,
                             ),
