@@ -21,12 +21,16 @@ class _OpeningScreenState extends State<OpeningScreen> {
   int _step = 0;
   userType _character = userType.user;
   register _register = register.no;
-  Widget _textField1(
-      double height, double width, BoxConstraints constraints, String text) {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  Widget _textField1(double height, double width, BoxConstraints constraints,
+      String text, TextEditingController controller) {
     return SizedBox(
       height: height,
       width: width,
       child: TextField(
+        controller: controller,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
@@ -107,9 +111,10 @@ class _OpeningScreenState extends State<OpeningScreen> {
                     ],
                   ),
                   SizedBox(height: constraints.maxHeight * .03),
-                  _textField1(55, 330, constraints, 'e-mail'),
+                  _textField1(55, 330, constraints, 'e-mail', emailController),
                   SizedBox(height: constraints.maxHeight * .022),
-                  _textField1(55, 330, constraints, 'senha'),
+                  _textField1(
+                      55, 330, constraints, 'senha', passwordController),
                   SizedBox(height: constraints.maxHeight * .05),
                   Padding(
                     padding: EdgeInsets.only(left: constraints.maxWidth * .075),
@@ -150,8 +155,15 @@ class _OpeningScreenState extends State<OpeningScreen> {
                         ),
                         SizedBox(width: constraints.maxWidth * .08),
                         InkWell(
-                          onTap: () => Navigator.of(context)
-                              .pushReplacementNamed(AppRoutes.HOMETAB),
+                          onTap: () {
+                            if (emailController.text == "produtor") {
+                              Navigator.of(context).pushReplacementNamed(
+                                  ProducerAppRoutes.PRODUCERHOMESCREEN);
+                            } else {
+                              Navigator.of(context)
+                                  .pushReplacementNamed(AppRoutes.HOMETAB);
+                            }
+                          },
                           child: Container(
                             height: constraints.maxHeight * .06,
                             width: constraints.maxWidth * .5,

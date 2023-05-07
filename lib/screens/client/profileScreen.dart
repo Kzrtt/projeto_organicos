@@ -5,11 +5,17 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/profileScreenButton.dart';
 import 'package:projeto_organicos/components/settingsText.dart';
 import 'package:side_sheet/side_sheet.dart';
+import 'package:projeto_organicos/utils/globalVariable.dart';
+import 'package:projeto_organicos/screens/client/homeTab.dart';
 
-import '../components/nameAndIcon.dart';
+import '../../components/nameAndIcon.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final void Function(int newValue) callbackFunction;
+  const ProfileScreen({
+    Key? key,
+    required this.callbackFunction,
+  }) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -23,17 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Container(
           height: constraints.maxHeight,
           width: constraints.maxWidth,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              stops: [0.8, 1],
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromRGBO(238, 238, 238, 1),
-                Color.fromRGBO(83, 242, 166, 1),
-              ],
-            ),
-          ),
+          color: Color.fromRGBO(238, 238, 238, 1),
           child: Column(
             children: [
               Row(
@@ -140,21 +136,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       text: "Endereços",
                       subtext: "Endereços para as entregas",
                       icon: Icons.map,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(4),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,
                       text: "Meus Pedidos",
                       subtext: "Veja seus pedidos finalizados e em andamento",
                       icon: Icons.receipt,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(5),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,
                       text: "Perfil",
                       subtext: "Alterar ou visualizar os dados do seu perfil",
                       icon: Icons.person,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(6),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,
@@ -162,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       subtext:
                           "Enviar mensagens para os produtores do nosso app",
                       icon: Icons.chat_bubble,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(7),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,
@@ -170,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       subtext:
                           "Envie suas recomendações ou reclamações para a nossa equipe",
                       icon: Icons.feedback,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(8),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,
@@ -178,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       subtext:
                           "Seja nosso assinante e tenha descontos e beneficios em nosso App",
                       icon: Icons.favorite,
-                      buttonFunction: () {},
+                      buttonFunction: () => widget.callbackFunction(9),
                     ),
                   ],
                 ),

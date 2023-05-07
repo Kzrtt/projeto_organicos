@@ -16,17 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              stops: [0.7, 1],
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromRGBO(238, 238, 238, 1),
-                Color.fromRGBO(83, 242, 166, 1),
-              ],
-            ),
-          ),
+          color: Color.fromRGBO(238, 238, 238, 1),
           child: SingleChildScrollView(
             child: SizedBox(
               height: constraints.maxHeight * 1.2,

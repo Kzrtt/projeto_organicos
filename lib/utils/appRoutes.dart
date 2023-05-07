@@ -1,8 +1,13 @@
 class AppRoutes {
   static const OPENINGSCREEN = "/";
-  static const HOMESCREEN = "/homescreen";
-  static const SEARCHSCREEN = "/searchscreen";
+  static const HOMESCREEN = "/home-screen";
+  static const SEARCHSCREEN = "/search-screen";
   static const HOMETAB = "/hometab";
-  static const CARTSCREEN = "/cartscreen";
-  static const PROFILESCREEN = "profilescreen";
+  static const CARTSCREEN = "/cart-screen";
+  static const PROFILESCREEN = "profile-screen";
+  static const ADRESSCREEN = "adress-screen";
+}
+
+class ProducerAppRoutes {
+  static const PRODUCERHOMESCREEN = "/producer-home-screen";
 }
