@@ -4,6 +4,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/cartScreen.dart';
+import 'package:projeto_organicos/screens/client/historicScreen.dart';
 import 'package:projeto_organicos/screens/client/homeScreen.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
@@ -35,10 +36,7 @@ class _HomeTabState extends State<HomeTab> {
     CartScreen(),
     ProfileScreen(callbackFunction: changePage),
     AdressScreen(),
-  ];
-
-  final List<Widget> _childScreens = const [
-    AdressScreen(),
+    HistoricScreen(),
   ];
 
   Widget _buildBody(int tabIndex, List baseScreens, List childScreens) {
