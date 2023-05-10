@@ -6,6 +6,7 @@ import 'package:projeto_organicos/screens/client/homeScreen.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
+import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
@@ -32,15 +33,14 @@ class _MyAppState extends State<MyApp> {
         title: 'Radix',
         theme: ThemeData(
           visualDensity: VisualDensity.comfortable,
+          primaryColor: const Color.fromRGBO(83, 242, 166, 0.69),
         ),
         routes: {
           //rotas para trocar as páginas
           //Página inicial: HomeTab, as outras páginas são abertas dentro do body dela
           AppRoutes.OPENINGSCREEN: (ctx) => const OpeningScreen(),
-          AppRoutes.HOMESCREEN: (ctx) => const HomeScreen(),
-          AppRoutes.SEARCHSCREEN: (ctx) => const SearchScreen(),
           AppRoutes.HOMETAB: (ctx) => const HomeTab(),
-          AppRoutes.CARTSCREEN: (ctx) => const CartScreen(),
+          AppRoutes.SIGNUPSCREEN: (ctx) => const SignUpScreen(),
           //Producer app routes
           ProducerAppRoutes.PRODUCERHOMESCREEN: (ctx) =>
               const ProducerHomeScreen(),

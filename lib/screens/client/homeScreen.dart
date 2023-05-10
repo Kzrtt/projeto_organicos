@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/whiteRoundedCornersBox.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -94,27 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Center(
-                          child: Container(
-                            height: constraints.maxHeight * .06,
-                            width: constraints.maxWidth * .6,
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(83, 242, 166, 0.69),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30)),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Explorar",
-                                style: TextStyle(
-                                  color: const Color.fromRGBO(255, 255, 255, 1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: constraints.maxHeight * .024,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        CommonButton(
+                            constraints: constraints, text: "Explorar"),
                         SizedBox(height: constraints.maxHeight * .04),
                         Padding(
                           padding:

@@ -13,14 +13,7 @@ class OpeningScreen extends StatefulWidget {
   State<OpeningScreen> createState() => _OpeningScreenState();
 }
 
-enum userType { user, seller }
-
-enum register { yes, no }
-
 class _OpeningScreenState extends State<OpeningScreen> {
-  int _step = 0;
-  userType _character = userType.user;
-  register _register = register.no;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -37,33 +30,6 @@ class _OpeningScreenState extends State<OpeningScreen> {
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
                 color: Colors.white, width: constraints.maxWidth * .03),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(14),
-            ),
-          ),
-          hintText: text,
-          hintStyle: TextStyle(
-            fontSize: constraints.maxHeight * .02,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _textField2(
-      double height, double width, BoxConstraints constraints, String text) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: TextField(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: const Color.fromRGBO(83, 242, 166, 1),
-              width: constraints.maxWidth * .01,
-            ),
             borderRadius: const BorderRadius.all(
               Radius.circular(14),
             ),
@@ -131,17 +97,8 @@ class _OpeningScreenState extends State<OpeningScreen> {
                               ),
                             ),
                             InkWell(
-                              onTap: () {
-                                if (_register == register.no) {
-                                  setState(() {
-                                    _register = register.yes;
-                                  });
-                                } else {
-                                  setState(() {
-                                    _register = register.no;
-                                  });
-                                }
-                              },
+                              onTap: () => Navigator.of(context)
+                                  .pushNamed(AppRoutes.SIGNUPSCREEN),
                               child: Text(
                                 "cadastre-se",
                                 style: TextStyle(
@@ -187,154 +144,24 @@ class _OpeningScreenState extends State<OpeningScreen> {
                     ),
                   ),
                   SizedBox(height: constraints.maxHeight * .05),
-                  _register == register.yes
-                      ? Container(
-                          height: constraints.maxHeight * .7,
-                          width: constraints.maxWidth * .9,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Colors.white,
-                          ),
-                          child: Theme(
-                            data: ThemeData(
-                              colorScheme:
-                                  Theme.of(context).colorScheme.copyWith(
-                                        primary: const Color.fromRGBO(
-                                            83, 242, 166, 0.47),
-                                        secondary: const Color.fromRGBO(
-                                            83, 242, 166, 0.47),
-                                      ),
-                            ),
-                            child: Stepper(
-                              currentStep: _step,
-                              onStepCancel: () {
-                                if (_step > 0) {
-                                  setState(() {
-                                    _step -= 1;
-                                  });
-                                }
-                              },
-                              onStepContinue: () {
-                                if (_step <= 0) {
-                                  setState(() {
-                                    _step += 1;
-                                  });
-                                }
-                              },
-                              onStepTapped: (int index) {
-                                setState(() {
-                                  _step = index;
-                                });
-                              },
-                              steps: <Step>[
-                                Step(
-                                    title: const Text('Informações Pessoais'),
-                                    content: Column(
-                                      children: [
-                                        _textField2(55, 330, constraints,
-                                            'Nome completo'),
-                                        SizedBox(
-                                          height: constraints.maxHeight * .01,
-                                        ),
-                                        _textField2(
-                                            55, 330, constraints, 'E-mail'),
-                                        SizedBox(
-                                          height: constraints.maxHeight * .01,
-                                        ),
-                                        _textField2(
-                                            55, 330, constraints, 'Cpf'),
-                                      ],
-                                    )),
-                                Step(
-                                  title:
-                                      const Text('Criar conta como Vendedor?'),
-                                  content: Column(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          ListTile(
-                                            title: const Text('Usuario comum'),
-                                            leading: Radio<userType>(
-                                              activeColor: const Color.fromRGBO(
-                                                  83, 242, 166, 0.47),
-                                              value: userType.user,
-                                              groupValue: _character,
-                                              onChanged: (userType? value) {
-                                                setState(() {
-                                                  _character = value!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          ListTile(
-                                            title: const Text('Vendedor'),
-                                            leading: Radio<userType>(
-                                              activeColor: const Color.fromRGBO(
-                                                  83, 242, 166, 0.47),
-                                              value: userType.seller,
-                                              groupValue: _character,
-                                              onChanged: (userType? value) {
-                                                setState(() {
-                                                  _character = value!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          _character == userType.seller
-                                              ? Column(
-                                                  children: [
-                                                    SizedBox(
-                                                        height: constraints
-                                                                .maxHeight *
-                                                            .04),
-                                                    _textField2(
-                                                        55,
-                                                        330,
-                                                        constraints,
-                                                        'Endereço'),
-                                                    _textField2(55, 330,
-                                                        constraints, 'Cnpj'),
-                                                  ],
-                                                )
-                                              : Center()
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Step(
-                                  title: Text('Senha'),
-                                  content: Column(
-                                    children: [
-                                      _textField2(
-                                          55, 330, constraints, 'Senha'),
-                                      _textField2(55, 330, constraints,
-                                          'Confirmar senha'),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Column(
-                          children: [
-                            SizedBox(height: constraints.maxHeight * .023),
-                            SvgPicture.asset(
-                              'assets/images/undraw_appreciation_r2a1.svg',
-                              height: constraints.maxHeight * .3,
-                              width: constraints.maxWidth * .3,
-                            ),
-                            SizedBox(height: constraints.maxHeight * .04),
-                            Text(
-                              "Bem vindo de volta",
-                              style: TextStyle(
-                                fontSize: constraints.maxHeight * .03,
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                              ),
-                            )
-                          ],
+                  Column(
+                    children: [
+                      SizedBox(height: constraints.maxHeight * .023),
+                      SvgPicture.asset(
+                        'assets/images/undraw_appreciation_r2a1.svg',
+                        height: constraints.maxHeight * .3,
+                        width: constraints.maxWidth * .3,
+                      ),
+                      SizedBox(height: constraints.maxHeight * .04),
+                      Text(
+                        "Bem vindo de volta",
+                        style: TextStyle(
+                          fontSize: constraints.maxHeight * .03,
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
                         ),
+                      )
+                    ],
+                  ),
                   SizedBox(height: constraints.maxHeight * .1),
                 ],
               ),

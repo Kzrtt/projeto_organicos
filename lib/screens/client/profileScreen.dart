@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       text: "Perfil",
                       subtext: "Alterar ou visualizar os dados do seu perfil",
                       icon: Icons.person,
-                      buttonFunction: () => widget.callbackFunction(6),
+                      buttonFunction: () => widget.callbackFunction(7),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,

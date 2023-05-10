@@ -4,10 +4,13 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/cartScreen.dart';
+import 'package:projeto_organicos/screens/client/feedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/historicScreen.dart';
 import 'package:projeto_organicos/screens/client/homeScreen.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
+import 'package:projeto_organicos/screens/client/sellDetails.dart';
+import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +39,10 @@ class _HomeTabState extends State<HomeTab> {
     CartScreen(),
     ProfileScreen(callbackFunction: changePage),
     AdressScreen(),
-    HistoricScreen(),
+    HistoricScreen(callbackFunction: changePage),
+    SellDetails(),
+    UserInfoScreen(),
+    FeedbackScreen(),
   ];
 
   Widget _buildBody(int tabIndex, List baseScreens, List childScreens) {
