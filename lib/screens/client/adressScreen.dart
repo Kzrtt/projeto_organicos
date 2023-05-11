@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 
 class AdressScreen extends StatefulWidget {
@@ -151,7 +148,7 @@ class _AdressScreenState extends State<AdressScreen> {
               child: FloatingActionButton(
                 backgroundColor: const Color.fromRGBO(83, 242, 166, 0.69),
                 onPressed: () {},
-                child: Icon(Icons.add),
+                child: const Icon(Icons.add),
               ),
             ),
           ],

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class WhiteRoundedCornersBox extends StatelessWidget {
   final String text;
-  const WhiteRoundedCornersBox({required this.text});
+  const WhiteRoundedCornersBox({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:projeto_organicos/components/commonButton.dart';
-import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/model/user.dart';
+import 'package:projeto_organicos/providers/userProvider.dart';
+import 'package:projeto_organicos/utils/validators.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -19,6 +18,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   int _step = 0;
   UserType _character = UserType.user;
   DietType _type = DietType.vegan;
+  Validators validators = Validators();
+  final _personalInfoFormKey = GlobalKey<FormState>();
+  final _passwordFormKey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController cpfController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController cellphoneController = TextEditingController();
+  TextEditingController birthDayController = TextEditingController();
+
+  String? placeholder(String? value) {
+    if (value!.length < 3) {
+      return "por favor preencha corretamente o campo";
+    }
+    return null;
+  }
 
   Widget _dietOption(String text, DietType type) {
     return ListTile(
@@ -37,11 +53,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _textField2(
-      double height, double width, BoxConstraints constraints, String text) {
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+  ) {
     return SizedBox(
       height: height,
       width: width,
-      child: TextField(
+      child: TextFormField(
+        validator: validator,
+        controller: controller,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
@@ -77,9 +101,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color.fromRGBO(83, 242, 166, 0.69),
           ),
         ),
-        actions: [
+        actions: const [
           Row(
-            children: const [
+            children: [
               Icon(Icons.people, color: Color.fromRGBO(83, 242, 166, 0.69)),
               SizedBox(width: 10),
               Text(
@@ -99,35 +123,104 @@ class _SignUpScreenState extends State<SignUpScreen> {
           return Column(
             children: [
               SizedBox(height: constraints.maxHeight * .03),
-              Container(
-                height: constraints.maxHeight * .8,
-                width: constraints.maxWidth * .9,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Colors.white,
-                ),
-                child: Theme(
-                  data: ThemeData(
-                    colorScheme: Theme.of(context).colorScheme.copyWith(
-                          primary: const Color.fromRGBO(83, 242, 166, 0.47),
-                          secondary: const Color.fromRGBO(83, 242, 166, 0.47),
-                        ),
+              Padding(
+                padding: EdgeInsets.only(left: constraints.maxWidth * .05),
+                child: Container(
+                  height: constraints.maxHeight * .9,
+                  width: constraints.maxWidth * .9,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Colors.white,
                   ),
                   child: Stepper(
                     currentStep: _step,
-                    onStepCancel: () {
-                      if (_step > 0) {
-                        setState(() {
-                          _step -= 1;
-                        });
-                      }
-                    },
-                    onStepContinue: () {
-                      if (_step <= 0) {
-                        setState(() {
-                          _step += 1;
-                        });
-                      }
+                    controlsBuilder: (context, details) {
+                      return Column(
+                        children: [
+                          SizedBox(height: constraints.maxHeight * .03),
+                          SizedBox(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                        const Color.fromRGBO(
+                                            83, 242, 166, 0.69),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      if (_step == 0 &&
+                                          _personalInfoFormKey.currentState!
+                                              .validate()) {
+                                        setState(() => _step = _step + 1);
+                                      } else if (_step != 3 && _step != 0) {
+                                        setState(() => _step = _step + 1);
+                                      } else if (_step == 3 &&
+                                          _passwordFormKey.currentState!
+                                              .validate()) {
+                                        if (passwordController.text ==
+                                            confirmPasswordController.text) {
+                                          User userData = User(
+                                            userName: nameController.text,
+                                            userCpf: cpfController.text,
+                                            userEmail: emailController.text,
+                                            userCell: cellphoneController.text,
+                                            password: passwordController.text,
+                                            isSubscriber: false,
+                                            isNutritious: false,
+                                          );
+                                          UserProvider provider =
+                                              UserProvider();
+                                          provider.createClient(
+                                              userData, _type, context);
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => const AlertDialog(
+                                              backgroundColor: Colors.white,
+                                              title: Center(
+                                                child: Text(
+                                                    "As senhas não cooencidem"),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      _step <= 2 ? "Continuar" : "Finalizar",
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: constraints.maxWidth * .05),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                        Colors.grey,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (_step != 0) {
+                                          _step = _step - 1;
+                                        }
+                                      });
+                                    },
+                                    child: const Text(
+                                      "Voltar",
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
                     },
                     onStepTapped: (int index) {
                       setState(() {
@@ -136,24 +229,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     steps: <Step>[
                       Step(
-                          title: const Text('Informações Pessoais'),
-                          content: Column(
+                        title: const Text('Informações Pessoais'),
+                        content: Form(
+                          key: _personalInfoFormKey,
+                          child: Column(
                             children: [
                               _textField2(
-                                  55, 330, constraints, 'Nome completo'),
+                                55,
+                                330,
+                                constraints,
+                                'Nome completo',
+                                nameController,
+                                validators.nameValidator,
+                              ),
                               SizedBox(
                                 height: constraints.maxHeight * .01,
                               ),
-                              _textField2(55, 330, constraints, 'E-mail'),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'E-mail',
+                                emailController,
+                                validators.emailValidator,
+                              ),
                               SizedBox(
                                 height: constraints.maxHeight * .01,
                               ),
-                              _textField2(55, 330, constraints, 'Cpf'),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Cpf',
+                                cpfController,
+                                validators.cpfValidate,
+                              ),
                               SizedBox(height: constraints.maxHeight * .01),
                               _textField2(
-                                  55, 330, constraints, 'Data de Nascimento'),
+                                55,
+                                330,
+                                constraints,
+                                'Telefone',
+                                cellphoneController,
+                                validators.phoneValidator,
+                              ),
+                              SizedBox(height: constraints.maxHeight * .01),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Data de Nascimento',
+                                birthDayController,
+                                placeholder,
+                              ),
                             ],
-                          )),
+                          ),
+                        ),
+                      ),
                       Step(
                         title: const Text('Criar conta como Vendedor?'),
                         content: Column(
@@ -161,7 +293,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Column(
                               children: [
                                 ListTile(
-                                  title: const Text('Usuario comum'),
+                                  title: const Text('Não'),
                                   leading: Radio<UserType>(
                                     activeColor: const Color.fromRGBO(
                                         83, 242, 166, 0.47),
@@ -175,7 +307,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ),
                                 ListTile(
-                                  title: const Text('Vendedor'),
+                                  title: const Text('Sim'),
                                   leading: Radio<UserType>(
                                     activeColor: const Color.fromRGBO(
                                         83, 242, 166, 0.47),
@@ -195,12 +327,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               height:
                                                   constraints.maxHeight * .04),
                                           _textField2(
-                                              55, 330, constraints, 'Endereço'),
+                                            55,
+                                            330,
+                                            constraints,
+                                            'Endereço',
+                                            nameController,
+                                            placeholder,
+                                          ),
                                           _textField2(
-                                              55, 330, constraints, 'Cnpj'),
+                                            55,
+                                            330,
+                                            constraints,
+                                            'Cnpj',
+                                            nameController,
+                                            placeholder,
+                                          ),
                                         ],
                                       )
-                                    : Center()
+                                    : const Center()
                               ],
                             )
                           ],
@@ -218,21 +362,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       Step(
                         title: const Text('Senha'),
-                        content: Column(
-                          children: [
-                            _textField2(55, 330, constraints, 'Senha'),
-                            _textField2(
-                                55, 330, constraints, 'Confirmar senha'),
-                          ],
+                        content: Form(
+                          key: _passwordFormKey,
+                          child: Column(
+                            children: [
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Senha',
+                                passwordController,
+                                validators.passwordValidator,
+                              ),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Confirmar senha',
+                                confirmPasswordController,
+                                validators.passwordValidator,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: constraints.maxHeight * .05),
-              CommonButton(
-                  constraints: constraints, text: "Finalizar Cadastro"),
             ],
           );
         },

@@ -20,7 +20,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   int _currentIndex = 0;
-  int _tab = 0;
+  final int _tab = 0;
   final globalVariable = GlobalVariable();
 
   void changePage(int tabIndex) {
@@ -30,15 +30,15 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   late final List<Widget> _baseScreens = [
-    HomeScreen(),
-    SearchScreen(),
-    CartScreen(),
+    const HomeScreen(),
+    const SearchScreen(),
+    const CartScreen(),
     ProfileScreen(callbackFunction: changePage),
-    AdressScreen(),
+    const AdressScreen(),
     HistoricScreen(callbackFunction: changePage),
-    SellDetails(),
-    UserInfoScreen(),
-    FeedbackScreen(),
+    const SellDetails(),
+    const UserInfoScreen(),
+    const FeedbackScreen(),
   ];
 
   Widget _buildBody(int tabIndex, List baseScreens, List childScreens) {

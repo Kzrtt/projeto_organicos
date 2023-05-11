@@ -39,7 +39,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
               SizedBox(height: constraints.maxHeight * .13),
               isCartEmpty
-                  ? Center()
+                  ? const Center()
                   : Center(
                       child: Column(
                         children: [

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/whiteRoundedCornersBox.dart';
 
@@ -17,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          color: Color.fromRGBO(238, 238, 238, 1),
+          color: const Color.fromRGBO(238, 238, 238, 1),
           child: SingleChildScrollView(
             child: SizedBox(
               height: constraints.maxHeight * 1.2,

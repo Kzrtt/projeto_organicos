@@ -1,12 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/profileScreenButton.dart';
 import 'package:projeto_organicos/components/settingsText.dart';
 import 'package:side_sheet/side_sheet.dart';
-import 'package:projeto_organicos/utils/globalVariable.dart';
-import 'package:projeto_organicos/screens/client/homeTab.dart';
 
 import '../../components/nameAndIcon.dart';
 import '../../utils/appRoutes.dart';
@@ -30,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Container(
           height: constraints.maxHeight,
           width: constraints.maxWidth,
-          color: Color.fromRGBO(238, 238, 238, 1),
+          color: const Color.fromRGBO(238, 238, 238, 1),
           child: Column(
             children: [
               Row(

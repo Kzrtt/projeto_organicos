@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 
 class SellBoxProducerEdition extends StatefulWidget {
@@ -35,9 +33,9 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     horizontal: widget.constraints.maxWidth * .05,
                     vertical: widget.constraints.maxHeight * .02,
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
                         "Pedido N°1",
                         style: TextStyle(
@@ -57,9 +55,9 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                 Padding(
                   padding:
                       EdgeInsets.only(left: widget.constraints.maxWidth * .05),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text("Cooperativa: nome da Cooperativa"),
                       Text("Endereço: endereço"),
                     ],
@@ -106,8 +104,8 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     left: widget.constraints.maxWidth * .05,
                     bottom: widget.constraints.maxHeight * .05,
                   ),
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Text(
                         "Status: ",
                         style: TextStyle(

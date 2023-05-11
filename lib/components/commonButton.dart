@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class CommonButton extends StatelessWidget {
   final BoxConstraints constraints;
@@ -14,23 +12,20 @@ class CommonButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: InkWell(
-        onTap: () {},
-        child: Container(
-          height: constraints.maxHeight * .06,
-          width: constraints.maxWidth * .6,
-          decoration: const BoxDecoration(
-            color: Color.fromRGBO(83, 242, 166, 0.69),
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                fontWeight: FontWeight.bold,
-                fontSize: constraints.maxHeight * .024,
-              ),
+      child: Container(
+        height: constraints.maxHeight * .06,
+        width: constraints.maxWidth * .6,
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(83, 242, 166, 0.69),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: const Color.fromRGBO(255, 255, 255, 1),
+              fontWeight: FontWeight.bold,
+              fontSize: constraints.maxHeight * .024,
             ),
           ),
         ),

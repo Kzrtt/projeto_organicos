@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/screens/producer/openSells.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerProfileScreen.dart';
@@ -25,9 +24,9 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
 
   late final List<Widget> _baseProducerScreens = [
     ProducerHomeScreen(callbackFunction: changePage),
-    ProductListScreen(),
-    ProducerProfileScreen(),
-    OpenSells(),
+    const ProductListScreen(),
+    const ProducerProfileScreen(),
+    const OpenSells(),
   ];
 
   Widget get bottomNavigationBar {

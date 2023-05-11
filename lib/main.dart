@@ -1,11 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:projeto_organicos/screens/client/adressScreen.dart';
-import 'package:projeto_organicos/screens/client/cartScreen.dart';
-import 'package:projeto_organicos/screens/client/homeScreen.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
-import 'package:projeto_organicos/screens/client/profileScreen.dart';
-import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
@@ -14,9 +8,11 @@ import 'package:provider/provider.dart';
 
 import 'screens/client/openingScreen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
