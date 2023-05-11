@@ -115,7 +115,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
                           onTap: () {
                             if (emailController.text == "produtor") {
                               Navigator.of(context).pushReplacementNamed(
-                                  ProducerAppRoutes.PRODUCERHOMESCREEN);
+                                  ProducerAppRoutes.PRODUCERHOMETAB);
                             } else {
                               Navigator.of(context)
                                   .pushReplacementNamed(AppRoutes.HOMETAB);

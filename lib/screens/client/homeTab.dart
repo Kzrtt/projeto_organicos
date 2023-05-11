@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/cartScreen.dart';
 import 'package:projeto_organicos/screens/client/feedbackScreen.dart';
@@ -11,7 +8,6 @@ import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/sellDetails.dart';
 import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
-import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
 

@@ -5,5 +5,5 @@ class AppRoutes {
 }
 
 class ProducerAppRoutes {
-  static const PRODUCERHOMESCREEN = "/producer-home-screen";
+  static const PRODUCERHOMETAB = "/producer-home-screen";
 }

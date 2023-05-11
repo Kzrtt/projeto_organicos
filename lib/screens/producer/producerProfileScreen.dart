@@ -1,36 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:projeto_organicos/components/profileScreenButton.dart';
-import 'package:projeto_organicos/components/settingsText.dart';
+import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:side_sheet/side_sheet.dart';
-import 'package:projeto_organicos/utils/globalVariable.dart';
-import 'package:projeto_organicos/screens/client/homeTab.dart';
 
-import '../../components/nameAndIcon.dart';
-import '../../utils/appRoutes.dart';
+import '../../components/profileScreenButton.dart';
+import '../../components/settingsText.dart';
 
-class ProfileScreen extends StatefulWidget {
-  final void Function(int newValue) callbackFunction;
-  const ProfileScreen({
-    Key? key,
-    required this.callbackFunction,
-  }) : super(key: key);
+class ProducerProfileScreen extends StatefulWidget {
+  const ProducerProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProducerProfileScreen> createState() => _ProducerProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Container(
-          height: constraints.maxHeight,
+        return SizedBox(
+          height: constraints.maxHeight * .8,
           width: constraints.maxWidth,
-          color: Color.fromRGBO(238, 238, 238, 1),
           child: Column(
             children: [
               Row(
@@ -39,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   NameAndIcon(
                     constraints: constraints,
                     icon: Icons.person,
-                    text: "Perfil",
+                    text: "Nome da Cooperativa",
                   ),
                   Column(
                     children: [
@@ -132,59 +124,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: constraints.maxHeight * .01),
-              SizedBox(
-                height: constraints.maxHeight * .8,
-                width: constraints.maxWidth,
-                child: ListView(
-                  children: [
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Endereços",
-                      subtext: "Endereços para as entregas",
-                      icon: Icons.map,
-                      buttonFunction: () => widget.callbackFunction(4),
-                    ),
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Meus Pedidos",
-                      subtext: "Veja seus pedidos finalizados e em andamento",
-                      icon: Icons.receipt,
-                      buttonFunction: () => widget.callbackFunction(5),
-                    ),
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Perfil",
-                      subtext: "Alterar ou visualizar os dados do seu perfil",
-                      icon: Icons.person,
-                      buttonFunction: () => widget.callbackFunction(7),
-                    ),
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Chats",
-                      subtext:
-                          "Enviar mensagens para os produtores do nosso app",
-                      icon: Icons.chat_bubble,
-                      buttonFunction: () => widget.callbackFunction(7),
-                    ),
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Feedbacks",
-                      subtext:
-                          "Envie suas recomendações ou reclamações para a nossa equipe",
-                      icon: Icons.feedback,
-                      buttonFunction: () => widget.callbackFunction(8),
-                    ),
-                    ProfileScreenButton(
-                      constraints: constraints,
-                      text: "Seja Assinante",
-                      subtext:
-                          "Seja nosso assinante e tenha descontos e beneficios em nosso App",
-                      icon: Icons.favorite,
-                      buttonFunction: () => widget.callbackFunction(9),
-                    ),
-                  ],
-                ),
+              SizedBox(height: constraints.maxHeight * .05),
+              ProfileScreenButton(
+                constraints: constraints,
+                text: "Produtores",
+                subtext: "Adicione ou altere os dados dos seus produtores",
+                icon: Icons.people,
+                buttonFunction: () {},
+              ),
+              ProfileScreenButton(
+                constraints: constraints,
+                text: "Produtos",
+                subtext: "Adicione ou altere os dados dos seus produtos",
+                icon: Icons.favorite,
+                buttonFunction: () {},
+              ),
+              ProfileScreenButton(
+                constraints: constraints,
+                text: "Perfil",
+                subtext: "Altere ou visualize seus dados",
+                icon: Icons.person,
+                buttonFunction: () {},
+              ),
+              ProfileScreenButton(
+                constraints: constraints,
+                text: "Chats",
+                subtext: "Suas conversas",
+                icon: Icons.map,
+                buttonFunction: () {},
+              ),
+              ProfileScreenButton(
+                constraints: constraints,
+                text: "Feedbacks",
+                subtext: "Envie suas recomendações para nossa equipe",
+                icon: Icons.feedback,
+                buttonFunction: () {},
               ),
             ],
           ),

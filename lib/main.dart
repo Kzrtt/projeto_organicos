@@ -7,7 +7,7 @@ import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
-import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
+import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
@@ -42,8 +42,7 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.HOMETAB: (ctx) => const HomeTab(),
           AppRoutes.SIGNUPSCREEN: (ctx) => const SignUpScreen(),
           //Producer app routes
-          ProducerAppRoutes.PRODUCERHOMESCREEN: (ctx) =>
-              const ProducerHomeScreen(),
+          ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
         },
       ),
     );
