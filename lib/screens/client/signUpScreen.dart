@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/model/user.dart';
 import 'package:projeto_organicos/providers/userProvider.dart';
 import 'package:projeto_organicos/utils/validators.dart';
@@ -18,6 +19,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   int _step = 0;
   UserType _character = UserType.user;
   DietType _type = DietType.vegan;
+  var maskFormatterCpf = MaskTextInputFormatter(
+      mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
+  var maskFormatterPhone = MaskTextInputFormatter(
+      mask: '(##) ## #####-####', filter: {'#': RegExp(r'[0-9]')});
   Validators validators = Validators();
   final _personalInfoFormKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
@@ -48,6 +53,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _type = value!;
           });
         },
+      ),
+    );
+  }
+
+  Widget _textField1(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+    bool isCpf,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        inputFormatters: [isCpf ? maskFormatterCpf : maskFormatterPhone],
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
       ),
     );
   }
@@ -90,6 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
@@ -256,22 +299,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               SizedBox(
                                 height: constraints.maxHeight * .01,
                               ),
-                              _textField2(
+                              _textField1(
                                 55,
                                 330,
                                 constraints,
                                 'Cpf',
                                 cpfController,
                                 validators.cpfValidate,
+                                true,
                               ),
                               SizedBox(height: constraints.maxHeight * .01),
-                              _textField2(
+                              _textField1(
                                 55,
                                 330,
                                 constraints,
                                 'Telefone',
                                 cellphoneController,
                                 validators.phoneValidator,
+                                false,
                               ),
                               SizedBox(height: constraints.maxHeight * .01),
                               _textField2(

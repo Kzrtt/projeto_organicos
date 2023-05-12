@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projeto_organicos/providers/userProvider.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 
 class OpeningScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
@@ -110,13 +112,25 @@ class _OpeningScreenState extends State<OpeningScreen> {
                         ),
                         SizedBox(width: constraints.maxWidth * .08),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (emailController.text == "produtor") {
                               Navigator.of(context).pushReplacementNamed(
                                   ProducerAppRoutes.PRODUCERHOMETAB);
                             } else {
-                              Navigator.of(context)
-                                  .pushReplacementNamed(AppRoutes.HOMETAB);
+                              UserProvider _provider = UserProvider();
+                              if (await _provider.login(emailController.text,
+                                  passwordController.text)) {
+                                Navigator.of(context)
+                                    .pushReplacementNamed(AppRoutes.HOMETAB);
+                              } else {
+                                // ignore: use_build_context_synchronously
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Erro"),
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: Container(
