@@ -20,7 +20,6 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   int _currentIndex = 0;
-  final int _tab = 0;
   final globalVariable = GlobalVariable();
 
   void changePage(int tabIndex) {
