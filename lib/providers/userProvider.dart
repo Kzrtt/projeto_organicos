@@ -7,7 +7,7 @@ import '../model/user.dart';
 class UserProvider with ChangeNotifier {
   final String _baseUrl = "http://localhost:27017/auth";
 
-  void createClient(User user, DietType diet, BuildContext context) async {
+  void createClient(User user, String dietType, BuildContext context) async {
     try {
       var response = await Dio().post(
         "$_baseUrl/sign-up",
@@ -17,12 +17,10 @@ class UserProvider with ChangeNotifier {
           "userEmail": user.userEmail,
           "userCell": user.userCell,
           "password": user.password,
-          "userBithDate": user.birthdate,
+          "userBirthDate": user.birthdate,
           "isSubscriber": false,
           "isNutritionist": false,
-          "diets": [
-            {"dietName": diet.toString()}
-          ],
+          "diets": dietType,
         },
       );
       if (response.data['error'] == 'This user already exists') {

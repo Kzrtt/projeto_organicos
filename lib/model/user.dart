@@ -4,7 +4,7 @@ class User {
   final String userEmail;
   final String userCell;
   final String password;
-  final DateTime birthdate;
+  final String birthdate;
   final bool isSubscriber;
   final bool isNutritious;
   List<String> diets;

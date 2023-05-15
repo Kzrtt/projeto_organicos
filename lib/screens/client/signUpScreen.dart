@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var maskFormatterCpf = MaskTextInputFormatter(
       mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterPhone = MaskTextInputFormatter(
-      mask: '(##) ## #####-####', filter: {'#': RegExp(r'[0-9]')});
+      mask: '(##) #####-####', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterBirth = MaskTextInputFormatter(
       mask: '####-##-##', filter: {'#': RegExp(r'[0-9]')});
   Validators validators = Validators();
@@ -236,9 +236,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           _personalInfoFormKey.currentState!
                                               .validate()) {
                                         setState(() => _step = _step + 1);
-                                      } else if (_step != 3 && _step != 0) {
+                                      } else if (_step != 2 && _step != 0) {
                                         setState(() => _step = _step + 1);
-                                      } else if (_step == 3 &&
+                                      } else if (_step == 2 &&
                                           _passwordFormKey.currentState!
                                               .validate()) {
                                         if (passwordController.text ==
@@ -249,16 +249,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             userEmail: emailController.text,
                                             userCell: cellphoneController.text,
                                             password: passwordController.text,
-                                            birthdate: DateTime.parse(
-                                              birthDayController.text,
-                                            ),
+                                            birthdate: birthDayController.text,
                                             isSubscriber: false,
                                             isNutritious: false,
                                           );
                                           UserProvider provider =
                                               UserProvider();
                                           provider.createClient(
-                                              userData, _type, context);
+                                              userData,
+                                              _type.toString().split('.').last,
+                                              context);
                                           Navigator.of(context).pop();
                                         } else {
                                           showDialog(
