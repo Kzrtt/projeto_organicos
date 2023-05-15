@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 
 class SellBoxProducerEdition extends StatefulWidget {
   BoxConstraints constraints;
@@ -33,7 +34,7 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     horizontal: widget.constraints.maxWidth * .05,
                     vertical: widget.constraints.maxHeight * .02,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -55,7 +56,7 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                 Padding(
                   padding:
                       EdgeInsets.only(left: widget.constraints.maxWidth * .05),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Cooperativa: nome da Cooperativa"),
@@ -104,8 +105,8 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     left: widget.constraints.maxWidth * .05,
                     bottom: widget.constraints.maxHeight * .05,
                   ),
-                  child: const Row(
-                    children: [
+                  child: Row(
+                    children: const [
                       Text(
                         "Status: ",
                         style: TextStyle(
@@ -123,7 +124,12 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     ],
                   ),
                 ),
-                CommonButton(constraints: widget.constraints, text: "Detalhes"),
+                InkWell(
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(ProducerAppRoutes.OPENSELLDETAILS),
+                  child: CommonButton(
+                      constraints: widget.constraints, text: "Detalhes"),
+                ),
               ],
             )),
       ],

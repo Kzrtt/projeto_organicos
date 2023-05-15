@@ -4,7 +4,7 @@ class Validators {
       return "Por favor, insira seu nome";
     } else if (name!.length < 3) {
       return "Por favor, insira seu nome";
-    } else if (!RegExp(r'^[a-zA-Z]+$').hasMatch(name)) {
+    } else if (!RegExp(r'^[A-Za-z ]+$').hasMatch(name)) {
       return "Somente letras são permitidas neste campo";
     }
     return null;
@@ -31,8 +31,6 @@ class Validators {
   String? phoneValidator(String? phone) {
     if (phone == "") {
       return "Por favor, insira seu telefone";
-    } else if (!RegExp(r'^[0-9]').hasMatch(phone!)) {
-      return "Somente numeros são permitidos neste campo";
     }
     return null;
   }

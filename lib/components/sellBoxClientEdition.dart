@@ -29,9 +29,9 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
               horizontal: widget.constraints.maxWidth * .05,
               vertical: widget.constraints.maxHeight * .02,
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
                 Text(
                   "Pedido N°1",
                   style: TextStyle(
@@ -50,9 +50,9 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
           ),
           Padding(
             padding: EdgeInsets.only(left: widget.constraints.maxWidth * .05),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text("Cooperativa: nome da Cooperativa"),
                 Text("Endereço: endereço"),
               ],
@@ -95,8 +95,8 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
               left: widget.constraints.maxWidth * .05,
               bottom: widget.constraints.maxHeight * .05,
             ),
-            child: const Row(
-              children: [
+            child: Row(
+              children: const [
                 Text(
                   "Status: ",
                   style: TextStyle(

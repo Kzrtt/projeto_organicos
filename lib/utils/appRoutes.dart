@@ -6,4 +6,6 @@ class AppRoutes {
 
 class ProducerAppRoutes {
   static const PRODUCERHOMETAB = "/producer-home-screen";
+  static const OPENSELLDETAILS = "/open-sell-details";
+  static const PRODUCERSIGNUP = "/producer-sign-up";
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class UserProvider with ChangeNotifier {
@@ -16,9 +17,12 @@ class UserProvider with ChangeNotifier {
           "userEmail": user.userEmail,
           "userCell": user.userCell,
           "password": user.password,
+          "userBithDate": user.birthdate,
           "isSubscriber": false,
           "isNutritionist": false,
-          "diets": [diet.toString()],
+          "diets": [
+            {"dietName": diet.toString()}
+          ],
         },
       );
       if (response.data['error'] == 'This user already exists') {
@@ -33,11 +37,13 @@ class UserProvider with ChangeNotifier {
       print(response.data["token"]);
     } catch (e) {
       print("$e");
+      return null;
     }
   }
 
   Future<bool> login(String email, String password) async {
     try {
+      final SharedPreferences _prefs = await SharedPreferences.getInstance();
       var response = await Dio().post(
         "$_baseUrl/authenticate/",
         data: {
@@ -52,6 +58,7 @@ class UserProvider with ChangeNotifier {
         return false;
       }
       String token = response.data["token"];
+      await _prefs.setString("token", token);
       print(token);
       return true;
     } catch (e) {

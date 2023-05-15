@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/producer/openSells.dart';
+import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerProfileScreen.dart';
 import 'package:projeto_organicos/screens/producer/productListScreen.dart';
@@ -27,6 +28,7 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
     const ProductListScreen(),
     const ProducerProfileScreen(),
     const OpenSells(),
+    OpenSellsDetails(),
   ];
 
   Widget get bottomNavigationBar {

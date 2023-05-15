@@ -12,7 +12,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return const Column(
+        return Column(
           children: [
             Center(),
           ],

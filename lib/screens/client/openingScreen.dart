@@ -171,7 +171,20 @@ class _OpeningScreenState extends State<OpeningScreen> {
                           fontSize: constraints.maxHeight * .03,
                           color: Color.fromRGBO(0, 0, 0, 0.5),
                         ),
-                      )
+                      ),
+                      SizedBox(height: constraints.maxHeight * .1),
+                      InkWell(
+                        onTap: () => Navigator.of(context)
+                            .pushNamed(ProducerAppRoutes.PRODUCERSIGNUP),
+                        child: Text(
+                          "Cadastre-se como Cooperativa e venda conosco",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: constraints.maxHeight * .02,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: constraints.maxHeight * .1),

@@ -23,6 +23,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterPhone = MaskTextInputFormatter(
       mask: '(##) ## #####-####', filter: {'#': RegExp(r'[0-9]')});
+  var maskFormatterBirth = MaskTextInputFormatter(
+      mask: '####-##-##', filter: {'#': RegExp(r'[0-9]')});
   Validators validators = Validators();
   final _personalInfoFormKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
@@ -129,6 +131,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Widget _textField3(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        inputFormatters: [maskFormatterBirth],
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,9 +182,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Color.fromRGBO(83, 242, 166, 0.69),
           ),
         ),
-        actions: const [
+        actions: [
           Row(
-            children: [
+            children: const [
               Icon(Icons.people, color: Color.fromRGBO(83, 242, 166, 0.69)),
               SizedBox(width: 10),
               Text(
@@ -211,6 +249,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             userEmail: emailController.text,
                                             userCell: cellphoneController.text,
                                             password: passwordController.text,
+                                            birthdate: DateTime.parse(
+                                              birthDayController.text,
+                                            ),
                                             isSubscriber: false,
                                             isNutritious: false,
                                           );
@@ -272,129 +313,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     steps: <Step>[
                       Step(
-                        title: const Text('Informações Pessoais'),
-                        content: Form(
-                          key: _personalInfoFormKey,
-                          child: Column(
-                            children: [
-                              _textField2(
-                                55,
-                                330,
-                                constraints,
-                                'Nome completo',
-                                nameController,
-                                validators.nameValidator,
-                              ),
-                              SizedBox(
-                                height: constraints.maxHeight * .01,
-                              ),
-                              _textField2(
-                                55,
-                                330,
-                                constraints,
-                                'E-mail',
-                                emailController,
-                                validators.emailValidator,
-                              ),
-                              SizedBox(
-                                height: constraints.maxHeight * .01,
-                              ),
-                              _textField1(
-                                55,
-                                330,
-                                constraints,
-                                'Cpf',
-                                cpfController,
-                                validators.cpfValidate,
-                                true,
-                              ),
-                              SizedBox(height: constraints.maxHeight * .01),
-                              _textField1(
-                                55,
-                                330,
-                                constraints,
-                                'Telefone',
-                                cellphoneController,
-                                validators.phoneValidator,
-                                false,
-                              ),
-                              SizedBox(height: constraints.maxHeight * .01),
-                              _textField2(
-                                55,
-                                330,
-                                constraints,
-                                'Data de Nascimento',
-                                birthDayController,
-                                placeholder,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Step(
-                        title: const Text('Criar conta como Vendedor?'),
-                        content: Column(
-                          children: [
-                            Column(
+                          title: const Text('Informações Pessoais'),
+                          content: Form(
+                            key: _personalInfoFormKey,
+                            child: Column(
                               children: [
-                                ListTile(
-                                  title: const Text('Não'),
-                                  leading: Radio<UserType>(
-                                    activeColor: const Color.fromRGBO(
-                                        83, 242, 166, 0.47),
-                                    value: UserType.user,
-                                    groupValue: _character,
-                                    onChanged: (UserType? value) {
-                                      setState(() {
-                                        _character = value!;
-                                      });
-                                    },
-                                  ),
+                                _textField2(
+                                  55,
+                                  330,
+                                  constraints,
+                                  'Nome completo',
+                                  nameController,
+                                  validators.nameValidator,
                                 ),
-                                ListTile(
-                                  title: const Text('Sim'),
-                                  leading: Radio<UserType>(
-                                    activeColor: const Color.fromRGBO(
-                                        83, 242, 166, 0.47),
-                                    value: UserType.seller,
-                                    groupValue: _character,
-                                    onChanged: (UserType? value) {
-                                      setState(() {
-                                        _character = value!;
-                                      });
-                                    },
-                                  ),
+                                SizedBox(
+                                  height: constraints.maxHeight * .01,
                                 ),
-                                _character == UserType.seller
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height:
-                                                  constraints.maxHeight * .04),
-                                          _textField2(
-                                            55,
-                                            330,
-                                            constraints,
-                                            'Endereço',
-                                            nameController,
-                                            placeholder,
-                                          ),
-                                          _textField2(
-                                            55,
-                                            330,
-                                            constraints,
-                                            'Cnpj',
-                                            nameController,
-                                            placeholder,
-                                          ),
-                                        ],
-                                      )
-                                    : const Center()
+                                _textField2(
+                                  55,
+                                  330,
+                                  constraints,
+                                  'E-mail',
+                                  emailController,
+                                  validators.emailValidator,
+                                ),
+                                SizedBox(
+                                  height: constraints.maxHeight * .01,
+                                ),
+                                _textField1(
+                                  55,
+                                  330,
+                                  constraints,
+                                  'Cpf',
+                                  cpfController,
+                                  validators.cpfValidate,
+                                  true,
+                                ),
+                                SizedBox(height: constraints.maxHeight * .01),
+                                _textField1(
+                                  55,
+                                  330,
+                                  constraints,
+                                  'Telefone',
+                                  cellphoneController,
+                                  validators.phoneValidator,
+                                  false,
+                                ),
+                                SizedBox(height: constraints.maxHeight * .01),
+                                _textField3(
+                                  55,
+                                  330,
+                                  constraints,
+                                  'Data de Nascimento',
+                                  birthDayController,
+                                  placeholder,
+                                ),
                               ],
-                            )
-                          ],
-                        ),
-                      ),
+                            ),
+                          )),
                       Step(
                         title: const Text('Dieta'),
                         content: Column(

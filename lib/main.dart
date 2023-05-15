@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
+import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
+import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +41,8 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.SIGNUPSCREEN: (ctx) => const SignUpScreen(),
           //Producer app routes
           ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
+          ProducerAppRoutes.OPENSELLDETAILS: (ctx) => const OpenSellsDetails(),
+          ProducerAppRoutes.PRODUCERSIGNUP: (ctx) => const SignUpCooperativa(),
         },
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/profileScreenButton.dart';
 import 'package:projeto_organicos/components/settingsText.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:side_sheet/side_sheet.dart';
 
 import '../../components/nameAndIcon.dart';
@@ -106,10 +107,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     SizedBox(
                                         height: constraints.maxHeight * .5),
                                     InkWell(
-                                      onTap: () => Navigator.of(context)
-                                          .pushReplacementNamed(
-                                        AppRoutes.OPENINGSCREEN,
-                                      ),
+                                      onTap: () async {
+                                        SharedPreferences _prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        _prefs.remove("token");
+                                        Navigator.of(context)
+                                            .pushReplacementNamed(
+                                          AppRoutes.OPENINGSCREEN,
+                                        );
+                                      },
                                       child: const Text(
                                         "Loggout",
                                         style: TextStyle(
