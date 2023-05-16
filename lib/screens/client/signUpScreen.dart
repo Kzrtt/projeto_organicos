@@ -243,8 +243,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               .validate()) {
                                         if (passwordController.text ==
                                             confirmPasswordController.text) {
-                                          String carnivoro =
-                                              "6462cc4e58aea7b81d425eea";
+                                          String diet = "";
+                                          if (_type == DietType.carnivore) {
+                                            diet = "6462cc4e58aea7b81d425eea";
+                                          } else if (_type == DietType.vegan) {
+                                            diet = "6462cc6758aea7b81d425eeb";
+                                          } else {
+                                            diet = "6462cc7d58aea7b81d425eec";
+                                          }
 
                                           User userData = User(
                                             userName: nameController.text,
@@ -259,7 +265,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           UserProvider provider =
                                               UserProvider();
                                           provider.createClient(
-                                              userData, carnivoro, context);
+                                              userData, diet, context);
                                           Navigator.of(context).pop();
                                         } else {
                                           showDialog(
