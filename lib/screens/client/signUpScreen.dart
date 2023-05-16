@@ -243,6 +243,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               .validate()) {
                                         if (passwordController.text ==
                                             confirmPasswordController.text) {
+                                          String carnivoro =
+                                              "6462cc4e58aea7b81d425eea";
+
                                           User userData = User(
                                             userName: nameController.text,
                                             userCpf: cpfController.text,
@@ -256,9 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           UserProvider provider =
                                               UserProvider();
                                           provider.createClient(
-                                              userData,
-                                              _type.toString().split('.').last,
-                                              context);
+                                              userData, carnivoro, context);
                                           Navigator.of(context).pop();
                                         } else {
                                           showDialog(
