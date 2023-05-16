@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:projeto_organicos/model/cooperative.dart';
+import 'package:projeto_organicos/model/cooperativeAdress.dart';
+import 'package:projeto_organicos/providers/cooperativeProvider.dart';
+import 'package:projeto_organicos/utils/cooperativeValidators.dart';
 
 class SignUpCooperativa extends StatefulWidget {
   const SignUpCooperativa({Key? key}) : super(key: key);
@@ -11,6 +15,90 @@ class SignUpCooperativa extends StatefulWidget {
 
 class _SignUpCooperativaState extends State<SignUpCooperativa> {
   int _currentStep = 0;
+  CooperativeValidators _validators = CooperativeValidators();
+  final GlobalKey _passwordFormKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _cnpjController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _streetController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
+  final TextEditingController _complementController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+
+  Widget _textField1(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _textField2(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +170,57 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        _currentStep = _currentStep + 1;
-                                      });
+                                      if (_currentStep <= 2) {
+                                        setState(() {
+                                          _currentStep = _currentStep + 1;
+                                        });
+                                      } else if (_currentStep == 3) {
+                                        if (_passwordController.text ==
+                                            _confirmPasswordController.text) {
+                                          CooperativeAdress _adress =
+                                              CooperativeAdress(
+                                            complement:
+                                                _complementController.text,
+                                            street: _streetController.text,
+                                            city: _cityController.text,
+                                            state: _stateController.text,
+                                            zipCode: _zipCodeController.text,
+                                          );
+                                          Cooperative _cooperative =
+                                              Cooperative(
+                                            cooperativeEmail:
+                                                _emailController.text,
+                                            password: _passwordController.text,
+                                            cooperativeName:
+                                                _nameController.text,
+                                            cooperativeCnpj:
+                                                _cnpjController.text,
+                                            cooperativeProfilePhoto: "dadada",
+                                            cooperativePhone:
+                                                _passwordController.text,
+                                          );
+                                          CooperativeProvider _provider =
+                                              CooperativeProvider();
+                                          _provider.createCooperative(
+                                            _cooperative,
+                                            _adress,
+                                            context,
+                                          );
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => const AlertDialog(
+                                              backgroundColor: Colors.white,
+                                              title: Center(
+                                                child: Text(
+                                                  "As senhas não cooencidem",
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
                                     },
                                     child: Text(
                                       _currentStep <= 2
@@ -120,9 +256,123 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                         ],
                       );
                     },
-                    steps: const [
-                      Step(title: Text("Primeiro Passo"), content: Center()),
-                      Step(title: Text("Segundo Passo"), content: Center()),
+                    steps: [
+                      Step(
+                        title: const Text("Primeiro Passo"),
+                        content: Column(
+                          children: [
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Nome Cooperativa",
+                              _nameController,
+                              _validators.nameValidator,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Email",
+                              _emailController,
+                              _validators.emailValidator,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Cnpj",
+                              _cnpjController,
+                              _validators.cnpjValidate,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Telefone",
+                              _phoneController,
+                              _validators.phoneValidator,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Step(
+                        title: const Text("Endereço"),
+                        content: Column(
+                          children: [
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Rua",
+                              _streetController,
+                              _validators.adressValidation,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "complemento",
+                              _complementController,
+                              _validators.adressValidation,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Cidade",
+                              _cityController,
+                              _validators.adressValidation,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Estado",
+                              _stateController,
+                              _validators.adressValidation,
+                            ),
+                            _textField1(
+                              55,
+                              330,
+                              constraints,
+                              "Cep",
+                              _zipCodeController,
+                              _validators.adressValidation,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Step(
+                        title: Text("Foto"),
+                        content: Center(),
+                      ),
+                      Step(
+                        title: const Text("Senha"),
+                        content: Form(
+                          key: _passwordFormKey,
+                          child: Column(
+                            children: [
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Senha',
+                                _passwordController,
+                                _validators.passwordValidator,
+                              ),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                'Confirmar senha',
+                                _confirmPasswordController,
+                                _validators.passwordValidator,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -118,18 +118,17 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   ProducerAppRoutes.PRODUCERHOMETAB);
                             } else {
                               UserProvider _provider = UserProvider();
-                              if (await _provider.login(emailController.text,
-                                  passwordController.text)) {
+                              String response = await _provider.login(
+                                emailController.text,
+                                passwordController.text,
+                                context,
+                              );
+                              if (response == "telaCliente") {
                                 Navigator.of(context)
                                     .pushReplacementNamed(AppRoutes.HOMETAB);
                               } else {
-                                // ignore: use_build_context_synchronously
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: Text("Erro"),
-                                  ),
-                                );
+                                Navigator.of(context).pushReplacementNamed(
+                                    ProducerAppRoutes.PRODUCERHOMETAB);
                               }
                             }
                           },

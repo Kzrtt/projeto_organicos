@@ -1,12 +1,14 @@
 class Cooperative {
-  final int cooperativeId;
   final String cooperativeName;
+  final String cooperativeEmail;
   final String cooperativeCnpj;
   final String cooperativePhone;
+  final String password;
   final String cooperativeProfilePhoto;
 
   Cooperative({
-    required this.cooperativeId,
+    required this.cooperativeEmail,
+    required this.password,
     required this.cooperativeName,
     required this.cooperativeCnpj,
     required this.cooperativeProfilePhoto,

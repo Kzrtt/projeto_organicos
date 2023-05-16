@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
@@ -10,7 +11,7 @@ class UserProvider with ChangeNotifier {
   void createClient(User user, String dietType, BuildContext context) async {
     try {
       var response = await Dio().post(
-        "$_baseUrl/sign-up",
+        "$_baseUrl/sign_up",
         data: {
           "userName": user.userName,
           "userCpf": user.userCpf,
@@ -39,28 +40,37 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<String> login(
+      String email, String password, BuildContext context) async {
     try {
       final SharedPreferences _prefs = await SharedPreferences.getInstance();
       var response = await Dio().post(
         "$_baseUrl/authenticate/",
         data: {
-          "userEmail": email,
+          "email": email,
           "password": password,
         },
       );
       if (response.data["error"] == "User not found") {
-        return false;
+        return "erro";
       } else if (response.data["error"] == "Invalid password") {
         print("senha errada");
-        return false;
+        return "erro";
       }
-      String token = response.data["token"];
-      await _prefs.setString("token", token);
-      print(token);
-      return true;
+      if (response.data.containsKey('user')) {
+        String token = response.data["token"];
+        await _prefs.setString("token", token);
+        print(token);
+        return "telaCliente";
+      } else if (response.data.containsKey('cooperative')) {
+        String token = response.data["token"];
+        await _prefs.setString("token", token);
+        print(token);
+        return "telaCooperativa";
+      }
+      return "erro";
     } catch (e) {
-      print(e);
+      print("$e");
       rethrow;
     }
   }
