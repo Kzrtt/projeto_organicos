@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/whiteRoundedCornersBox.dart';
 
+import '../../model/user.dart';
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final User user;
+  const HomeScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,10 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: constraints.maxHeight * .024),
-                  const Center(
+                  Center(
                     child: Text(
-                      "Rua do Cliente",
-                      style: TextStyle(
+                      widget.user.userName,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color.fromRGBO(0, 0, 0, 0.58),
                       ),

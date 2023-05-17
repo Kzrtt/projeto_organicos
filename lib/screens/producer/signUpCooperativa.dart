@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:projeto_organicos/providers/cooperativeProvider.dart';
-import 'package:projeto_organicos/utils/cooperativeValidators.dart';
+import 'package:projeto_organicos/utils/validators.dart';
 
 class SignUpCooperativa extends StatefulWidget {
   const SignUpCooperativa({Key? key}) : super(key: key);
@@ -15,8 +16,14 @@ class SignUpCooperativa extends StatefulWidget {
 
 class _SignUpCooperativaState extends State<SignUpCooperativa> {
   int _currentStep = 0;
-  CooperativeValidators _validators = CooperativeValidators();
-  final GlobalKey _passwordFormKey = GlobalKey<FormState>();
+  Validators _validators = Validators();
+  var maskFormatterCnpj = MaskTextInputFormatter(
+      mask: '###.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
+  var maskedFormatterCep = MaskTextInputFormatter(
+      mask: '#####-###', filter: {'#': RegExp(r'[0-9]')});
+  final _passwordFormKey = GlobalKey<FormState>();
+  final _personalInformationFormKey = GlobalKey<FormState>();
+  final _adressFormKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _cnpjController = TextEditingController();
@@ -72,11 +79,13 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
     String text,
     TextEditingController controller,
     String? Function(String?) validator,
+    bool isCnpj,
   ) {
     return SizedBox(
       height: height,
       width: width,
       child: TextFormField(
+        inputFormatters: [isCnpj ? maskFormatterCnpj : maskedFormatterCep],
         validator: validator,
         controller: controller,
         decoration: InputDecoration(
@@ -170,14 +179,27 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      if (_currentStep <= 2) {
-                                        setState(() {
-                                          _currentStep = _currentStep + 1;
-                                        });
+                                      if (_currentStep == 0 &&
+                                          _personalInformationFormKey
+                                              .currentState!
+                                              .validate()) {
+                                        setState(() =>
+                                            _currentStep = _currentStep + 1);
+                                      } else if (_currentStep == 1 &&
+                                          _adressFormKey.currentState!
+                                              .validate()) {
+                                        setState(() =>
+                                            _currentStep = _currentStep + 1);
+                                      } else if (_currentStep == 2) {
+                                        setState(() =>
+                                            _currentStep = _currentStep + 1);
                                       } else if (_currentStep == 3) {
                                         if (_passwordController.text ==
-                                            _confirmPasswordController.text) {
-                                          CooperativeAdress _adress =
+                                                _confirmPasswordController
+                                                    .text &&
+                                            _passwordFormKey.currentState!
+                                                .validate()) {
+                                          CooperativeAdress adress =
                                               CooperativeAdress(
                                             complement:
                                                 _complementController.text,
@@ -186,8 +208,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                             state: _stateController.text,
                                             zipCode: _zipCodeController.text,
                                           );
-                                          Cooperative _cooperative =
-                                              Cooperative(
+                                          Cooperative cooperative = Cooperative(
                                             cooperativeEmail:
                                                 _emailController.text,
                                             password: _passwordController.text,
@@ -195,15 +216,16 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                                 _nameController.text,
                                             cooperativeCnpj:
                                                 _cnpjController.text,
-                                            cooperativeProfilePhoto: "dadada",
+                                            cooperativeAdress: adress,
+                                            cooperativeProfilePhoto: "",
                                             cooperativePhone:
                                                 _passwordController.text,
                                           );
                                           CooperativeProvider _provider =
                                               CooperativeProvider();
                                           _provider.createCooperative(
-                                            _cooperative,
-                                            _adress,
+                                            cooperative,
+                                            adress,
                                             context,
                                           );
                                           Navigator.of(context).pop();
@@ -258,89 +280,96 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                     },
                     steps: [
                       Step(
-                        title: const Text("Primeiro Passo"),
-                        content: Column(
-                          children: [
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Nome Cooperativa",
-                              _nameController,
-                              _validators.nameValidator,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Email",
-                              _emailController,
-                              _validators.emailValidator,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Cnpj",
-                              _cnpjController,
-                              _validators.cnpjValidate,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Telefone",
-                              _phoneController,
-                              _validators.phoneValidator,
-                            ),
-                          ],
+                        title: const Text("Informações Pessoais"),
+                        content: Form(
+                          key: _personalInformationFormKey,
+                          child: Column(
+                            children: [
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Nome Cooperativa",
+                                _nameController,
+                                _validators.nameValidator,
+                              ),
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Email",
+                                _emailController,
+                                _validators.emailValidator,
+                              ),
+                              _textField2(
+                                  55,
+                                  330,
+                                  constraints,
+                                  "Cnpj",
+                                  _cnpjController,
+                                  _validators.cpnjValidator,
+                                  true),
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Telefone",
+                                _phoneController,
+                                _validators.phoneValidator,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Step(
                         title: const Text("Endereço"),
-                        content: Column(
-                          children: [
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Rua",
-                              _streetController,
-                              _validators.adressValidation,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "complemento",
-                              _complementController,
-                              _validators.adressValidation,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Cidade",
-                              _cityController,
-                              _validators.adressValidation,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Estado",
-                              _stateController,
-                              _validators.adressValidation,
-                            ),
-                            _textField1(
-                              55,
-                              330,
-                              constraints,
-                              "Cep",
-                              _zipCodeController,
-                              _validators.adressValidation,
-                            ),
-                          ],
+                        content: Form(
+                          key: _adressFormKey,
+                          child: Column(
+                            children: [
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Rua",
+                                _streetController,
+                                _validators.adressValidator,
+                              ),
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "complemento",
+                                _complementController,
+                                _validators.adressValidator,
+                              ),
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Cidade",
+                                _cityController,
+                                _validators.adressValidator,
+                              ),
+                              _textField1(
+                                55,
+                                330,
+                                constraints,
+                                "Estado",
+                                _stateController,
+                                _validators.adressValidator,
+                              ),
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                "Cep",
+                                _zipCodeController,
+                                _validators.cepValidator,
+                                false,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const Step(
@@ -353,7 +382,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                           key: _passwordFormKey,
                           child: Column(
                             children: [
-                              _textField2(
+                              _textField1(
                                 55,
                                 330,
                                 constraints,
@@ -361,7 +390,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                 _passwordController,
                                 _validators.passwordValidator,
                               ),
-                              _textField2(
+                              _textField1(
                                 55,
                                 330,
                                 constraints,

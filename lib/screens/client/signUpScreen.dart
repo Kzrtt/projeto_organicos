@@ -373,7 +373,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   constraints,
                                   'Data de Nascimento',
                                   birthDayController,
-                                  placeholder,
+                                  validators.birthDateValidator,
                                 ),
                               ],
                             ),

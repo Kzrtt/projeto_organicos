@@ -11,6 +11,9 @@ import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/user.dart';
+import '../../utils/userState.dart';
+
 class HomeTab extends StatefulWidget {
   const HomeTab({Key? key}) : super(key: key);
 
@@ -26,30 +29,6 @@ class _HomeTabState extends State<HomeTab> {
     setState(() {
       globalVariable.tabValue = tabIndex;
     });
-  }
-
-  late final List<Widget> _baseScreens = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const CartScreen(),
-    ProfileScreen(callbackFunction: changePage),
-    const AdressScreen(),
-    HistoricScreen(callbackFunction: changePage),
-    const SellDetails(),
-    const UserInfoScreen(),
-    const FeedbackScreen(),
-  ];
-
-  Widget _buildBody(int tabIndex, List baseScreens, List childScreens) {
-    return Consumer<GlobalVariable>(
-      builder: ((context, globalVariable, child) {
-        if (globalVariable.getTabValue <= 3) {
-          return baseScreens[tabIndex];
-        } else {
-          return childScreens[tabIndex];
-        }
-      }),
-    );
   }
 
   Widget get bottomNavigationBar {
@@ -96,6 +75,29 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = Provider.of<UserState>(context);
+    User? user = userState.getUser;
+
+    late final List<Widget> _baseScreens = [
+      HomeScreen(user: user!),
+      const SearchScreen(),
+      const CartScreen(),
+      ProfileScreen(
+        callbackFunction: changePage,
+        user: user,
+      ),
+      const AdressScreen(),
+      HistoricScreen(
+        callbackFunction: changePage,
+      ),
+      const SellDetails(),
+      UserInfoScreen(
+        user: user,
+        callbackFunction: changePage,
+      ),
+      const FeedbackScreen(),
+    ];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,

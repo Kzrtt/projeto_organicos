@@ -1,9 +1,17 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projeto_organicos/model/cooperative.dart';
+import 'package:projeto_organicos/providers/cooperativeProvider.dart';
 import 'package:projeto_organicos/providers/userProvider.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:projeto_organicos/utils/cooperativeState.dart';
+import 'package:projeto_organicos/utils/userState.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../model/user.dart';
 
 class OpeningScreen extends StatefulWidget {
   const OpeningScreen({Key? key}) : super(key: key);
@@ -118,17 +126,47 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   ProducerAppRoutes.PRODUCERHOMETAB);
                             } else {
                               UserProvider _provider = UserProvider();
+                              CooperativeProvider _cprovider =
+                                  CooperativeProvider();
                               String response = await _provider.login(
                                 emailController.text,
                                 passwordController.text,
                                 context,
                               );
                               if (response == "telaCliente") {
-                                Navigator.of(context)
-                                    .pushReplacementNamed(AppRoutes.HOMETAB);
+                                final userState = Provider.of<UserState>(
+                                  context,
+                                  listen: false,
+                                );
+                                SharedPreferences _prefs =
+                                    await SharedPreferences.getInstance();
+                                String? userId = _prefs.getString('userId');
+                                _provider.getClient(userId).then((value) {
+                                  User user = value;
+                                  userState.setUser(user);
+                                  Navigator.of(context).pushReplacementNamed(
+                                    AppRoutes.HOMETAB,
+                                  );
+                                });
                               } else {
-                                Navigator.of(context).pushReplacementNamed(
-                                    ProducerAppRoutes.PRODUCERHOMETAB);
+                                final cooperativeState =
+                                    Provider.of<CooperativeState>(
+                                  context,
+                                  listen: false,
+                                );
+                                SharedPreferences _prefs =
+                                    await SharedPreferences.getInstance();
+                                String? cooperativeId =
+                                    _prefs.getString("cooperativeId");
+                                _cprovider
+                                    .getCooperative(cooperativeId)
+                                    .then((value) {
+                                  Cooperative cooperative = value;
+                                  cooperativeState.setCooperative(cooperative);
+                                  Navigator.of(context).pushReplacementNamed(
+                                    ProducerAppRoutes.PRODUCERHOMETAB,
+                                  );
+                                });
                               }
                             }
                           },

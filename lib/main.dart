@@ -5,7 +5,9 @@ import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
 import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
+import 'package:projeto_organicos/utils/userState.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/client/openingScreen.dart';
@@ -25,6 +27,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => GlobalVariable()),
+        ChangeNotifierProvider(create: (_) => UserState()),
+        ChangeNotifierProvider(create: (_) => CooperativeState()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

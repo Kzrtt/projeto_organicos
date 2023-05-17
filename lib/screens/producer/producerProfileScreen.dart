@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:side_sheet/side_sheet.dart';
 
 import '../../components/profileScreenButton.dart';
 import '../../components/settingsText.dart';
 
 class ProducerProfileScreen extends StatefulWidget {
-  const ProducerProfileScreen({Key? key}) : super(key: key);
+  Cooperative cooperative;
+  final void Function(int newValue) callbackFunction;
+  ProducerProfileScreen({
+    Key? key,
+    required this.cooperative,
+    required this.callbackFunction,
+  }) : super(key: key);
 
   @override
   State<ProducerProfileScreen> createState() => _ProducerProfileScreenState();
@@ -29,7 +37,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                   NameAndIcon(
                     constraints: constraints,
                     icon: Icons.person,
-                    text: "Nome da Cooperativa",
+                    text: widget.cooperative.cooperativeName,
                   ),
                   Column(
                     children: [
@@ -101,10 +109,17 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                                     SizedBox(
                                         height: constraints.maxHeight * .5),
                                     InkWell(
-                                      onTap: () => Navigator.of(context)
-                                          .pushReplacementNamed(
-                                        AppRoutes.OPENINGSCREEN,
-                                      ),
+                                      onTap: () async {
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        prefs.remove('cooperativeId');
+                                        prefs.remove('cooperativeToken');
+                                        Navigator.of(context)
+                                            .pushReplacementNamed(
+                                          AppRoutes.OPENINGSCREEN,
+                                        );
+                                      },
                                       child: const Text(
                                         "Loggout",
                                         style: TextStyle(
@@ -142,7 +157,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                 text: "Perfil",
                 subtext: "Altere ou visualize seus dados",
                 icon: Icons.person,
-                buttonFunction: () {},
+                buttonFunction: () => widget.callbackFunction(5),
               ),
               ProfileScreenButton(
                 constraints: constraints,

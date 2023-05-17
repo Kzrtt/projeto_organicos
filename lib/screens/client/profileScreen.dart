@@ -5,13 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:side_sheet/side_sheet.dart';
 
 import '../../components/nameAndIcon.dart';
+import '../../model/user.dart';
 import '../../utils/appRoutes.dart';
 
 class ProfileScreen extends StatefulWidget {
   final void Function(int newValue) callbackFunction;
+  final User user;
   const ProfileScreen({
     Key? key,
     required this.callbackFunction,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -35,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   NameAndIcon(
                     constraints: constraints,
                     icon: Icons.person,
-                    text: "Perfil",
+                    text: widget.user.userName,
                   ),
                   Column(
                     children: [
@@ -108,10 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         height: constraints.maxHeight * .5),
                                     InkWell(
                                       onTap: () async {
-                                        SharedPreferences _prefs =
+                                        SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
-                                        _prefs.remove("token");
+                                        prefs.remove('userId');
+                                        prefs.remove('userToken');
                                         Navigator.of(context)
                                             .pushReplacementNamed(
                                           AppRoutes.OPENINGSCREEN,

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/model/cooperative.dart';
+import 'package:projeto_organicos/screens/producer/cooperativeInfoScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSells.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerProfileScreen.dart';
 import 'package:projeto_organicos/screens/producer/productListScreen.dart';
+import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
+import 'package:provider/provider.dart';
+
+import '../../model/cooperative.dart';
 
 class ProducerHomeTab extends StatefulWidget {
   const ProducerHomeTab({Key? key}) : super(key: key);
@@ -22,14 +28,6 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
       globalVariable.tabProducerValue = tabIndex;
     });
   }
-
-  late final List<Widget> _baseProducerScreens = [
-    ProducerHomeScreen(callbackFunction: changePage),
-    const ProductListScreen(),
-    const ProducerProfileScreen(),
-    const OpenSells(),
-    OpenSellsDetails(),
-  ];
 
   Widget get bottomNavigationBar {
     return ClipRRect(
@@ -71,6 +69,21 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final cooperativeState = Provider.of<CooperativeState>(context);
+    Cooperative? cooperative = cooperativeState.getCooperative;
+
+    late final List<Widget> _baseProducerScreens = [
+      ProducerHomeScreen(callbackFunction: changePage),
+      const ProductListScreen(),
+      ProducerProfileScreen(
+        cooperative: cooperative!,
+        callbackFunction: changePage,
+      ),
+      const OpenSells(),
+      OpenSellsDetails(),
+      CooperativeInfoScreen(callbackFunction: changePage),
+    ];
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       bottomNavigationBar: bottomNavigationBar,

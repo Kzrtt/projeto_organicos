@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/utils/cooperativeState.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/nameAndIcon.dart';
+import '../../model/cooperative.dart';
 
 class ProducerHomeScreen extends StatefulWidget {
   final void Function(int newValue) callbackFunction;
@@ -30,6 +33,9 @@ class _ProducerHomeScreenState extends State<ProducerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cooperativeState = Provider.of<CooperativeState>(context);
+    Cooperative? cooperative = cooperativeState.getCooperative;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -37,7 +43,7 @@ class _ProducerHomeScreenState extends State<ProducerHomeScreen> {
             NameAndIcon(
               constraints: constraints,
               icon: Icons.star,
-              text: "Bem vindo Cooperativa",
+              text: "Bem vindo ${cooperative!.cooperativeName}",
             ),
             SizedBox(height: constraints.maxHeight * .03),
             Column(

@@ -1,4 +1,6 @@
-class User {
+import 'package:flutter/cupertino.dart';
+
+class User with ChangeNotifier {
   final String userName;
   final String userCpf;
   final String userEmail;
