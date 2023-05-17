@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/controller/userController.dart';
+import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:projeto_organicos/utils/userState.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({Key? key}) : super(key: key);
@@ -13,6 +18,30 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   String _selectedItem = "";
   final List<String> _items = ["item 1", "item 2", "item 3"];
   final TextEditingController _feedbackController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  List<ClientFeedback> _feedbacks = [];
+  List<bool> isExpandedList = List.generate(5, (index) => false);
+
+  void loadFeedbacks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    UserController userController = UserController();
+    String? userId = prefs.getString("userId");
+    List<ClientFeedback> temp = await userController.getAllFeedbacks(userId!);
+    UserState userState = UserState();
+    userState.setFeedbackList(temp);
+    print(userState.feedbacks.length);
+    setState(() {
+      _feedbacks = temp;
+    });
+    print(_feedbacks.length);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadFeedbacks();
+  }
 
   Widget _textField1(double height, double width, BoxConstraints constraints,
       String text, TextEditingController controller) {
@@ -47,94 +76,113 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: SizedBox(
-            height: constraints.maxHeight * 1.3,
-            child: Column(
-              children: [
-                NameAndIcon(
-                  constraints: constraints,
-                  icon: Icons.feedback,
-                  text: "Feedbacks",
-                ),
-                SizedBox(height: constraints.maxHeight * .03),
-                Padding(
-                  padding: EdgeInsets.all(constraints.maxHeight * .01),
-                  child: const Card(
-                    child: ListTile(
-                      title: Text("Feedback 1"),
-                      subtitle: Text("Status: Resolvido"),
-                      trailing: Icon(
-                        Icons.arrow_drop_down,
-                        color: Color.fromRGBO(83, 242, 166, 0.69),
-                      ),
+        return SizedBox(
+          height: constraints.maxHeight,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  NameAndIcon(
+                    constraints: constraints,
+                    icon: Icons.feedback,
+                    text: "Feedbacks",
+                  ),
+                  SizedBox(height: constraints.maxHeight * .03),
+                  SizedBox(
+                    height: constraints.maxHeight * .8,
+                    child: ListView.builder(
+                      itemCount: _feedbacks.length,
+                      itemBuilder: (context, index) {
+                        var item = _feedbacks[index];
+                        return Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsets.all(constraints.maxHeight * .015),
+                              child: Card(
+                                child: ListTile(
+                                  leading: const Icon(
+                                    Icons.favorite,
+                                    color: Color.fromRGBO(108, 168, 129, 0.7),
+                                  ),
+                                  title: Text(item.title),
+                                  trailing: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isExpandedList[index] =
+                                            !isExpandedList[index];
+                                      });
+                                    },
+                                    child: Icon(
+                                      isExpandedList[index]
+                                          ? Icons.expand_less
+                                          : Icons.expand_more,
+                                    ),
+                                  ),
+                                  subtitle: isExpandedList[index]
+                                      ? SizedBox(
+                                          height: constraints.maxHeight * .25,
+                                          width: constraints.maxWidth,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height:
+                                                    constraints.maxHeight * .02,
+                                              ),
+                                              Text(
+                                                "pergunta: ${item.message}",
+                                              ),
+                                              SizedBox(
+                                                height:
+                                                    constraints.maxHeight * .02,
+                                              ),
+                                              Text(
+                                                "resposta: ${item.response}",
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Column(
+                                          children: [
+                                            Container(
+                                              height:
+                                                  constraints.maxHeight * .035,
+                                              width: constraints.maxWidth,
+                                              child: Text(
+                                                "data: ${item.data.substring(0, 10)}",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
+                  SizedBox(height: constraints.maxHeight * .045),
+                ],
+              ),
+              Positioned(
+                bottom: 75.0,
+                right: 15.0,
+                child: FloatingActionButton(
+                  backgroundColor: const Color.fromRGBO(83, 242, 166, 0.69),
+                  onPressed: () async {
+                    var result = await Navigator.of(context)
+                        .pushNamed(AppRoutes.ADDFEEDBACK) as ClientFeedback;
+                    setState(() {
+                      _feedbacks.add(result);
+                    });
+                  },
+                  child: const Icon(Icons.add),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(constraints.maxHeight * .01),
-                  child: const Card(
-                    child: ListTile(
-                      title: Text("Feedback 2"),
-                      subtitle: Text("Status: Em aberto"),
-                      trailing: Icon(
-                        Icons.arrow_drop_down,
-                        color: Color.fromRGBO(83, 242, 166, 0.69),
-                      ),
-                    ),
-                  ),
-                ),
-                Divider(
-                  color: const Color.fromRGBO(83, 242, 166, 0.69),
-                  thickness: constraints.maxWidth * .003,
-                  indent: constraints.maxWidth * .1,
-                  endIndent: constraints.maxWidth * .1,
-                  height: constraints.maxHeight * .1,
-                ),
-                SizedBox(
-                  width: constraints.maxWidth * .9,
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedItem.isNotEmpty ? _selectedItem : null,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.white,
-                            width: constraints.maxWidth * .03),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(12),
-                        ),
-                      ),
-                    ),
-                    hint: const Text("Escolher endereço padrão"),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedItem = value.toString();
-                      });
-                    },
-                    items: _items
-                        .map(
-                          (item) => DropdownMenuItem(
-                            value: item,
-                            child: Text(item),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * .03),
-                _textField1(
-                  250,
-                  320,
-                  constraints,
-                  "Feedback",
-                  _feedbackController,
-                ),
-                SizedBox(height: constraints.maxHeight * .045),
-                CommonButton(constraints: constraints, text: "Enviar Feedback"),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

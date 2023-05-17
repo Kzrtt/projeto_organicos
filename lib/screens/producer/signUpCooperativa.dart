@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
-import 'package:projeto_organicos/providers/cooperativeProvider.dart';
+import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/utils/validators.dart';
 
 class SignUpCooperativa extends StatefulWidget {
@@ -221,8 +221,8 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                             cooperativePhone:
                                                 _passwordController.text,
                                           );
-                                          CooperativeProvider _provider =
-                                              CooperativeProvider();
+                                          CooperativeController _provider =
+                                              CooperativeController();
                                           _provider.createCooperative(
                                             cooperative,
                                             adress,

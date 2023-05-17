@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/model/user.dart';
-import 'package:projeto_organicos/providers/userProvider.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/utils/validators.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -262,8 +262,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             isSubscriber: false,
                                             isNutritious: false,
                                           );
-                                          UserProvider provider =
-                                              UserProvider();
+                                          UserController provider =
+                                              UserController();
                                           provider.createClient(
                                               userData, diet, context);
                                           Navigator.of(context).pop();

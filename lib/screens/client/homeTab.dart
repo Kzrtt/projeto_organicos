@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/cartScreen.dart';
 import 'package:projeto_organicos/screens/client/feedbackScreen.dart';
@@ -10,6 +11,7 @@ import 'package:projeto_organicos/screens/client/sellDetails.dart';
 import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/user.dart';
 import '../../utils/userState.dart';

@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
-import 'package:projeto_organicos/providers/cooperativeProvider.dart';
-import 'package:projeto_organicos/providers/userProvider.dart';
+import 'package:projeto_organicos/controller/cooperativeController.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/userState.dart';
@@ -121,53 +121,48 @@ class _OpeningScreenState extends State<OpeningScreen> {
                         SizedBox(width: constraints.maxWidth * .08),
                         InkWell(
                           onTap: () async {
-                            if (emailController.text == "produtor") {
-                              Navigator.of(context).pushReplacementNamed(
-                                  ProducerAppRoutes.PRODUCERHOMETAB);
-                            } else {
-                              UserProvider _provider = UserProvider();
-                              CooperativeProvider _cprovider =
-                                  CooperativeProvider();
-                              String response = await _provider.login(
-                                emailController.text,
-                                passwordController.text,
+                            UserController _provider = UserController();
+                            CooperativeController _cprovider =
+                                CooperativeController();
+                            String response = await _provider.login(
+                              emailController.text,
+                              passwordController.text,
+                              context,
+                            );
+                            if (response == "telaCliente") {
+                              final userState = Provider.of<UserState>(
                                 context,
+                                listen: false,
                               );
-                              if (response == "telaCliente") {
-                                final userState = Provider.of<UserState>(
-                                  context,
-                                  listen: false,
+                              SharedPreferences _prefs =
+                                  await SharedPreferences.getInstance();
+                              String? userId = _prefs.getString('userId');
+                              _provider.getClient(userId).then((value) {
+                                User user = value;
+                                userState.setUser(user);
+                                Navigator.of(context).pushReplacementNamed(
+                                  AppRoutes.HOMETAB,
                                 );
-                                SharedPreferences _prefs =
-                                    await SharedPreferences.getInstance();
-                                String? userId = _prefs.getString('userId');
-                                _provider.getClient(userId).then((value) {
-                                  User user = value;
-                                  userState.setUser(user);
-                                  Navigator.of(context).pushReplacementNamed(
-                                    AppRoutes.HOMETAB,
-                                  );
-                                });
-                              } else {
-                                final cooperativeState =
-                                    Provider.of<CooperativeState>(
-                                  context,
-                                  listen: false,
+                              });
+                            } else {
+                              final cooperativeState =
+                                  Provider.of<CooperativeState>(
+                                context,
+                                listen: false,
+                              );
+                              SharedPreferences _prefs =
+                                  await SharedPreferences.getInstance();
+                              String? cooperativeId =
+                                  _prefs.getString("cooperativeId");
+                              _cprovider
+                                  .getCooperative(cooperativeId)
+                                  .then((value) {
+                                Cooperative cooperative = value;
+                                cooperativeState.setCooperative(cooperative);
+                                Navigator.of(context).pushReplacementNamed(
+                                  ProducerAppRoutes.PRODUCERHOMETAB,
                                 );
-                                SharedPreferences _prefs =
-                                    await SharedPreferences.getInstance();
-                                String? cooperativeId =
-                                    _prefs.getString("cooperativeId");
-                                _cprovider
-                                    .getCooperative(cooperativeId)
-                                    .then((value) {
-                                  Cooperative cooperative = value;
-                                  cooperativeState.setCooperative(cooperative);
-                                  Navigator.of(context).pushReplacementNamed(
-                                    ProducerAppRoutes.PRODUCERHOMETAB,
-                                  );
-                                });
-                              }
+                              });
                             }
                           },
                           child: Container(

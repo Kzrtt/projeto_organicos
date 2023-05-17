@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/profileScreenButton.dart';
 import 'package:projeto_organicos/components/settingsText.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:side_sheet/side_sheet.dart';
 
 import '../../components/nameAndIcon.dart';
+import '../../model/adress.dart';
 import '../../model/user.dart';
 import '../../utils/appRoutes.dart';
+import '../../utils/userState.dart';
 
 class ProfileScreen extends StatefulWidget {
   final void Function(int newValue) callbackFunction;
@@ -149,7 +152,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       text: "Endereços",
                       subtext: "Endereços para as entregas",
                       icon: Icons.map,
-                      buttonFunction: () => widget.callbackFunction(4),
+                      buttonFunction: () {
+                        widget.callbackFunction(4);
+                      },
                     ),
                     ProfileScreenButton(
                       constraints: constraints,

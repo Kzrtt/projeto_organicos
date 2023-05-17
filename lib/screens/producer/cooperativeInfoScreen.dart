@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
-import 'package:projeto_organicos/providers/cooperativeProvider.dart';
+import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,7 +164,7 @@ class _CooperativeInfoScreenState extends State<CooperativeInfoScreen> {
                       cooperativeProfilePhoto: "",
                       cooperativePhone: _phoneController.text,
                     );
-                    CooperativeProvider cprovider = CooperativeProvider();
+                    CooperativeController cprovider = CooperativeController();
                     cprovider.updateCooperativa(
                       id,
                       newCooperative,

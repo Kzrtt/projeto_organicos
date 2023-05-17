@@ -5,7 +5,7 @@ import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CooperativeProvider with ChangeNotifier {
+class CooperativeController with ChangeNotifier {
   final String _baseUrl = "http://localhost:27017/auth";
   final String _cooperativeUrl = "http://localhost:27017/cooperative";
   CooperativeAdress adress = CooperativeAdress(

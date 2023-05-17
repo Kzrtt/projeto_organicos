@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/screens/client/addAdressScreen.dart';
+import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
@@ -43,6 +45,8 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.OPENINGSCREEN: (ctx) => const OpeningScreen(),
           AppRoutes.HOMETAB: (ctx) => const HomeTab(),
           AppRoutes.SIGNUPSCREEN: (ctx) => const SignUpScreen(),
+          AppRoutes.ADDADRESS: (ctx) => const AddAdressScreen(),
+          AppRoutes.ADDFEEDBACK: (ctx) => const AddFeedbackScreen(),
           //Producer app routes
           ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
           ProducerAppRoutes.OPENSELLDETAILS: (ctx) => const OpenSellsDetails(),

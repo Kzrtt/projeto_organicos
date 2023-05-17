@@ -2,6 +2,8 @@ class AppRoutes {
   static const OPENINGSCREEN = "/";
   static const HOMETAB = "/hometab";
   static const SIGNUPSCREEN = "/sign-up-screen";
+  static const ADDADRESS = "/add-adress-screen";
+  static const ADDFEEDBACK = "/add-feedback-screen";
 }
 
 class ProducerAppRoutes {

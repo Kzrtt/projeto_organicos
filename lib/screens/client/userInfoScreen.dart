@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
-import 'package:projeto_organicos/providers/userProvider.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -127,7 +127,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                     isSubscriber: false,
                     isNutritious: false,
                   );
-                  UserProvider provider = UserProvider();
+                  UserController provider = UserController();
                   provider.updateClient(id, newUser, widget.user);
                   userState.setUser(newUser);
                   widget.callbackFunction(3);

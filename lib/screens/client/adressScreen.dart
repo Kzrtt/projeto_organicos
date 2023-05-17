@@ -1,5 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/model/adress.dart';
+import 'package:projeto_organicos/controller/userController.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:projeto_organicos/utils/userState.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdressScreen extends StatefulWidget {
   const AdressScreen({Key? key}) : super(key: key);
@@ -10,10 +20,35 @@ class AdressScreen extends StatefulWidget {
 
 class _AdressScreenState extends State<AdressScreen> {
   String _selectedItem = "";
-  final List<String> items = ["item1", "item2", "item3", "item4"];
+  bool isLoading = false;
+  UserState userState = UserState();
+  List<Adress> adress = [];
+
+  void loadAdresses() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    UserController userController = UserController();
+    String? userId = prefs.getString("userId");
+    List<Adress> temp = await userController.getAllAdresses(userId!);
+    UserState userState = UserState();
+    userState.setAdressList(temp);
+    print(userState.adressList.length);
+    setState(() {
+      adress = temp;
+    });
+    print(adress.length);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadAdresses();
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<String> items = adress.map((e) => e.nickname).toList();
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Stack(
@@ -58,88 +93,64 @@ class _AdressScreenState extends State<AdressScreen> {
                         .toList(),
                   ),
                 ),
-                /*
-                SizedBox(height: constraints.maxHeight * .03),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * .07),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedItem.isEmpty
-                            ? "Endereço principal"
-                            : _selectedItem,
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: constraints.maxHeight * .06,
-                          width: constraints.maxWidth * .4,
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(83, 242, 166, 0.69),
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Salvar",
-                              style: TextStyle(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                fontWeight: FontWeight.bold,
-                                fontSize: constraints.maxHeight * .024,
+                SizedBox(height: constraints.maxHeight * .05),
+                SizedBox(
+                  height: constraints.maxHeight * .7,
+                  child: ListView.builder(
+                    itemCount: adress.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: constraints.maxWidth * .03),
+                            child: Card(
+                              child: ListTile(
+                                leading: Icon(
+                                  Icons.map,
+                                  size: constraints.maxHeight * .06,
+                                  color:
+                                      const Color.fromRGBO(108, 168, 129, 0.7),
+                                ),
+                                title: Text(adress[index].nickname),
+                                subtitle:
+                                    Text('${adress[index].street}, n°1392'),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  color: Colors.red,
+                                  onPressed: () async {
+                                    UserState userState = UserState();
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    String? userId = prefs.getString("userId");
+                                    UserController userController =
+                                        UserController();
+                                    userState.removeAdress(
+                                      adress[index].adressId,
+                                    );
+                                    userController.deleteAdress(
+                                      userId!,
+                                      adress[index].adressId,
+                                    );
+                                    setState(() {
+                                      adress.removeWhere(
+                                        (element) =>
+                                            element.adressId ==
+                                            adress[index].adressId,
+                                      );
+                                    });
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                */
-                SizedBox(height: constraints.maxHeight * .05),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * .03),
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.map,
-                        size: constraints.maxHeight * .06,
-                        color: const Color.fromRGBO(108, 168, 129, 0.7),
-                      ),
-                      title: const Text('Casa'),
-                      subtitle: const Text('Rua Alagoas, n°1392'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        color: Colors.red,
-                        onPressed: () {},
-                      ),
-                    ),
+                          SizedBox(height: constraints.maxHeight * .02),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 SizedBox(height: constraints.maxHeight * .02),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * .03),
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.map,
-                        size: constraints.maxHeight * .06,
-                        color: const Color.fromRGBO(108, 168, 129, 0.7),
-                      ),
-                      title: const Text('Faculdade'),
-                      subtitle: const Text(
-                        'Linha Santa Bárbara, s/n - Francisco Beltrão',
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        color: Colors.red,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
             Positioned(
@@ -147,7 +158,13 @@ class _AdressScreenState extends State<AdressScreen> {
               right: 15.0,
               child: FloatingActionButton(
                 backgroundColor: const Color.fromRGBO(83, 242, 166, 0.69),
-                onPressed: () {},
+                onPressed: () async {
+                  var result = await Navigator.of(context)
+                      .pushNamed(AppRoutes.ADDADRESS) as Adress;
+                  setState(() {
+                    adress.add(result);
+                  });
+                },
                 child: const Icon(Icons.add),
               ),
             ),
