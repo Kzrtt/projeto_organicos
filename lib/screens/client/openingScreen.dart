@@ -144,7 +144,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   AppRoutes.HOMETAB,
                                 );
                               });
-                            } else {
+                            } else if (response == "telaCooperativa") {
                               final cooperativeState =
                                   Provider.of<CooperativeState>(
                                 context,
@@ -163,6 +163,13 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   ProducerAppRoutes.PRODUCERHOMETAB,
                                 );
                               });
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text("Usuário ou senhas erradas"),
+                                ),
+                              );
                             }
                           },
                           child: Container(
