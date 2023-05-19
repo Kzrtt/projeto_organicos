@@ -95,56 +95,33 @@ class CooperativeController with ChangeNotifier {
         ),
       );
       if (response.data.containsKey('producer')) {
-        List<Producers> _p = [];
-        var response2 = await Dio().get(
-          "$_cooperativeUrl/$id",
-          options: Options(
-            headers: {'Authorization': 'Bearer $token'},
-          ),
-        );
-        if (response2.data.containsKey('cooperative')) {
-          for (var element in response2.data['cooperative']['producer']) {
-            Producers producer = Producers(
-              producerId: element["_id"] ?? "1",
-              producerName: element["producerName"] ?? "1",
-              producerCell: element["producerCell"] ?? "1",
-              producerCpf: element["producerCpf"] ?? "1",
-              birthDate: element["producerBirthDate"] ?? "1",
-            );
-            _p.add(producer);
-          }
-          print(_p.length);
-          List<String> _listaDeId = _p.map((e) => e.producerId).toList();
-          print(_listaDeId.length);
-          _listaDeId.add(response.data['producer']['_id'].toString());
-          print(_listaDeId.length);
-          var response3 = await Dio().put(
-            "$_cooperativeUrl/$id",
-            data: {
-              "producers": [
-                ..._listaDeId,
-              ]
-            },
-            options: Options(
-              headers: {
-                'Authorization': 'Bearer $token',
+        getAllProducers().then((value) async {
+          if (value.isNotEmpty) {
+            List<String> _listaDeId = value.map((e) => e.producerId).toList();
+            print(_listaDeId.length);
+            _listaDeId.add(response.data['producer']['_id'].toString());
+            print(_listaDeId.length);
+            var response2 = await Dio().put(
+              "$_cooperativeUrl/$id",
+              data: {
+                "producers": [
+                  ..._listaDeId,
+                ]
               },
-            ),
-          );
-          print('atualizou a cooperativa');
-          if (!response2.data.containsKey('cooperative')) {
-            print('erro ao atualizar a lista de produtores');
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                },
+              ),
+            );
+            print('atualizou a cooperativa');
+            if (!response2.data.containsKey('cooperative')) {
+              print('erro ao atualizar a lista de produtores');
+            }
+          } else {
+            print('nenhum produtor nessa cooperativa');
           }
-        } else {
-          print("cooperativa não existe");
-        }
-      } else {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text(response.data["error"]),
-          ),
-        );
+        });
       }
     } catch (e) {
       if (e is DioError) {
