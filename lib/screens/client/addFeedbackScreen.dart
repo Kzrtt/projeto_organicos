@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/utils/validators.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddFeedbackScreen extends StatefulWidget {
@@ -13,12 +14,19 @@ class AddFeedbackScreen extends StatefulWidget {
   State<AddFeedbackScreen> createState() => _AddFeedbackScreenState();
 }
 
-Widget _textField1(double height, double width, BoxConstraints constraints,
-    String text, TextEditingController controller) {
+Widget _textField1(
+  double height,
+  double width,
+  BoxConstraints constraints,
+  String text,
+  TextEditingController controller,
+  String? Function(String?) validator,
+) {
   return SizedBox(
     height: height,
     width: width,
-    child: TextField(
+    child: TextFormField(
+      validator: validator,
       maxLines: null,
       expands: true,
       textAlignVertical: TextAlignVertical.top,
@@ -43,8 +51,10 @@ Widget _textField1(double height, double width, BoxConstraints constraints,
 }
 
 class _AddFeedbackScreenState extends State<AddFeedbackScreen> {
+  final _feedbackFormKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
+  Validators validators = Validators();
 
   @override
   Widget build(BuildContext context) {
@@ -81,51 +91,58 @@ class _AddFeedbackScreenState extends State<AddFeedbackScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Center(
-            child: Column(
-              children: [
-                SizedBox(height: constraints.maxHeight * .08),
-                _textField1(
-                  55,
-                  330,
-                  constraints,
-                  "Assunto",
-                  _titleController,
-                ),
-                SizedBox(height: constraints.maxHeight * .03),
-                _textField1(
-                  300,
-                  330,
-                  constraints,
-                  "Seu feedback",
-                  _messageController,
-                ),
-                SizedBox(height: constraints.maxHeight * .05),
-                InkWell(
-                  onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String? userId = prefs.getString("userId");
-                    UserController userController = UserController();
-                    userController.createFeedback(
-                      _messageController.text,
-                      _titleController.text,
-                      userId!,
-                    );
-                    ClientFeedback f = ClientFeedback(
-                      id: "",
-                      title: _titleController.text,
-                      response: "Aguardando Resposta",
-                      message: _messageController.text,
-                      data: DateTime.now().toString().substring(0, 10),
-                    );
-                    Navigator.pop(context, f);
-                  },
-                  child: CommonButton(
-                    constraints: constraints,
-                    text: "Enviar Feedback",
+            child: Form(
+              key: _feedbackFormKey,
+              child: Column(
+                children: [
+                  SizedBox(height: constraints.maxHeight * .08),
+                  _textField1(
+                    55,
+                    330,
+                    constraints,
+                    "Assunto",
+                    _titleController,
+                    validators.nameValidator,
                   ),
-                )
-              ],
+                  SizedBox(height: constraints.maxHeight * .03),
+                  _textField1(
+                    300,
+                    330,
+                    constraints,
+                    "Seu feedback",
+                    _messageController,
+                    validators.nameValidator,
+                  ),
+                  SizedBox(height: constraints.maxHeight * .05),
+                  InkWell(
+                    onTap: () async {
+                      if (_feedbackFormKey.currentState!.validate()) {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        String? userId = prefs.getString("userId");
+                        UserController userController = UserController();
+                        userController.createFeedback(
+                          _messageController.text,
+                          _titleController.text,
+                          userId!,
+                        );
+                        ClientFeedback f = ClientFeedback(
+                          id: "",
+                          title: _titleController.text,
+                          response: "Aguardando Resposta",
+                          message: _messageController.text,
+                          data: DateTime.now().toString().substring(0, 10),
+                        );
+                        Navigator.pop(context, f);
+                      }
+                    },
+                    child: CommonButton(
+                      constraints: constraints,
+                      text: "Enviar Feedback",
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         },

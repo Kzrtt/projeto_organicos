@@ -26,154 +26,164 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
-          height: constraints.maxHeight * .8,
-          width: constraints.maxWidth,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  NameAndIcon(
-                    constraints: constraints,
-                    icon: Icons.person,
-                    text: widget.cooperative.cooperativeName,
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(height: constraints.maxHeight * .029),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: constraints.maxWidth * .05,
-                        ),
-                        child: InkWell(
-                          child: Icon(
-                            Icons.settings_outlined,
-                            size: constraints.maxHeight * .035,
-                            color: const Color.fromRGBO(0, 0, 0, .5),
+        return SingleChildScrollView(
+          child: SizedBox(
+            height: constraints.maxHeight * 1.1,
+            width: constraints.maxWidth,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    NameAndIcon(
+                      constraints: constraints,
+                      icon: Icons.person,
+                      text: widget.cooperative.cooperativeName,
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(height: constraints.maxHeight * .029),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: constraints.maxWidth * .05,
                           ),
-                          onTap: () {
-                            SideSheet.right(
-                              context: context,
-                              width: MediaQuery.of(context).size.width * .7,
-                              body: Container(
-                                width: 100,
-                                height: 100,
-                                color: const Color.fromRGBO(178, 214, 192, 1),
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                        height: constraints.maxHeight * .03),
-                                    Text(
-                                      "Configurações",
-                                      style: TextStyle(
-                                        color: const Color.fromRGBO(
-                                            18, 18, 18, .58),
-                                        fontSize: constraints.maxHeight * .025,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                        height: constraints.maxHeight * .05),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Idioma",
-                                        ),
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Modo Escuro",
-                                        ),
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Limpar histórico de busca",
-                                        ),
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Termos de uso",
-                                        ),
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Política de Privacidade",
-                                        ),
-                                        SettingsText(
-                                          constraints: constraints,
-                                          text: "Desativar Conta",
-                                          isDesativarConta: true,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height: constraints.maxHeight * .5),
-                                    InkWell(
-                                      onTap: () async {
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        prefs.remove('cooperativeId');
-                                        prefs.remove('cooperativeToken');
-                                        Navigator.of(context)
-                                            .pushReplacementNamed(
-                                          AppRoutes.OPENINGSCREEN,
-                                        );
-                                      },
-                                      child: const Text(
-                                        "Loggout",
+                          child: InkWell(
+                            child: Icon(
+                              Icons.settings_outlined,
+                              size: constraints.maxHeight * .035,
+                              color: const Color.fromRGBO(0, 0, 0, .5),
+                            ),
+                            onTap: () {
+                              SideSheet.right(
+                                context: context,
+                                width: MediaQuery.of(context).size.width * .7,
+                                body: Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: const Color.fromRGBO(178, 214, 192, 1),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                          height: constraints.maxHeight * .03),
+                                      Text(
+                                        "Configurações",
                                         style: TextStyle(
-                                            fontStyle: FontStyle.italic),
+                                          color: const Color.fromRGBO(
+                                              18, 18, 18, .58),
+                                          fontSize:
+                                              constraints.maxHeight * .025,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(
+                                          height: constraints.maxHeight * .05),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Idioma",
+                                          ),
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Modo Escuro",
+                                          ),
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Limpar histórico de busca",
+                                          ),
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Termos de uso",
+                                          ),
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Política de Privacidade",
+                                          ),
+                                          SettingsText(
+                                            constraints: constraints,
+                                            text: "Desativar Conta",
+                                            isDesativarConta: true,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: constraints.maxHeight * .5),
+                                      InkWell(
+                                        onTap: () async {
+                                          SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.remove('cooperativeId');
+                                          prefs.remove('cooperativeToken');
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                            AppRoutes.OPENINGSCREEN,
+                                          );
+                                        },
+                                        child: const Text(
+                                          "Loggout",
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: constraints.maxHeight * .05),
-              ProfileScreenButton(
-                constraints: constraints,
-                text: "Produtores",
-                subtext: "Adicione ou altere os dados dos seus produtores",
-                icon: Icons.people,
-                buttonFunction: () {},
-              ),
-              ProfileScreenButton(
-                constraints: constraints,
-                text: "Produtos",
-                subtext: "Adicione ou altere os dados dos seus produtos",
-                icon: Icons.favorite,
-                buttonFunction: () {},
-              ),
-              ProfileScreenButton(
-                constraints: constraints,
-                text: "Perfil",
-                subtext: "Altere ou visualize seus dados",
-                icon: Icons.person,
-                buttonFunction: () => widget.callbackFunction(5),
-              ),
-              ProfileScreenButton(
-                constraints: constraints,
-                text: "Chats",
-                subtext: "Suas conversas",
-                icon: Icons.map,
-                buttonFunction: () {},
-              ),
-              ProfileScreenButton(
-                constraints: constraints,
-                text: "Feedbacks",
-                subtext: "Envie suas recomendações para nossa equipe",
-                icon: Icons.feedback,
-                buttonFunction: () {},
-              ),
-            ],
+                      ],
+                    ),
+                  ],
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Produtores",
+                  subtext: "Adicione novos produtores",
+                  icon: Icons.people,
+                  buttonFunction: () => widget.callbackFunction(7),
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Lista de Produtores",
+                  subtext:
+                      "Altere os dados e visualize os dados dos seus Produtores",
+                  icon: Icons.people,
+                  buttonFunction: () {},
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Produtos",
+                  subtext: "Adicione novos produtos",
+                  icon: Icons.favorite,
+                  buttonFunction: () => widget.callbackFunction(6),
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Perfil",
+                  subtext: "Altere ou visualize seus dados",
+                  icon: Icons.person,
+                  buttonFunction: () => widget.callbackFunction(5),
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Chats",
+                  subtext: "Suas conversas",
+                  icon: Icons.map,
+                  buttonFunction: () => widget.callbackFunction(8),
+                ),
+                ProfileScreenButton(
+                  constraints: constraints,
+                  text: "Feedbacks",
+                  subtext: "Envie suas recomendações para nossa equipe",
+                  icon: Icons.feedback,
+                  buttonFunction: () {},
+                ),
+              ],
+            ),
           ),
         );
       },

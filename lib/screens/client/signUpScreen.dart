@@ -245,11 +245,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             confirmPasswordController.text) {
                                           String diet = "";
                                           if (_type == DietType.carnivore) {
-                                            diet = "6462cc4e58aea7b81d425eea";
+                                            diet = "6466b39050187706d6d3f2a6";
                                           } else if (_type == DietType.vegan) {
-                                            diet = "6462cc6758aea7b81d425eeb";
+                                            diet = "6466b3a950187706d6d3f2a7";
                                           } else {
-                                            diet = "6462cc7d58aea7b81d425eec";
+                                            diet = "6466b3b550187706d6d3f2a8";
                                           }
 
                                           User userData = User(

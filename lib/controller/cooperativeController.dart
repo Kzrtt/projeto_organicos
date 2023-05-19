@@ -5,9 +5,13 @@ import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/producers.dart';
+
 class CooperativeController with ChangeNotifier {
   final String _baseUrl = "http://localhost:27017/auth";
   final String _cooperativeUrl = "http://localhost:27017/cooperative";
+  final String _producerUrl = "http://localhost:27017/producer";
+  List<Producers> _producers = [];
   CooperativeAdress adress = CooperativeAdress(
     state: "",
     street: "",
@@ -30,6 +34,128 @@ class CooperativeController with ChangeNotifier {
       complement: "",
     ),
   );
+
+  Future<List<Producers>> getAllProducers() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("cooperativeId");
+      String? token = prefs.getString("cooperativeToken");
+      var response = await Dio().get(
+        "$_cooperativeUrl/$id",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('cooperative')) {
+        for (var element in response.data['cooperative']['producers']) {
+          Producers producer = Producers(
+            producerId: element["_id"],
+            producerName: element["producerName"],
+            producerCell: element["producerCell"],
+            producerCpf: element["producerCpf"],
+            birthDate: element["producerBirthDate"],
+          );
+          _producers.add(producer);
+        }
+        return _producers;
+      } else {
+        print("cooperativa não existe");
+        return _producers;
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _producers;
+    }
+  }
+
+  void createProducer(Producers producer, BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("cooperativeToken");
+      String? id = prefs.getString("cooperativeId");
+      var response = await Dio().post(
+        "$_producerUrl",
+        data: {
+          "producerName": producer.producerName,
+          "producerCpf": producer.producerCpf,
+          "producerCell": producer.producerCell,
+          "producerBirthDate": producer.birthDate,
+          "cooperatives": id,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.data.containsKey('producer')) {
+        List<Producers> _p = [];
+        var response2 = await Dio().get(
+          "$_cooperativeUrl/$id",
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ),
+        );
+        if (response2.data.containsKey('cooperative')) {
+          for (var element in response2.data['cooperative']['producer']) {
+            Producers producer = Producers(
+              producerId: element["_id"] ?? "1",
+              producerName: element["producerName"] ?? "1",
+              producerCell: element["producerCell"] ?? "1",
+              producerCpf: element["producerCpf"] ?? "1",
+              birthDate: element["producerBirthDate"] ?? "1",
+            );
+            _p.add(producer);
+          }
+          print(_p.length);
+          List<String> _listaDeId = _p.map((e) => e.producerId).toList();
+          print(_listaDeId.length);
+          _listaDeId.add(response.data['producer']['_id'].toString());
+          print(_listaDeId.length);
+          var response3 = await Dio().put(
+            "$_cooperativeUrl/$id",
+            data: {
+              "producers": [
+                ..._listaDeId,
+              ]
+            },
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $token',
+              },
+            ),
+          );
+          print('atualizou a cooperativa');
+          if (!response2.data.containsKey('cooperative')) {
+            print('erro ao atualizar a lista de produtores');
+          }
+        } else {
+          print("cooperativa não existe");
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(response.data["error"]),
+          ),
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
 
   Future<Cooperative> updateCooperativa(
     String? id,

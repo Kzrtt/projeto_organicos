@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
+import 'package:projeto_organicos/screens/producer/addProducerScreen.dart';
+import 'package:projeto_organicos/screens/producer/addProductScreen.dart';
 import 'package:projeto_organicos/screens/producer/cooperativeInfoScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSells.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerProfileScreen.dart';
 import 'package:projeto_organicos/screens/producer/productListScreen.dart';
+import 'package:projeto_organicos/screens/producer/teste.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
@@ -82,6 +85,9 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
       const OpenSells(),
       OpenSellsDetails(),
       CooperativeInfoScreen(callbackFunction: changePage),
+      AddProductScreen(),
+      AddProducerScreen(callbackFunction: changePage),
+      Teste(),
     ];
 
     return Scaffold(
