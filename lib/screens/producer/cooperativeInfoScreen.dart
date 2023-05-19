@@ -150,6 +150,7 @@ class _CooperativeInfoScreenState extends State<CooperativeInfoScreen> {
                         await SharedPreferences.getInstance();
                     String? id = prefs.getString("cooperativeId");
                     Cooperative newCooperative = Cooperative(
+                      cooperativeId: id!,
                       cooperativeEmail: "",
                       password: "",
                       cooperativeName: _nameController.text,

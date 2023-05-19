@@ -209,6 +209,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                             zipCode: _zipCodeController.text,
                                           );
                                           Cooperative cooperative = Cooperative(
+                                            cooperativeId: "",
                                             cooperativeEmail:
                                                 _emailController.text,
                                             password: _passwordController.text,
@@ -219,7 +220,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                             cooperativeAdress: adress,
                                             cooperativeProfilePhoto: "",
                                             cooperativePhone:
-                                                _passwordController.text,
+                                                _phoneController.text,
                                           );
                                           CooperativeController _provider =
                                               CooperativeController();

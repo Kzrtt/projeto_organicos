@@ -87,7 +87,7 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
       CooperativeInfoScreen(callbackFunction: changePage),
       AddProductScreen(),
       AddProducerScreen(callbackFunction: changePage),
-      Teste(),
+      ProductListScreen(),
     ];
 
     return Scaffold(

@@ -1,6 +1,9 @@
 class Validators {
   String? birthDateValidator(String? birthDate) {
     // Converte a data de nascimento de String para DateTime
+    if (birthDate == "") {
+      return null;
+    }
     DateTime dateOfBirth = DateTime.parse(birthDate!);
 
     // Calcula a idade com base na data de nascimento
@@ -12,6 +15,73 @@ class Validators {
     }
 
     // Maior de idade
+    return null;
+  }
+
+  String? nameValidator2(String? name) {
+    if (name == "") {
+      return null;
+    }
+    if (!RegExp(r'^[A-Za-z ]+$').hasMatch(name!)) {
+      return "Somente letras são permitidas neste campo";
+    }
+    return null;
+  }
+
+  String? phoneValidator2(String? phone) {
+    if (phone == "") {
+      return null;
+    }
+    if (!RegExp(r'^[A-Za-z ]+$').hasMatch(phone!)) {
+      return "Somente letras são permitidas neste campo";
+    }
+    return null;
+  }
+
+  String? cpfValidate2(String? cpf) {
+    if (cpf == "") {
+      return null;
+    }
+    if (!RegExp(r'^[a-zA-Z0-9]').hasMatch(cpf!)) {
+      return "Não são permitidos caracteres especiais";
+    }
+    // Remove caracteres especiais do CPF
+    cpf = cpf.replaceAll(RegExp(r'[^\d]'), '');
+
+    // Verifica se o CPF possui 11 dígitos
+    if (cpf.length != 11) {
+      return 'CPF inválido';
+    }
+
+    // Verifica se todos os dígitos são iguais
+    if (RegExp(r'^(\d)\1*$').hasMatch(cpf)) {
+      return 'CPF inválido';
+    }
+
+    // Calcula o primeiro dígito verificador
+    var sum = 0;
+    for (var i = 0; i < 9; i++) {
+      sum += int.parse(cpf[i]) * (10 - i);
+    }
+    var digit1 = 11 - (sum % 11);
+    if (digit1 > 9) {
+      digit1 = 0;
+    }
+
+    // Calcula o segundo dígito verificador
+    sum = 0;
+    for (var i = 0; i < 10; i++) {
+      sum += int.parse(cpf[i]) * (11 - i);
+    }
+    var digit2 = 11 - (sum % 11);
+    if (digit2 > 9) {
+      digit2 = 0;
+    }
+
+    // Verifica se os dígitos verificadores estão corretos
+    if (digit1.toString() != cpf[9] || digit2.toString() != cpf[10]) {
+      return 'CPF inválido';
+    }
     return null;
   }
 

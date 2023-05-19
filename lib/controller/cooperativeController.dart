@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +15,8 @@ class CooperativeController with ChangeNotifier {
   final String _cooperativeUrl = "http://localhost:27017/cooperative";
   final String _producerUrl = "http://localhost:27017/producer";
   List<Producers> _producers = [];
+  ProducerController producerController = ProducerController();
+
   CooperativeAdress adress = CooperativeAdress(
     state: "",
     street: "",
@@ -20,6 +25,7 @@ class CooperativeController with ChangeNotifier {
     complement: "",
   );
   Cooperative cooperative = Cooperative(
+    cooperativeId: "",
     cooperativeEmail: "",
     password: "",
     cooperativeName: "",
@@ -35,6 +41,62 @@ class CooperativeController with ChangeNotifier {
     ),
   );
 
+  void deleteProducer(String producerId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? coopId = prefs.getString("cooperativeId");
+      String? token = prefs.getString("cooperativeToken");
+      getAllProducers().then((value) async {
+        List<String> _listaDeId = value.map((e) => e.producerId).toList();
+        _listaDeId.removeWhere((element) => element == producerId);
+        var response = await Dio().put(
+          "$_cooperativeUrl/$coopId",
+          data: {
+            "producers": [
+              ..._listaDeId,
+            ]
+          },
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ),
+        );
+        if (response.data.containsKey('cooperative')) {
+          producerController
+              .getAllCooperativesFromProducer(producerId)
+              .then((value) async {
+            List<String> listaDeIdsCooperativas = [];
+            value.forEach((element) {
+              listaDeIdsCooperativas.add(element.cooperativeId);
+            });
+            var response2 = await Dio().put(
+              "$_producerUrl/$producerId",
+              data: {
+                "active": false,
+                "cooperatives": [
+                  ...listaDeIdsCooperativas,
+                ]
+              },
+              options: Options(
+                headers: {'Authorization': 'Bearer $token'},
+              ),
+            );
+            if (!response2.data.containsKey('producer')) {
+              print('erro ao atualizar a lista de cooperativas');
+            }
+          });
+        }
+      });
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   Future<List<Producers>> getAllProducers() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -47,15 +109,18 @@ class CooperativeController with ChangeNotifier {
         ),
       );
       if (response.data.containsKey('cooperative')) {
+        _producers = [];
         for (var element in response.data['cooperative']['producers']) {
-          Producers producer = Producers(
-            producerId: element["_id"],
-            producerName: element["producerName"],
-            producerCell: element["producerCell"],
-            producerCpf: element["producerCpf"],
-            birthDate: element["producerBirthDate"],
-          );
-          _producers.add(producer);
+          if (element['active'] == true) {
+            Producers producer = Producers(
+              producerId: element["_id"],
+              producerName: element["producerName"],
+              producerCell: element["producerCell"],
+              producerCpf: element["producerCpf"],
+              birthDate: element["producerBirthDate"],
+            );
+            _producers.add(producer);
+          }
         }
         return _producers;
       } else {
@@ -83,6 +148,7 @@ class CooperativeController with ChangeNotifier {
         "$_producerUrl",
         data: {
           "producerName": producer.producerName,
+          "producerEmail": Random().nextInt(100).toString(),
           "producerCpf": producer.producerCpf,
           "producerCell": producer.producerCell,
           "producerBirthDate": producer.birthDate,
@@ -96,31 +162,27 @@ class CooperativeController with ChangeNotifier {
       );
       if (response.data.containsKey('producer')) {
         getAllProducers().then((value) async {
+          print(value.length);
+          List<String> _listaDeId = [];
           if (value.isNotEmpty) {
-            List<String> _listaDeId = value.map((e) => e.producerId).toList();
+            _listaDeId = value.map((e) => e.producerId).toList();
             print(_listaDeId.length);
-            _listaDeId.add(response.data['producer']['_id'].toString());
-            print(_listaDeId.length);
-            var response2 = await Dio().put(
-              "$_cooperativeUrl/$id",
-              data: {
-                "producers": [
-                  ..._listaDeId,
-                ]
-              },
-              options: Options(
-                headers: {
-                  'Authorization': 'Bearer $token',
-                },
-              ),
-            );
-            print('atualizou a cooperativa');
-            if (!response2.data.containsKey('cooperative')) {
-              print('erro ao atualizar a lista de produtores');
-            }
-          } else {
-            print('nenhum produtor nessa cooperativa');
           }
+          _listaDeId.add(response.data['producer']['_id'].toString());
+          var response2 = await Dio().put(
+            "$_cooperativeUrl/$id",
+            data: {
+              "producers": [
+                ..._listaDeId,
+              ]
+            },
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $token',
+              },
+            ),
+          );
+          print('atualizou a cooperativa');
         });
       }
     } catch (e) {
@@ -200,6 +262,7 @@ class CooperativeController with ChangeNotifier {
       );
       if (response.data.containsKey('cooperative')) {
         cooperative = Cooperative(
+          cooperativeId: response.data['cooperative']['_id'],
           cooperativeEmail: response.data['cooperative']['cooperativeEmail'],
           password: "",
           cooperativeName: response.data['cooperative']['cooperativeName'],

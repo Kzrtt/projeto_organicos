@@ -152,7 +152,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                   subtext:
                       "Altere os dados e visualize os dados dos seus Produtores",
                   icon: Icons.people,
-                  buttonFunction: () {},
+                  buttonFunction: () => widget.callbackFunction(8),
                 ),
                 ProfileScreenButton(
                   constraints: constraints,
@@ -173,7 +173,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                   text: "Chats",
                   subtext: "Suas conversas",
                   icon: Icons.map,
-                  buttonFunction: () => widget.callbackFunction(8),
+                  buttonFunction: () {},
                 ),
                 ProfileScreenButton(
                   constraints: constraints,
