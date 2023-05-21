@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
+import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/producers.dart';
@@ -15,6 +17,7 @@ class CooperativeController with ChangeNotifier {
   final String _cooperativeUrl = "http://localhost:27017/cooperative";
   final String _producerUrl = "http://localhost:27017/producer";
   List<Producers> _producers = [];
+  List<ClientFeedback> _feedbackList = [];
   ProducerController producerController = ProducerController();
 
   CooperativeAdress adress = CooperativeAdress(
@@ -40,6 +43,84 @@ class CooperativeController with ChangeNotifier {
       complement: "",
     ),
   );
+
+  Future<List<ClientFeedback>> getAllFeedbacks(String id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      var response = await Dio().get(
+        "$_cooperativeUrl/$id",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      CooperativeState cooperativeState = CooperativeState();
+      if (response.data.containsKey('cooperative')) {
+        for (var element in response.data['cooperative']['feedbacks']) {
+          ClientFeedback f = ClientFeedback(
+            id: element['_id'],
+            title: element['titleFeedback'],
+            response: element['response'] ?? "aguardando resposta",
+            message: element['message'],
+            data: element['dataFeedback'],
+          );
+          cooperativeState.addFeedback(f);
+          _feedbackList.add(f);
+          print(_feedbackList.length);
+        }
+      }
+      return _feedbackList;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _feedbackList;
+    }
+  }
+
+  void createFeedback(String message, String title, String id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      final List<ClientFeedback> e = await getAllFeedbacks(id);
+      List<Map<String, dynamic>> listaDeJson = e
+          .map((objeto) => {
+                'titleFeedback': objeto.title,
+                'dataFeedback': objeto.data,
+                'message': objeto.message,
+                '_id': objeto.id,
+              })
+          .toList();
+      var response = await Dio().put(
+        "$_cooperativeUrl/$id",
+        data: {
+          "feedbacks": [
+            ...listaDeJson,
+            {
+              'titleFeedback': title,
+              'dataFeedback': DateTime.now().toString().substring(0, 10),
+              'message': message,
+            },
+          ]
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
 
   void deleteProducer(String producerId) async {
     try {
@@ -213,7 +294,7 @@ class CooperativeController with ChangeNotifier {
           "cooperativePhone": cooperative.cooperativePhone.isNotEmpty
               ? cooperative.cooperativePhone
               : oldCooperative.cooperativePhone,
-          "cooperativeAdress": {
+          "cooperativeAddress": {
             "complement": cooperative.cooperativeAdress.complement.isNotEmpty
                 ? cooperative.cooperativeAdress.complement
                 : oldCooperative.cooperativeAdress.complement,

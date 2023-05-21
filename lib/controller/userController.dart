@@ -122,7 +122,7 @@ class UserController {
       var response = await Dio().put(
         "$_userUrl/$id",
         data: {
-          "adresses": [...listaDeJson]
+          "addresses": [...listaDeJson]
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
@@ -151,7 +151,7 @@ class UserController {
       );
       UserState userState = UserState();
       if (response.data.containsKey('user')) {
-        for (var element in response.data['user']['adresses']) {
+        for (var element in response.data['user']['addresses']) {
           Adress a = Adress(
             nickname: element['nickname'],
             complement: element['complement'],
@@ -196,7 +196,7 @@ class UserController {
       var response = await Dio().put(
         "$_userUrl/$id",
         data: {
-          "adresses": [
+          "addresses": [
             ...listaDeJson,
             {
               "nickname": adress.nickname,

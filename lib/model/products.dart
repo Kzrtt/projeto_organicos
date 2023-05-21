@@ -1,18 +1,30 @@
+import 'package:projeto_organicos/model/category.dart';
+
 class Products {
-  final int productId;
+  final String productId;
   final String productName;
   final String productDetails;
+  final String productPhoto;
   final double productPrice;
-  final int productQuantity;
-  final bool isFromCooperative;
+  final List<String> category;
+  final int stockQuantity;
+  final String unitValue;
+  final String measuremntUnit;
+  final String cooperativeId;
+  final String producerId;
 
   Products({
     required this.productId,
     required this.productName,
+    required this.category,
+    required this.productPhoto,
     required this.productPrice,
-    required this.productQuantity,
+    required this.stockQuantity,
+    required this.unitValue,
     required this.productDetails,
-    required this.isFromCooperative,
+    required this.cooperativeId,
+    required this.producerId,
+    required this.measuremntUnit,
   });
 }
 

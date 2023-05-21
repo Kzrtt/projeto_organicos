@@ -10,4 +10,5 @@ class ProducerAppRoutes {
   static const PRODUCERHOMETAB = "/producer-home-screen";
   static const OPENSELLDETAILS = "/open-sell-details";
   static const PRODUCERSIGNUP = "/producer-sign-up";
+  static const ADDFEEDBACKCOOP = "/add-feedback-cooperative";
 }

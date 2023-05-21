@@ -3,6 +3,7 @@ import 'package:projeto_organicos/screens/client/addAdressScreen.dart';
 import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
+import 'package:projeto_organicos/screens/producer/cooperativeAddFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
 import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
@@ -51,6 +52,8 @@ class _MyAppState extends State<MyApp> {
           ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
           ProducerAppRoutes.OPENSELLDETAILS: (ctx) => const OpenSellsDetails(),
           ProducerAppRoutes.PRODUCERSIGNUP: (ctx) => const SignUpCooperativa(),
+          ProducerAppRoutes.ADDFEEDBACKCOOP: (ctx) =>
+              const CooperativeAddFeedbackScreen(),
         },
       ),
     );

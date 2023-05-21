@@ -1,4 +1,13 @@
 class Validators {
+  String? precoValidate(String? preco) {
+    int precoInt = int.parse(preco!);
+    if (precoInt < 0) {
+      return "O valor deve ser maior que 0";
+    } else if (preco == "") {
+      return "O campo deve ser preenchido";
+    }
+  }
+
   String? birthDateValidator(String? birthDate) {
     // Converte a data de nascimento de String para DateTime
     if (birthDate == "") {

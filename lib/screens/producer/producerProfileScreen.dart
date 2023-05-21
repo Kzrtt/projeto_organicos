@@ -180,7 +180,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                   text: "Feedbacks",
                   subtext: "Envie suas recomendações para nossa equipe",
                   icon: Icons.feedback,
-                  buttonFunction: () {},
+                  buttonFunction: () => widget.callbackFunction(9),
                 ),
               ],
             ),
