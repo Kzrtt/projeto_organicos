@@ -5,10 +5,10 @@ class Products {
   final String productName;
   final String productDetails;
   final String productPhoto;
-  final double productPrice;
+  final num productPrice;
   final List<String> category;
-  final int stockQuantity;
-  final String unitValue;
+  final num stockQuantity;
+  final int unitValue;
   final String measuremntUnit;
   final String cooperativeId;
   final String producerId;

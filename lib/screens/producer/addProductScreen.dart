@@ -189,8 +189,8 @@ class _AddProductScreenState extends State<AddProductScreen>
                             productPhoto: "",
                             productPrice: double.parse(_priceController.text),
                             stockQuantity:
-                                int.parse(_stockQuantityController.text),
-                            unitValue: _unitValueController.text,
+                                double.parse(_stockQuantityController.text),
+                            unitValue: int.parse(_unitValueController.text),
                             productDetails: _detailsController.text,
                             cooperativeId: "",
                             producerId: _p[index].producerId,

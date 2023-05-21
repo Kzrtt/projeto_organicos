@@ -20,7 +20,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final TextEditingController _feedbackController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   List<ClientFeedback> _feedbacks = [];
-  List<bool> isExpandedList = List.generate(5, (index) => false);
+  List<bool> isExpandedList = [];
 
   void loadFeedbacks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,6 +32,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     print(userState.feedbacks.length);
     setState(() {
       _feedbacks = temp;
+      isExpandedList = List.generate(_feedbacks.length, (index) => false);
     });
     print(_feedbacks.length);
   }

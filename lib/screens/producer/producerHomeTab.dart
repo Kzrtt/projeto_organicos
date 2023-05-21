@@ -11,6 +11,7 @@ import 'package:projeto_organicos/screens/producer/producerListScreen.dart';
 import 'package:projeto_organicos/screens/producer/producerProfileScreen.dart';
 import 'package:projeto_organicos/screens/producer/productListScreen.dart';
 import 'package:projeto_organicos/screens/producer/teste.dart';
+import 'package:projeto_organicos/screens/warning.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
@@ -91,6 +92,7 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
       AddProducerScreen(callbackFunction: changePage),
       ProducerListScreen(),
       CooperativeFeedbacksScreen(),
+      WarningScreen(),
     ];
 
     return Scaffold(

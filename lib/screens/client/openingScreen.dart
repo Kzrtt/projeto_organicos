@@ -77,7 +77,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
                     children: [
                       SizedBox(width: constraints.maxWidth * .03),
                       const Text(
-                        "Bem vindo ao Lorem Ipsum",
+                        "Bem vindo ao OrganoTec Saúde",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),

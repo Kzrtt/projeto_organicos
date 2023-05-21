@@ -22,8 +22,18 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  bool isExpanded = false;
+  List<bool> isExpandedList = [];
   List<Products> _productList = [];
+  Validators validators = Validators();
+  final _updateFormKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _detailsController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _stockQuantityController =
+      TextEditingController();
+  final TextEditingController _unitValueController = TextEditingController();
+  final TextEditingController _measurementUnityController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +43,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     controller.getAllProducts().then((value) {
       setState(() {
         _productList = value;
+        isExpandedList = List.generate(_productList.length, (index) => false);
       });
     });
   }
@@ -51,13 +62,66 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 icon: Icons.list,
                 text: "Seus Produtos",
               ),
+              SizedBox(height: constraints.maxHeight * .02),
               SizedBox(
-                height: constraints.maxHeight * .9,
+                height: constraints.maxHeight * .7,
                 child: ListView.builder(
                   itemCount: _productList.length,
                   itemBuilder: (context, index) {
                     var item = _productList[index];
-                    return Text(item.productName);
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(constraints.maxHeight * .01),
+                          child: Card(
+                            child: ListTile(
+                              leading: InkWell(
+                                onTap: () {},
+                                child: const Icon(
+                                  Icons.edit,
+                                  color: Color.fromRGBO(108, 168, 129, 0.7),
+                                ),
+                              ),
+                              title: Text(item.productName),
+                              trailing: InkWell(
+                                onTap: () {
+                                  ProductController controller =
+                                      ProductController();
+                                  controller.deleteProduct(
+                                      item.productId, item.productName);
+                                  setState(() {
+                                    _productList.removeWhere((element) =>
+                                        element.productId == item.productId);
+                                  });
+                                },
+                                child:
+                                    const Icon(Icons.delete, color: Colors.red),
+                              ),
+                              subtitle: RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: <TextSpan>[
+                                    const TextSpan(
+                                      text: 'Quantidade em Estoque:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(0, 0, 0, 0.58),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' ${item.stockQuantity}',
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(0, 0, 0, 0.58),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   },
                 ),
               ),

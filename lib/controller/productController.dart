@@ -10,6 +10,32 @@ class ProductController {
   List<Category> _categoryList = [];
   List<Products> _productList = [];
 
+  void deleteProduct(String productId, String productName) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("cooperativeToken");
+      var response = await Dio().put(
+        "$_productUrl/$productId",
+        data: {
+          "productName": productName,
+          "active": false,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+        print(StackTrace.current);
+      }
+    }
+  }
+
   Future<List<Products>> getAllProducts() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -23,7 +49,7 @@ class ProductController {
       );
       if (response.data.containsKey('products')) {
         for (var element in response.data['products']) {
-          if (element['cooperativeId'] == id) {
+          if (element['cooperativeId'] == id && element['active'] == true) {
             List<String> categories = [];
             for (var e in element['categories']) {
               categories.add(e['_id']);

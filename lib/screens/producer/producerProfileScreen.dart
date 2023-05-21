@@ -172,8 +172,8 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                   constraints: constraints,
                   text: "Chats",
                   subtext: "Suas conversas",
-                  icon: Icons.map,
-                  buttonFunction: () {},
+                  icon: Icons.chat_bubble_outline_rounded,
+                  buttonFunction: () => widget.callbackFunction(10),
                 ),
                 ProfileScreenButton(
                   constraints: constraints,
