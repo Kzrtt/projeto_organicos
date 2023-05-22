@@ -13,6 +13,71 @@ class ProductController {
   List<Products> _productList = [];
   List<Box> _boxList = [];
 
+  Future<List<Box>> getAllBoxes() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      var response = await Dio().get(
+        "$_productUrl/boxes",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('boxes')) {
+        for (var element in response.data['boxes']) {
+          List<ProductInBox> products = [];
+          for (var element2 in element['products']) {
+            List<String> categorias = [];
+            for (var element3 in element2['product']['categories']) {
+              categorias.add(element3);
+            }
+            Products product = Products(
+              productId: element2['product']['_id'],
+              productName: element2['product']['productName'],
+              category: categorias,
+              productPhoto: element2['product']['productPhoto'],
+              productPrice: element2['product']['productPrice'],
+              stockQuantity: element2['product']['stockQuantity'],
+              unitValue: element2['product']['unitValue'],
+              productDetails: element2['product']['productDetails'],
+              cooperativeId: element2['product']['cooperativeId'],
+              producerId: element2['product']['producerId'],
+              measuremntUnit: element2['product']['measurementUnit'],
+            );
+            ProductInBox productInBox = ProductInBox(
+              product: product,
+              quantity: double.parse(element2['quantity']),
+              measurementUnity: element['measurementUnity'],
+            );
+            products.add(productInBox);
+          }
+          Box box = Box(
+            id: element['_id'],
+            boxDetails: element['boxDetails'],
+            boxName: element['boxName'],
+            boxPhoto: element['boxPhoto'],
+            boxPrice: element['boxPrice'],
+            boxQuantity: int.parse(element['stockQuantity']),
+            produtos: products,
+          );
+          _boxList.add(box);
+        }
+        return _boxList;
+      }
+      return _boxList;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+        print(StackTrace.current);
+      }
+      return _boxList;
+    }
+  }
+
   void createBox(Box box) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();

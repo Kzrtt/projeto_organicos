@@ -209,6 +209,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                           print(total);
 
                           Box box = Box(
+                            id: "",
                             boxDetails: _boxDetailsController.text,
                             boxName: _boxNameController.text,
                             boxPhoto: "",

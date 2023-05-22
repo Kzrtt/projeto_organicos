@@ -1,6 +1,7 @@
 import 'package:projeto_organicos/model/productInBox.dart';
 
 class Box {
+  final String id;
   final String boxName;
   final String boxDetails;
   final int boxQuantity;
@@ -9,6 +10,7 @@ class Box {
   final List<ProductInBox> produtos;
 
   const Box({
+    required this.id,
     required this.boxDetails,
     required this.boxName,
     required this.boxPhoto,
