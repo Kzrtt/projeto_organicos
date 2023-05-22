@@ -6,7 +6,9 @@ import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/screens/producer/cooperativeAddFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
+import 'package:projeto_organicos/screens/producer/selectProductsToBox.dart';
 import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
+import 'package:projeto_organicos/screens/producer/updateProductScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
@@ -54,6 +56,9 @@ class _MyAppState extends State<MyApp> {
           ProducerAppRoutes.PRODUCERSIGNUP: (ctx) => const SignUpCooperativa(),
           ProducerAppRoutes.ADDFEEDBACKCOOP: (ctx) =>
               const CooperativeAddFeedbackScreen(),
+          ProducerAppRoutes.UPDATEPRODUCT: (ctx) => const UpdateProductScreen(),
+          ProducerAppRoutes.SEARCHPRODUCTS: (ctx) =>
+              const SelectProductsToBox(),
         },
       ),
     );

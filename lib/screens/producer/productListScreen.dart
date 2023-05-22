@@ -8,6 +8,7 @@ import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/model/producers.dart';
 import 'package:projeto_organicos/model/products.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/validators.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,7 +77,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           child: Card(
                             child: ListTile(
                               leading: InkWell(
-                                onTap: () {},
+                                onTap: () async {
+                                  var response =
+                                      await Navigator.of(context).pushNamed(
+                                    ProducerAppRoutes.UPDATEPRODUCT,
+                                    arguments: item,
+                                  ) as Products;
+                                  for (var element in _productList) {
+                                    if (element.productId ==
+                                        response.productId) {
+                                      setState(() {
+                                        _productList[_productList
+                                            .indexOf(element)] = response;
+                                      });
+                                      break;
+                                    }
+                                  }
+                                },
                                 child: const Icon(
                                   Icons.edit,
                                   color: Color.fromRGBO(108, 168, 129, 0.7),

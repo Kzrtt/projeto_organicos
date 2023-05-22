@@ -11,10 +11,13 @@ import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/controller/measurementUnitController.dart';
 import 'package:projeto_organicos/controller/productController.dart';
+import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/model/measurementUnit.dart';
 import 'package:projeto_organicos/model/producers.dart';
+import 'package:projeto_organicos/model/productInBox.dart';
 import 'package:projeto_organicos/model/products.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/validators.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -63,6 +66,7 @@ Widget _textField1(
 
 class _AddProductScreenState extends State<AddProductScreen>
     with SingleTickerProviderStateMixin {
+  //Variaveis para o Produto
   bool isSelected = false;
   final Validators validators = Validators();
   final _firstFormKey = GlobalKey<FormState>();
@@ -83,10 +87,19 @@ class _AddProductScreenState extends State<AddProductScreen>
   List<bool> _categoryBoolList = [];
   List<Category> _categorias = [];
   List<Producers> _p = [];
+  List<Products> _products = [];
+  List<String> _productsNames = [];
   List<Measurement> _measurementList = [];
   TabController? _tabController;
   ProductController pcontroller = ProductController();
   int _step = 0;
+  //Variaveis para a box
+  int _stepBox = 0;
+  List<ProductInBox> _produtosNaBox = [];
+  final basicInfoBoxKey = GlobalKey<FormState>();
+  final TextEditingController _boxNameController = TextEditingController();
+  final TextEditingController _boxDetailsController = TextEditingController();
+  final TextEditingController _boxStockQuantity = TextEditingController();
 
   @override
   void initState() {
@@ -95,6 +108,12 @@ class _AddProductScreenState extends State<AddProductScreen>
     _tabController = TabController(length: 2, vsync: this);
     CooperativeController coopController = CooperativeController();
     MeasuremntUnitController unityController = MeasuremntUnitController();
+    ProductController productController = ProductController();
+    productController.getAllProducts().then((value) {
+      List<String> nomesProdutos = value.map((e) => e.productName).toList();
+      _products = value;
+      _productsNames = nomesProdutos;
+    });
     coopController.getAllProducers().then((value) {
       List<String> nomesProdutores = value.map((e) => e.producerName).toList();
       setState(() {
@@ -128,6 +147,242 @@ class _AddProductScreenState extends State<AddProductScreen>
     // TODO: implement dispose
     _tabController?.dispose();
     super.dispose();
+  }
+
+  Widget addBoxForm(BoxConstraints constraints, BuildContext context) {
+    return Stepper(
+      currentStep: _stepBox,
+      onStepTapped: (int index) {
+        setState(() {
+          _stepBox = index;
+        });
+      },
+      controlsBuilder: (context, details) {
+        return Column(
+          children: [
+            SizedBox(height: constraints.maxHeight * .03),
+            SizedBox(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromRGBO(83, 242, 166, 0.69),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_stepBox == 0) {
+                          if (basicInfoBoxKey.currentState!.validate()) {
+                            setState(() {
+                              _stepBox = _stepBox + 1;
+                            });
+                          }
+                        } else if (_stepBox == 1) {
+                          if (_produtosNaBox.length > 1) {
+                            setState(() {
+                              _stepBox = _stepBox + 1;
+                            });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return const AlertDialog(
+                                  title: Text(
+                                    "A box deve conter mais que dois items",
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        } else if (_stepBox == 2) {
+                          ProductController controller = ProductController();
+                          print('criou controller');
+
+                          double total = 0;
+                          for (var i = 0; i < _produtosNaBox.length; i++) {
+                            total = total +
+                                _produtosNaBox[i].quantity *
+                                    _produtosNaBox[i].product.productPrice;
+                          }
+
+                          print(total);
+
+                          Box box = Box(
+                            boxDetails: _boxDetailsController.text,
+                            boxName: _boxNameController.text,
+                            boxPhoto: "",
+                            boxPrice: total,
+                            boxQuantity: int.parse(_boxStockQuantity.text),
+                            produtos: _produtosNaBox,
+                          );
+                          controller.createBox(box);
+                          print("criou box");
+                          widget.callbackFunction(2);
+                        }
+                      },
+                      child: Text(
+                        _stepBox <= 1 ? "Continuar" : "Finalizar",
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: constraints.maxWidth * .05),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.grey,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (_step != 0) {
+                            _step = _step - 1;
+                          }
+                        });
+                      },
+                      child: const Text(
+                        "Voltar",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+      steps: [
+        Step(
+          title: Text("Informações Básicas"),
+          content: Form(
+            key: basicInfoBoxKey,
+            child: Column(
+              children: [
+                _textField1(
+                  .09,
+                  .9,
+                  constraints,
+                  "Nome da Box",
+                  _boxNameController,
+                  (p0) => null,
+                ),
+                SizedBox(height: constraints.maxHeight * .03),
+                _textField1(
+                  .25,
+                  .9,
+                  constraints,
+                  "Detalhes da Box",
+                  _boxDetailsController,
+                  (p0) => null,
+                ),
+                SizedBox(height: constraints.maxHeight * .03),
+                _textField1(
+                  .09,
+                  .9,
+                  constraints,
+                  "Quantidade de Box disponiveis",
+                  _boxStockQuantity,
+                  (p0) => null,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Step(
+          title: const Text("Produtos da Box"),
+          content: Column(
+            children: [
+              _produtosNaBox.isNotEmpty
+                  ? SizedBox(
+                      height:
+                          constraints.maxHeight * _produtosNaBox.length / 10,
+                      width: constraints.maxWidth,
+                      child: ListView.builder(
+                        itemCount: _produtosNaBox.length,
+                        itemBuilder: (context, index) {
+                          var item = _produtosNaBox[index];
+                          return ListTile(
+                            title: Text(item.product.productName),
+                            subtitle: Text(
+                              "Quantidade: ${item.quantity.toString()} ${item.measurementUnity}",
+                            ),
+                            trailing: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _produtosNaBox.removeWhere(
+                                    (element) =>
+                                        element.product.productName ==
+                                        item.product.productName,
+                                  );
+                                });
+                              },
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : Center(),
+              SizedBox(height: constraints.maxHeight * .05),
+              InkWell(
+                onTap: () async {
+                  var response = await Navigator.of(context)
+                          .pushNamed(ProducerAppRoutes.SEARCHPRODUCTS)
+                      as List<ProductInBox>;
+                  setState(() {
+                    _produtosNaBox = response;
+                  });
+                },
+                child: CommonButton(
+                  constraints: constraints,
+                  text: "Selecionar Produtos",
+                ),
+              ),
+              SizedBox(height: constraints.maxHeight * .03),
+            ],
+          ),
+        ),
+        Step(
+          title: const Text("Foto"),
+          content: Column(
+            children: [
+              SizedBox(height: constraints.maxHeight * .03),
+              Row(
+                children: [
+                  Container(
+                    height: constraints.maxHeight * .2,
+                    width: constraints.maxWidth * .3,
+                    color: Colors.grey,
+                    child: const Icon(Icons.camera_alt_rounded),
+                  ),
+                  SizedBox(width: constraints.maxWidth * .05),
+                  InkWell(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        const Icon(Icons.camera_alt_outlined),
+                        SizedBox(width: constraints.maxWidth * .01),
+                        const Text(
+                          "Escolher Foto",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: constraints.maxHeight * .03)
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget addProductForm(BoxConstraints constraints, BuildContext context) {
@@ -498,7 +753,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                     controller: _tabController,
                     children: [
                       addProductForm(constraints, context),
-                      Center(),
+                      addBoxForm(constraints, context),
                     ],
                   ),
                 ),

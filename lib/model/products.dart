@@ -27,21 +27,3 @@ class Products {
     required this.measuremntUnit,
   });
 }
-
-class Box {
-  final int boxId;
-  final String boxName;
-  final double boxPrice;
-  final int quantity;
-  final List<Products> products;
-  final bool isFromCooperative;
-
-  Box({
-    required this.boxId,
-    required this.boxName,
-    required this.boxPrice,
-    required this.isFromCooperative,
-    required this.products,
-    required this.quantity,
-  });
-}

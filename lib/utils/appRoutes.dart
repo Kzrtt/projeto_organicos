@@ -11,4 +11,6 @@ class ProducerAppRoutes {
   static const OPENSELLDETAILS = "/open-sell-details";
   static const PRODUCERSIGNUP = "/producer-sign-up";
   static const ADDFEEDBACKCOOP = "/add-feedback-cooperative";
+  static const UPDATEPRODUCT = "/update-product";
+  static const SEARCHPRODUCTS = "/search-products";
 }
