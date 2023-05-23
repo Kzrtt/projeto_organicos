@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/adress.dart';
+import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/userState.dart';
@@ -11,8 +13,12 @@ import '../model/user.dart';
 class UserController {
   final String _baseUrl = "http://localhost:27017/auth";
   final String _userUrl = "http://localhost:27017/user";
+  final String _categoryUrl = "http://localhost:27017/category";
+  final String _productsUrl = "http://localhost:27017/product/products";
   List<Adress> _adressList = [];
   List<ClientFeedback> _feedbackList = [];
+  List<Category> _categoryList = [];
+  List<Products> _productList = [];
 
   User user = User(
     userName: "",
@@ -24,6 +30,90 @@ class UserController {
     isSubscriber: false,
     isNutritious: false,
   );
+
+  Future<List<Products>> getAllProducts() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      var response = await Dio().get(
+        _productsUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('products')) {
+        for (var element in response.data['products']) {
+          if (element['active'] == true) {
+            List<String> categories = [];
+            for (var e in element['categories']) {
+              categories.add(e['categoryName']);
+            }
+            Products products = Products(
+              productId: element['_id'],
+              productName: element['productName'],
+              category: categories,
+              productPhoto: element['productPhoto'],
+              productPrice: element['productPrice'],
+              stockQuantity: element['stockQuantity'],
+              unitValue: element['unitValue'],
+              productDetails: element['productDetails'],
+              cooperativeId: element['cooperativeId'],
+              producerId: element['producerId'],
+              measuremntUnit: element['measurementUnit']['measurementUnit'],
+            );
+            _productList.add(products);
+          }
+        }
+      }
+      return _productList;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _productList;
+    }
+  }
+
+  Future<List<Category>> getAllCategories() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("userToken");
+      var response = await Dio().get(
+        _categoryUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('categories')) {
+        var categories = response.data['categories'];
+        for (var element in categories) {
+          Category category = Category(
+            active: element['active'],
+            categoryId: element['_id'],
+            categoryName: element['categoryName'],
+          );
+          _categoryList.add(category);
+        }
+        return _categoryList;
+      } else {
+        print('erro');
+        return _categoryList;
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _categoryList;
+    }
+  }
 
   Future<List<ClientFeedback>> getAllFeedbacks(String id) async {
     try {

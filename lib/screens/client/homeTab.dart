@@ -5,10 +5,12 @@ import 'package:projeto_organicos/screens/client/cartScreen.dart';
 import 'package:projeto_organicos/screens/client/feedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/historicScreen.dart';
 import 'package:projeto_organicos/screens/client/homeScreen.dart';
+import 'package:projeto_organicos/screens/client/productScreen.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/sellDetails.dart';
 import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
+import 'package:projeto_organicos/screens/warning.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,7 +83,10 @@ class _HomeTabState extends State<HomeTab> {
     User? user = userState.getUser;
 
     late final List<Widget> _baseScreens = [
-      HomeScreen(user: user!),
+      HomeScreen(
+        user: user!,
+        callbackFunction: changePage,
+      ),
       const SearchScreen(),
       const CartScreen(),
       ProfileScreen(
@@ -98,6 +103,7 @@ class _HomeTabState extends State<HomeTab> {
         callbackFunction: changePage,
       ),
       const FeedbackScreen(),
+      const WarningScreen(),
     ];
 
     return Scaffold(

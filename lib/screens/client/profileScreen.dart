@@ -176,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       subtext:
                           "Enviar mensagens para os produtores do nosso app",
                       icon: Icons.chat_bubble,
-                      buttonFunction: () => widget.callbackFunction(7),
+                      buttonFunction: () => widget.callbackFunction(9),
                     ),
                     ProfileScreenButton(
                       constraints: constraints,

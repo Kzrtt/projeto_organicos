@@ -13,6 +13,31 @@ class ProductController {
   List<Products> _productList = [];
   List<Box> _boxList = [];
 
+  void deleteBox(String id, String boxName) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      var response = await Dio().put(
+        "$_productUrl/$id",
+        data: {
+          "boxName": boxName,
+          "active": false,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   Future<List<Box>> getAllBoxes() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,6 +56,7 @@ class ProductController {
             for (var element3 in element2['product']['categories']) {
               categorias.add(element3);
             }
+
             Products product = Products(
               productId: element2['product']['_id'],
               productName: element2['product']['productName'],
@@ -46,21 +72,24 @@ class ProductController {
             );
             ProductInBox productInBox = ProductInBox(
               product: product,
-              quantity: double.parse(element2['quantity']),
-              measurementUnity: element['measurementUnity'],
+              quantity: element2['quantity'],
+              measurementUnity: element2['product']['measurementUnit'],
             );
             products.add(productInBox);
           }
+
           Box box = Box(
             id: element['_id'],
             boxDetails: element['boxDetails'],
             boxName: element['boxName'],
             boxPhoto: element['boxPhoto'],
             boxPrice: element['boxPrice'],
-            boxQuantity: int.parse(element['stockQuantity']),
+            boxQuantity: element['stockQuantity'],
             produtos: products,
           );
-          _boxList.add(box);
+          if (element['active'] == true) {
+            _boxList.add(box);
+          }
         }
         return _boxList;
       }
@@ -72,7 +101,6 @@ class ProductController {
         print('Mensagem: ${e.response?.data}');
       } else {
         print('Erro inesperado: $e');
-        print(StackTrace.current);
       }
       return _boxList;
     }

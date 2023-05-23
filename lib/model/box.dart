@@ -4,8 +4,8 @@ class Box {
   final String id;
   final String boxName;
   final String boxDetails;
-  final int boxQuantity;
-  final double boxPrice;
+  final num boxQuantity;
+  final num boxPrice;
   final String boxPhoto;
   final List<ProductInBox> produtos;
 

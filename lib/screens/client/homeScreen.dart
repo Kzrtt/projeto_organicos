@@ -6,7 +6,12 @@ import '../../model/user.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
-  const HomeScreen({Key? key, required this.user}) : super(key: key);
+  final void Function(int newValue) callbackFunction;
+  const HomeScreen({
+    Key? key,
+    required this.user,
+    required this.callbackFunction,
+  }) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -57,9 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        const Icon(
-                          Icons.search,
-                          color: Color.fromRGBO(108, 168, 129, 0.7),
+                        IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () => widget.callbackFunction(1),
+                          color: const Color.fromRGBO(108, 168, 129, 0.7),
                         ),
                       ],
                     ),

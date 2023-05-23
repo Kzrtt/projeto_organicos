@@ -28,15 +28,11 @@ class _ProductListScreenState extends State<ProductListScreen>
   List<Products> _productList = [];
   List<Box> _boxList = [];
   Validators validators = Validators();
+  final _updateBoxFormKey = GlobalKey<FormState>();
   final _updateFormKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _detailsController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _stockQuantityController =
-      TextEditingController();
-  final TextEditingController _unitValueController = TextEditingController();
-  final TextEditingController _measurementUnityController =
-      TextEditingController();
+  final TextEditingController _boxNameController = TextEditingController();
+  final TextEditingController _boxDetailsController = TextEditingController();
+  final TextEditingController _boxPriceController = TextEditingController();
   TabController? _tabController;
 
   @override
@@ -79,7 +75,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                   trailing: InkWell(
                     onTap: () {
                       ProductController controller = ProductController();
-                      controller.deleteProduct(item.id, item.boxName);
+                      controller.deleteBox(item.id, item.boxName);
                       setState(() {
                         _boxList
                             .removeWhere((element) => element.id == item.id);
