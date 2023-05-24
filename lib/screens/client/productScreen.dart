@@ -5,6 +5,8 @@ import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
 import 'package:projeto_organicos/model/products.dart';
+import 'package:projeto_organicos/utils/cartProvider.dart';
+import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({Key? key}) : super(key: key);
@@ -181,7 +183,15 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       SizedBox(width: constraints.maxWidth * .05),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          final provider = Provider.of<CartProvider>(
+                            context,
+                            listen: false,
+                          );
+                          provider.addProduct(product, value);
+                          print(provider.getCart.length);
+                          Navigator.of(context).pop();
+                        },
                         child: SmallButton(
                           constraints: constraints,
                           text: "Adicionar",

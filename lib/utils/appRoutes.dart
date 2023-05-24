@@ -5,6 +5,7 @@ class AppRoutes {
   static const ADDADRESS = "/add-adress-screen";
   static const ADDFEEDBACK = "/add-feedback-screen";
   static const PRODUCTSCREEN = "/product-screen";
+  static const PAYMENTSCREEN = "/payment-screen";
 }
 
 class ProducerAppRoutes {

@@ -11,6 +11,7 @@ import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/sellDetails.dart';
 import 'package:projeto_organicos/screens/client/userInfoScreen.dart';
 import 'package:projeto_organicos/screens/warning.dart';
+import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
