@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/model/products.dart';
 
 class CartProvider with ChangeNotifier {
+  CartController controller = CartController();
   List<Products> produtos = [];
   List<int> quantidades = [];
 

@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
+import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:provider/provider.dart';
@@ -184,12 +185,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       SizedBox(width: constraints.maxWidth * .05),
                       InkWell(
                         onTap: () {
-                          final provider = Provider.of<CartProvider>(
-                            context,
-                            listen: false,
-                          );
-                          provider.addProduct(product, value);
-                          print(provider.getCart.length);
+                          CartController controller = CartController();
+                          controller.addProductToCart(product.productId, value);
                           Navigator.of(context).pop();
                         },
                         child: SmallButton(

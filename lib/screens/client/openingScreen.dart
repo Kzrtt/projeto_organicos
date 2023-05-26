@@ -85,10 +85,10 @@ class _OpeningScreenState extends State<OpeningScreen> {
                     ],
                   ),
                   SizedBox(height: constraints.maxHeight * .03),
-                  _textField1(55, 330, constraints, 'e-mail', emailController),
+                  _textField1(55, 330, constraints, 'E-mail', emailController),
                   SizedBox(height: constraints.maxHeight * .022),
                   _textField1(
-                      55, 330, constraints, 'senha', passwordController),
+                      55, 330, constraints, 'Senha', passwordController),
                   SizedBox(height: constraints.maxHeight * .05),
                   Padding(
                     padding: EdgeInsets.only(left: constraints.maxWidth * .075),

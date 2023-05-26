@@ -6,6 +6,7 @@ class Adress {
   final String city;
   final String state;
   final String zipCode;
+  final bool isDefault;
 
   Adress({
     required this.adressId,
@@ -15,5 +16,6 @@ class Adress {
     required this.city,
     required this.state,
     required this.zipCode,
+    required this.isDefault,
   });
 }

@@ -204,6 +204,7 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
                           );
                           Adress adress = Adress(
                             adressId: "0",
+                            isDefault: false,
                             nickname: _nickNameController.text,
                             complement: _complementController.text,
                             street: _streetController.text,

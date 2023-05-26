@@ -3,7 +3,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/components/smallButton.dart';
 import 'package:projeto_organicos/model/adress.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
@@ -53,105 +55,133 @@ class _AdressScreenState extends State<AdressScreen> {
       builder: (context, constraints) {
         return Stack(
           children: [
-            Column(
-              children: [
-                NameAndIcon(
-                  constraints: constraints,
-                  icon: Icons.map,
-                  text: "Endereços",
-                ),
-                SizedBox(height: constraints.maxHeight * .035),
-                SizedBox(
-                  width: constraints.maxWidth * .9,
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedItem.isNotEmpty ? _selectedItem : null,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.white,
-                            width: constraints.maxWidth * .03),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(12),
-                        ),
-                      ),
+            SingleChildScrollView(
+              child: SizedBox(
+                height: constraints.maxHeight * 1.1,
+                width: constraints.maxWidth,
+                child: Column(
+                  children: [
+                    NameAndIcon(
+                      constraints: constraints,
+                      icon: Icons.map,
+                      text: "Endereços",
                     ),
-                    hint: const Text("Escolher endereço padrão"),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedItem = value.toString();
-                      });
-                    },
-                    items: items
-                        .map(
-                          (item) => DropdownMenuItem(
-                            value: item,
-                            child: Text(item),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * .05),
-                SizedBox(
-                  height: constraints.maxHeight * .7,
-                  child: ListView.builder(
-                    itemCount: adress.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: constraints.maxWidth * .03),
-                            child: Card(
-                              child: ListTile(
-                                leading: Icon(
-                                  Icons.map,
-                                  size: constraints.maxHeight * .06,
-                                  color:
-                                      const Color.fromRGBO(108, 168, 129, 0.7),
-                                ),
-                                title: Text(adress[index].nickname),
-                                subtitle:
-                                    Text('${adress[index].street}, n°1392'),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.red,
-                                  onPressed: () async {
-                                    UserState userState = UserState();
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    String? userId = prefs.getString("userId");
-                                    UserController userController =
-                                        UserController();
-                                    userState.removeAdress(
-                                      adress[index].adressId,
-                                    );
-                                    userController.deleteAdress(
-                                      userId!,
-                                      adress[index].adressId,
-                                    );
-                                    setState(() {
-                                      adress.removeWhere(
-                                        (element) =>
-                                            element.adressId ==
-                                            adress[index].adressId,
-                                      );
-                                    });
-                                  },
-                                ),
-                              ),
+                    SizedBox(height: constraints.maxHeight * .035),
+                    SizedBox(
+                      width: constraints.maxWidth * .9,
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedItem.isNotEmpty ? _selectedItem : null,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white,
+                                width: constraints.maxWidth * .03),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(12),
                             ),
                           ),
-                          SizedBox(height: constraints.maxHeight * .02),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                        hint: const Text("Escolher endereço padrão"),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedItem = value.toString();
+                          });
+                        },
+                        items: items
+                            .map(
+                              (item) => DropdownMenuItem(
+                                value: item,
+                                child: Text(item),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    SizedBox(height: constraints.maxHeight * .03),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          "Endereço padrão",
+                          style: const TextStyle(
+                            color: Color.fromRGBO(18, 18, 18, 0.58),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {},
+                          child: SmallButton(
+                            constraints: constraints,
+                            text: "Definir Padrão",
+                            color: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: constraints.maxHeight * .05),
+                    SizedBox(
+                      height: constraints.maxHeight * .7,
+                      child: ListView.builder(
+                        itemCount: adress.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: constraints.maxWidth * .03),
+                                child: Card(
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.map,
+                                      size: constraints.maxHeight * .06,
+                                      color: const Color.fromRGBO(
+                                          108, 168, 129, 0.7),
+                                    ),
+                                    title: Text(adress[index].nickname),
+                                    subtitle: Text('${adress[index].street}'),
+                                    trailing: IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      color: Colors.red,
+                                      onPressed: () async {
+                                        UserState userState = UserState();
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String? userId =
+                                            prefs.getString("userId");
+                                        UserController userController =
+                                            UserController();
+                                        userState.removeAdress(
+                                          adress[index].adressId,
+                                        );
+                                        userController.deleteAdress(
+                                          userId!,
+                                          adress[index].adressId,
+                                        );
+                                        setState(() {
+                                          adress.removeWhere(
+                                            (element) =>
+                                                element.adressId ==
+                                                adress[index].adressId,
+                                          );
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: constraints.maxHeight * .02),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: constraints.maxHeight * .02),
+                  ],
                 ),
-                SizedBox(height: constraints.maxHeight * .02),
-              ],
+              ),
             ),
             Positioned(
               bottom: 75.0,

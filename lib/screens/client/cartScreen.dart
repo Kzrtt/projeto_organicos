@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
@@ -19,9 +20,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  bool isCartEmpty = false;
   String _selectedItem = "";
   List<Adress> addresses = [];
+  List<String> addressesId = [];
+  List<Map<String, dynamic>> cartMongodb = [];
 
   Widget thinDivider(BoxConstraints constraints) {
     return Center(
@@ -40,6 +42,9 @@ class _CartScreenState extends State<CartScreen> {
     List<Adress> temp = await userController.getAllAdresses(userId!);
     setState(() {
       addresses = temp;
+      for (var element in temp) {
+        addressesId.add(element.adressId);
+      }
     });
   }
 
@@ -47,7 +52,16 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    UserController controller = UserController();
+    CartController cartController = CartController();
+    cartController.getAllProductsInfo().then((value) {
+      cartMongodb = value;
+      final provider = Provider.of<CartProvider>(context, listen: false);
+      List<int> temp = [];
+      for (var element in value) {
+        temp.add(element['quantity']);
+      }
+      provider.setQuantity(temp);
+    });
     loadAdresses();
   }
 
@@ -57,8 +71,8 @@ class _CartScreenState extends State<CartScreen> {
     List<int> quantity = Provider.of<CartProvider>(context).getQuantity;
     List<String> items = addresses.map((e) => e.nickname).toList();
     num subTotal = 0;
-    for (var i = 0; i < cart.length; i++) {
-      subTotal = cart[i].productPrice * quantity[i];
+    for (var i = 0; i < cartMongodb.length; i++) {
+      subTotal += cartMongodb[i]['product'].productPrice * quantity[i];
     }
 
     return LayoutBuilder(
@@ -78,7 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                   text: "Carrinho",
                 ),
                 SizedBox(height: constraints.maxHeight * .03),
-                cart.isNotEmpty
+                cartMongodb.isNotEmpty
                     ? SizedBox(
                         height: constraints.maxHeight,
                         width: constraints.maxWidth,
@@ -86,13 +100,15 @@ class _CartScreenState extends State<CartScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height:
-                                  constraints.maxHeight * cart.length / 10 + 50,
+                              height: constraints.maxHeight *
+                                      cartMongodb.length /
+                                      10 +
+                                  50,
                               width: constraints.maxWidth,
                               child: ListView.builder(
-                                itemCount: cart.length,
+                                itemCount: cartMongodb.length,
                                 itemBuilder: (context, index) {
-                                  var item = cart[index];
+                                  var item = cartMongodb[index]['product'];
                                   var quantia = quantity[index];
                                   return InkWell(
                                     onTap: () {
@@ -236,6 +252,14 @@ class _CartScreenState extends State<CartScreen> {
                                                                   1;
                                                           subTotal = subTotal -
                                                               item.productPrice;
+                                                          CartController
+                                                              controller =
+                                                              CartController();
+                                                          controller
+                                                              .incrementOrSubtractQuantity(
+                                                            item,
+                                                            "-",
+                                                          );
                                                         });
                                                         if (quantity[index] ==
                                                             0) {
@@ -260,15 +284,32 @@ class _CartScreenState extends State<CartScreen> {
                                                                     onPressed:
                                                                         () {
                                                                       // Lógica para remover o produto
+                                                                      CartController
+                                                                          controller =
+                                                                          CartController();
+                                                                      controller
+                                                                          .removeProductFromCart(
+                                                                        item.productId,
+                                                                      );
+                                                                      setState(
+                                                                          () {
+                                                                        cartMongodb
+                                                                            .removeWhere((element) {
+                                                                          quantity.removeWhere((element) =>
+                                                                              element ==
+                                                                              0);
+                                                                          return element['product'].productId ==
+                                                                              item.productId;
+                                                                        });
+                                                                      });
                                                                       Navigator.of(
                                                                               context)
                                                                           .pop();
-                                                                      Provider.of<CartProvider>(
-                                                                              context,
-                                                                              listen:
-                                                                                  false)
-                                                                          .removeProduct(
-                                                                              item);
+                                                                      Provider.of<
+                                                                              CartProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false);
                                                                     },
                                                                   ),
                                                                   TextButton(
@@ -304,7 +345,8 @@ class _CartScreenState extends State<CartScreen> {
                                                       }
                                                     },
                                                     icon: const Icon(
-                                                        Icons.remove),
+                                                      Icons.remove,
+                                                    ),
                                                   ),
                                                   Text(
                                                     "${quantia}${item.measuremntUnit}",
@@ -319,6 +361,14 @@ class _CartScreenState extends State<CartScreen> {
                                                           quantity[index] =
                                                               quantity[index] +
                                                                   1;
+                                                          CartController
+                                                              controller =
+                                                              CartController();
+                                                          controller
+                                                              .incrementOrSubtractQuantity(
+                                                            item,
+                                                            "+",
+                                                          );
                                                         }
                                                       });
                                                     },
@@ -509,6 +559,9 @@ class _CartScreenState extends State<CartScreen> {
                                 );
                                 provider.setCart(cart);
                                 provider.setQuantity(quantity);
+                                int index = items.indexOf(_selectedItem);
+                                CartController controller = CartController();
+                                controller.createSell(addressesId[index]);
                                 Navigator.of(context).pushNamed(
                                   AppRoutes.PAYMENTSCREEN,
                                 );

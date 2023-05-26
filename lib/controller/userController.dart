@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/adress.dart';
@@ -19,6 +21,7 @@ class UserController {
   List<ClientFeedback> _feedbackList = [];
   List<Category> _categoryList = [];
   List<Products> _productList = [];
+  Map<String, dynamic> address = {};
 
   User user = User(
     userName: "",
@@ -30,6 +33,45 @@ class UserController {
     isSubscriber: false,
     isNutritious: false,
   );
+
+  Future<Map<String, dynamic>> getAddress(String addressId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('userId');
+      List<Adress> addresses = await getAllAdresses(id!);
+      for (var element in addresses) {
+        if (element.adressId == addressId) {
+          address.addAll({
+            "complement": element.complement,
+            "street": element.street,
+            "city": element.city,
+            "state": element.state,
+            "zipcode": element.zipCode,
+          });
+        }
+      }
+      return address;
+    } catch (e) {
+      print('erro: $e');
+      return address;
+    }
+  }
+
+  void setDefaultAddress() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('userId');
+      String? token = prefs.getString('userToken');
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
 
   Future<List<Products>> getAllProducts() async {
     try {
@@ -250,6 +292,7 @@ class UserController {
             state: element['state'],
             zipCode: element['zipcode'],
             adressId: element['_id'],
+            isDefault: element['isDefault'],
           );
           userState.addAdress(a);
           _adressList.add(a);
