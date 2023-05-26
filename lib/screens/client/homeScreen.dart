@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/whiteRoundedCornersBox.dart';
+import 'package:projeto_organicos/controller/productController.dart';
+import 'package:projeto_organicos/controller/userController.dart';
+import 'package:projeto_organicos/model/category.dart';
 
 import '../../model/user.dart';
 
@@ -18,6 +21,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Category> categorias = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    UserController controller = UserController();
+    controller.getAllCategorys().then((value) {
+      setState(() {
+        categorias = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -117,48 +134,36 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(height: constraints.maxHeight * .03),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(width: constraints.maxWidth * .05),
-                            Container(
-                              height: constraints.maxHeight * .14,
-                              width: constraints.maxWidth * .28,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
+                        SizedBox(
+                          height: constraints.maxHeight * .2,
+                          width: constraints.maxWidth,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: categorias.length,
+                            itemBuilder: (context, index) {
+                              var item = categorias[index];
+                              return Padding(
+                                padding:
+                                    EdgeInsets.all(constraints.maxHeight * .02),
+                                child: Container(
+                                  height: constraints.maxHeight * .14,
+                                  width: constraints.maxWidth * .28,
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    color: Color.fromRGBO(112, 250, 151, 0.33),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      item.categoryName,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
-                                color: Color.fromRGBO(255, 23, 23, 0.33),
-                              ),
-                              child: const Center(child: Text("Carnes")),
-                            ),
-                            SizedBox(width: constraints.maxWidth * .05),
-                            Container(
-                              padding: const EdgeInsets.only(left: 16),
-                              height: constraints.maxHeight * .14,
-                              width: constraints.maxWidth * .28,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                                color: Color.fromRGBO(112, 250, 151, 0.33),
-                              ),
-                              child: const Center(
-                                  child: Text("Agricultura Familiar")),
-                            ),
-                            SizedBox(width: constraints.maxWidth * .05),
-                            Container(
-                              height: constraints.maxHeight * .14,
-                              width: constraints.maxWidth * .28,
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                                color: Color.fromRGBO(111, 176, 253, 0.33),
-                              ),
-                              child: const Center(child: Text("Verduras")),
-                            ),
-                          ],
+                              );
+                            },
+                          ),
                         )
                       ],
                     ),

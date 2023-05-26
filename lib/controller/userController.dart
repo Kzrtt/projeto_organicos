@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/adress.dart';
+import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/model/productInBox.dart';
 import 'package:projeto_organicos/model/products.dart';
+import 'package:projeto_organicos/model/sell.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/userState.dart';
@@ -16,13 +19,15 @@ class UserController {
   final String _baseUrl = "http://localhost:27017/auth";
   final String _userUrl = "http://localhost:27017/user";
   final String _categoryUrl = "http://localhost:27017/category";
-  final String _productsUrl = "http://localhost:27017/product/products";
+  final String _productsUrl = "http://localhost:27017/product";
+  final String _sellUrl = "http://localhost:27017/sell";
   List<Adress> _adressList = [];
   List<ClientFeedback> _feedbackList = [];
   List<Category> _categoryList = [];
   List<Products> _productList = [];
+  List<Box> _boxList = [];
   Map<String, dynamic> address = {};
-
+  List<Sell> _sells = [];
   User user = User(
     userName: "",
     userCpf: "",
@@ -33,6 +38,189 @@ class UserController {
     isSubscriber: false,
     isNutritious: false,
   );
+
+  Future<List<Box>> getAllBoxes() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("userToken");
+      String? id = prefs.getString("userId");
+      var response = await Dio().get(
+        "$_productsUrl/boxes",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('boxes')) {
+        try {
+          List<ProductInBox> produtos = [];
+          for (var element in response.data['boxes']) {
+            for (var element2 in element['products']) {
+              List<String> categories = [];
+              for (var e in element2['product']['categories']) {
+                categories.add(e);
+              }
+              Products product = Products(
+                productId: element2['product']['_id'],
+                productName: element2['product']['productName'],
+                category: categories,
+                productPhoto: element2['product']['productPhoto'],
+                productPrice: element2['product']['productPrice'],
+                stockQuantity: element2['product']['stockQuantity'],
+                unitValue: element2['product']['unitValue'],
+                productDetails: element2['product']['productDetails'],
+                cooperativeId: element2['product']['cooperativeId'],
+                producerId: element2['product']['producerId'],
+                measuremntUnit: element2['product']['measurementUnit'],
+              );
+              ProductInBox productInBox = ProductInBox(
+                product: product,
+                quantity: element2['quantity'],
+                measurementUnity: element2['product']['measurementUnit'],
+              );
+              produtos.add(productInBox);
+            }
+            Box box = Box(
+              id: element['_id'],
+              boxDetails: element['boxDetails'],
+              boxName: element['boxName'],
+              boxPhoto: element['boxPhoto'],
+              boxPrice: element['boxPrice'],
+              boxQuantity: element['stockQuantity'],
+              produtos: produtos,
+            );
+            _boxList.add(box);
+            produtos = [];
+          }
+        } catch (e, stackTrace) {
+          print("erro: $e, stackTrace: $stackTrace");
+        }
+      }
+      return _boxList;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _boxList;
+    }
+  }
+
+  Future<List<Category>> getAllCategorys() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("userToken");
+      var response = await Dio().get(
+        _categoryUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('categories')) {
+        var categories = response.data['categories'];
+        for (var element in categories) {
+          Category category = Category(
+            active: element['active'],
+            categoryId: element['_id'],
+            categoryName: element['categoryName'],
+          );
+          _categoryList.add(category);
+        }
+        return _categoryList;
+      } else {
+        print('erro');
+        return _categoryList;
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _categoryList;
+    }
+  }
+
+  Future<List<Sell>> getAllHistoric() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      var response = await Dio().get(
+        _sellUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('sells')) {
+        try {
+          Map<String, dynamic> endereco = {};
+          List<Map<String, dynamic>> produtos = [];
+          for (var element in response.data['sells']) {
+            endereco = {
+              "complement": element['userAddress']['complement'],
+              "street": element['userAddress']['street'],
+              "city": element['userAddress']['city'],
+              "state": element['userAddress']['state'],
+              "zipcode": element['userAddress']['zipcode'],
+            };
+
+            for (var element3 in element['products']) {
+              List<String> categories = [];
+              for (var e in element3['productId']['categories']) {
+                categories.add(e['categoryName']);
+              }
+              Products product = Products(
+                productId: element3['productId']['_id'],
+                productName: element3['productId']['productName'],
+                category: categories,
+                productPhoto: element3['productId']['productPhoto'],
+                productPrice: element3['productId']['productPrice'],
+                stockQuantity: element3['productId']['stockQuantity'],
+                unitValue: element3['productId']['unitValue'],
+                productDetails: element3['productId']['productDetails'],
+                cooperativeId: element3['productId']['cooperativeId'],
+                producerId: element3['productId']['producerId'],
+                measuremntUnit: element3['productId']['measurementUnit']
+                    ['measurementUnit'],
+              );
+              produtos.add(
+                {
+                  "produto": product,
+                  "quantidade": element3['quantity'],
+                },
+              );
+            }
+            Sell sell = Sell(
+              address: endereco,
+              products: produtos,
+              sellId: element['_id'],
+              status: element['status'],
+              sellDate: element['sellDate'],
+            );
+            _sells.add(sell);
+            produtos = [];
+          }
+        } catch (e, stackTrace) {
+          print("erro: $e, stackTrace: $stackTrace");
+        }
+      }
+      return _sells;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _sells;
+    }
+  }
 
   Future<Map<String, dynamic>> getAddress(String addressId) async {
     try {
@@ -57,11 +245,20 @@ class UserController {
     }
   }
 
-  void setDefaultAddress() async {
+  void setDefaultAddress(String addressId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
+      var response = await Dio().put(
+        "$_userUrl/setDefaultAddress/$id",
+        data: {
+          "addressId": addressId,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');
@@ -78,7 +275,7 @@ class UserController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
       var response = await Dio().get(
-        _productsUrl,
+        "$_productsUrl/products",
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

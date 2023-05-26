@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/model/products.dart';
+import 'package:projeto_organicos/model/sell.dart';
 
 class SellBoxClientEdition extends StatefulWidget {
   BoxConstraints constraints;
+  Sell sell;
+  int index;
   SellBoxClientEdition({
     required this.constraints,
+    required this.sell,
+    required this.index,
     Key? key,
   }) : super(key: key);
 
@@ -14,8 +20,15 @@ class SellBoxClientEdition extends StatefulWidget {
 class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
   @override
   Widget build(BuildContext context) {
+    int total = 0;
+    for (var i = 0; i < widget.sell.products.length; i++) {
+      total += widget.sell.products[i]['produto'].productPrice *
+          widget.sell.products[i]['quantidade'] as int;
+    }
+
     return Container(
-      height: widget.constraints.maxHeight * .6,
+      height:
+          widget.constraints.maxHeight * widget.sell.products.length / 10 + 190,
       width: widget.constraints.maxWidth * .9,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -31,17 +44,17 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Text(
-                  "Pedido N°1",
-                  style: TextStyle(
+                  "Pedido N°${widget.index + 1}",
+                  style: const TextStyle(
                     color: Color.fromRGBO(0, 0, 0, 0.58),
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  "R\$ 45,00",
-                  style: TextStyle(
+                  "R\$ $total",
+                  style: const TextStyle(
                     color: Color.fromRGBO(113, 227, 154, 1),
                   ),
                 )
@@ -65,29 +78,27 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
               "Produtos comprados:",
               style: TextStyle(
                 color: Color.fromRGBO(0, 0, 0, 0.58),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          Expanded(
-            child: ListView(
-              children: const <ListTile>[
-                ListTile(
-                  title: Text("Produto 1"),
-                  subtitle: Text("2 unidades"),
-                  trailing: Text("R\$ 20.00"),
-                ),
-                ListTile(
-                  title: Text("Produto 2"),
-                  subtitle: Text("5 unidades"),
-                  trailing: Text("R\$ 10.00"),
-                ),
-                ListTile(
-                  title: Text("Produto 3"),
-                  subtitle: Text("10 unidades"),
-                  trailing: Text("R\$ 15.00"),
-                ),
-              ],
+          SizedBox(
+            height: widget.constraints.maxHeight *
+                    widget.sell.products.length /
+                    10 +
+                20,
+            width: widget.constraints.maxWidth,
+            child: ListView.builder(
+              itemCount: widget.sell.products.length,
+              itemBuilder: (context, index) {
+                Products item = widget.sell.products[index]['produto'];
+                var quantity = widget.sell.products[index]['quantidade'];
+                return ListTile(
+                  title: Text(item.productName),
+                  subtitle: Text("$quantity${item.measuremntUnit}"),
+                  trailing: Text("R\$ ${item.productPrice * quantity}"),
+                );
+              },
             ),
           ),
           Padding(
@@ -96,17 +107,17 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
               bottom: widget.constraints.maxHeight * .05,
             ),
             child: Row(
-              children: const [
-                Text(
+              children: [
+                const Text(
                   "Status: ",
                   style: TextStyle(
                     color: Color.fromRGBO(0, 0, 0, 0.58),
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  "Pago!",
-                  style: TextStyle(
+                  widget.sell.status,
+                  style: const TextStyle(
                     color: Color.fromRGBO(132, 202, 157, 1),
                     fontWeight: FontWeight.w600,
                   ),

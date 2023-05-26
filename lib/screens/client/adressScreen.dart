@@ -25,6 +25,16 @@ class _AdressScreenState extends State<AdressScreen> {
   bool isLoading = false;
   UserState userState = UserState();
   List<Adress> adress = [];
+  Adress defaultAddress = Adress(
+    adressId: "",
+    nickname: "",
+    complement: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    isDefault: false,
+  );
 
   void loadAdresses() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,6 +45,7 @@ class _AdressScreenState extends State<AdressScreen> {
     userState.setAdressList(temp);
     print(userState.adressList.length);
     setState(() {
+      defaultAddress = temp.singleWhere((element) => element.isDefault == true);
       adress = temp;
     });
     print(adress.length);
@@ -104,18 +115,41 @@ class _AdressScreenState extends State<AdressScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          "Endereço padrão",
+                          defaultAddress.nickname != ""
+                              ? "Padrão: ${defaultAddress.nickname}"
+                              : "Endereço padrão",
                           style: const TextStyle(
                             color: Color.fromRGBO(18, 18, 18, 0.58),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
-                          child: SmallButton(
-                            constraints: constraints,
-                            text: "Definir Padrão",
-                            color: true,
+                          onTap: () {
+                            UserController controller = UserController();
+                            Adress a = adress.singleWhere(
+                                (element) => element.nickname == _selectedItem);
+                            controller.setDefaultAddress(a.adressId);
+                            setState(() {
+                              defaultAddress = a;
+                            });
+                          },
+                          child: Container(
+                            height: constraints.maxHeight * .06,
+                            width: constraints.maxWidth * .5,
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              color: Color.fromRGBO(83, 242, 166, 0.47),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Definir Padrão",
+                                style: TextStyle(
+                                  fontSize: constraints.maxHeight * .025,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

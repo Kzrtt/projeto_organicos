@@ -20,10 +20,19 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  String _selectedItem = "";
   List<Adress> addresses = [];
   List<String> addressesId = [];
   List<Map<String, dynamic>> cartMongodb = [];
+  Adress defaultAddress = Adress(
+    adressId: "",
+    nickname: "",
+    complement: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    isDefault: false,
+  );
 
   Widget thinDivider(BoxConstraints constraints) {
     return Center(
@@ -42,6 +51,7 @@ class _CartScreenState extends State<CartScreen> {
     List<Adress> temp = await userController.getAllAdresses(userId!);
     setState(() {
       addresses = temp;
+      defaultAddress = temp.singleWhere((element) => element.isDefault == true);
       for (var element in temp) {
         addressesId.add(element.adressId);
       }
@@ -67,6 +77,8 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String _selectedItem = defaultAddress.nickname;
+    String _selectedDate = "";
     List<Products> cart = Provider.of<CartProvider>(context).getCart;
     List<int> quantity = Provider.of<CartProvider>(context).getQuantity;
     List<String> items = addresses.map((e) => e.nickname).toList();
@@ -390,7 +402,16 @@ class _CartScreenState extends State<CartScreen> {
                             SizedBox(height: constraints.maxHeight * .05),
                             Center(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  const Text(
+                                    "Endereço para entrega:",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(0, 0, 0, .81),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(height: constraints.maxHeight * .02),
                                   SizedBox(
                                     width: constraints.maxWidth * .9,
                                     child: DropdownButtonFormField<String>(
@@ -428,6 +449,14 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                   SizedBox(height: constraints.maxHeight * .04),
+                                  const Text(
+                                    "Data e Horário da entrega:",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(0, 0, 0, .81),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(height: constraints.maxHeight * .02),
                                   SizedBox(
                                     width: constraints.maxWidth * .9,
                                     child: DropdownButtonFormField<String>(
@@ -448,10 +477,11 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       hint: const Text(
-                                          "Escolha o horário para entrega"),
+                                        "Escolha o horário para entrega",
+                                      ),
                                       onChanged: (value) {
                                         setState(() {
-                                          _selectedItem = value.toString();
+                                          _selectedDate = value.toString();
                                         });
                                       },
                                       items: items

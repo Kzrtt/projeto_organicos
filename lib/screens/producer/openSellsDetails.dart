@@ -67,7 +67,7 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
                     ),
                   ),
                   SizedBox(height: constraints.maxHeight * .02),
-                  SellBoxClientEdition(constraints: constraints),
+                  //SellBoxClientEdition(constraints: constraints),
                   SizedBox(height: constraints.maxHeight * .05),
                   SizedBox(
                     width: constraints.maxWidth * .9,

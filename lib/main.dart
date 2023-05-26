@@ -4,6 +4,7 @@ import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/paymentScreen.dart';
 import 'package:projeto_organicos/screens/client/productScreen.dart';
+import 'package:projeto_organicos/screens/client/sellDetails.dart';
 import 'package:projeto_organicos/screens/client/signUpScreen.dart';
 import 'package:projeto_organicos/screens/producer/cooperativeAddFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
@@ -56,6 +57,7 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.ADDFEEDBACK: (ctx) => const AddFeedbackScreen(),
           AppRoutes.PRODUCTSCREEN: (ctx) => const ProductScreen(),
           AppRoutes.PAYMENTSCREEN: (ctx) => const PaymentScreen(),
+          AppRoutes.SELLDETAILS: (ctx) => const SellDetails(),
           //Producer app routes
           ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
           ProducerAppRoutes.OPENSELLDETAILS: (ctx) => const OpenSellsDetails(),
