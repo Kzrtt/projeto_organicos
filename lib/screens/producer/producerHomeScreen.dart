@@ -73,7 +73,7 @@ class _ProducerHomeScreenState extends State<ProducerHomeScreen> {
                       constraints,
                       const Color.fromRGBO(255, 253, 211, 1),
                       "Pedidos Finalizados",
-                      () => null,
+                      () => widget.callbackFunction(11),
                     ),
                     simpleBox(
                       constraints,

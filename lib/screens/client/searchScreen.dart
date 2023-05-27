@@ -28,6 +28,7 @@ class _SearchScreenState extends State<SearchScreen> {
     controller.getAllProducts().then((value) {
       setState(() {
         _produtos = value;
+        _filteredItems = value;
       });
     });
     controller.getAllCategories().then((value) {
@@ -111,11 +112,19 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemCount: _categorias.length,
                 itemBuilder: (context, index) {
                   var item = _categorias[index];
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * .01,
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        AppRoutes.CATEGORYPRODUCTS,
+                        arguments: item,
+                      );
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: constraints.maxWidth * .01,
+                      ),
+                      child: Chip(label: Text(item.categoryName)),
                     ),
-                    child: Chip(label: Text(item.categoryName)),
                   );
                 },
               ),

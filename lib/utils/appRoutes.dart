@@ -7,6 +7,8 @@ class AppRoutes {
   static const PRODUCTSCREEN = "/product-screen";
   static const PAYMENTSCREEN = "/payment-screen";
   static const SELLDETAILS = "/sell-details";
+  static const BOXSCREEN = "/box-screen";
+  static const CATEGORYPRODUCTS = "products-from-category";
 }
 
 class ProducerAppRoutes {

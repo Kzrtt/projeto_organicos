@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/sellBoxClientEdition.dart';
+import 'package:projeto_organicos/components/sellBoxProducerEdition.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
+import 'package:projeto_organicos/controller/cooperativeController.dart';
 
 class OpenSellsDetails extends StatefulWidget {
   const OpenSellsDetails({
@@ -22,6 +24,14 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
 
   @override
   Widget build(BuildContext context) {
+    List<dynamic> sell =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+    String year = sell[0].sellDate.substring(0, 4);
+    String month = sell[0].sellDate.substring(5, 7);
+    String day = sell[0].sellDate.substring(8, 10);
+
+    String formattedDate = '$day-$month-$year';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
@@ -35,17 +45,18 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
         ),
         actions: [
           Row(
-            children: const [
-              Icon(Icons.receipt, color: Color.fromRGBO(108, 168, 129, 0.7)),
-              SizedBox(width: 10),
+            children: [
+              const Icon(Icons.receipt,
+                  color: Color.fromRGBO(108, 168, 129, 0.7)),
+              const SizedBox(width: 10),
               Text(
-                "Pedido N°1",
-                style: TextStyle(
+                "Pedido N°${sell[1] + 1}",
+                style: const TextStyle(
                   color: Color.fromRGBO(18, 18, 18, 0.58),
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
             ],
           )
         ],
@@ -59,15 +70,19 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
               child: Column(
                 children: [
                   SizedBox(height: constraints.maxHeight * .03),
-                  const Text(
-                    "Data do Pedido: 04/05/2023",
-                    style: TextStyle(
+                  Text(
+                    "Data do Pedido: $day/$month/$year",
+                    style: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.58),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: constraints.maxHeight * .02),
-                  //SellBoxClientEdition(constraints: constraints),
+                  SizedBox(height: constraints.maxHeight * .04),
+                  SellBoxProducerEdition(
+                    constraints: constraints,
+                    sell: sell[0],
+                    index: sell[1],
+                  ),
                   SizedBox(height: constraints.maxHeight * .05),
                   SizedBox(
                     width: constraints.maxWidth * .9,
@@ -108,10 +123,21 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        SmallButton(
-                          constraints: constraints,
-                          text: "Salvar",
-                          color: true,
+                        InkWell(
+                          onTap: () {
+                            CooperativeController controller =
+                                CooperativeController();
+                            controller.updateStatus(
+                              sell[0].sellId,
+                              _selectedItem,
+                            );
+                            Navigator.of(context).pop();
+                          },
+                          child: SmallButton(
+                            constraints: constraints,
+                            text: "Salvar",
+                            color: true,
+                          ),
                         ),
                         SizedBox(width: constraints.maxWidth * .2),
                         SmallButton(
@@ -122,7 +148,7 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
                       ],
                     ),
                   ),
-                  SizedBox(height: constraints.maxHeight * .16),
+                  SizedBox(height: constraints.maxHeight * .05),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * .05,

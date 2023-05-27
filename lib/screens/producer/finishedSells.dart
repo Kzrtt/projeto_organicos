@@ -6,14 +6,14 @@ import 'package:projeto_organicos/utils/appRoutes.dart';
 
 import '../../model/sell.dart';
 
-class OpenSells extends StatefulWidget {
-  const OpenSells({Key? key}) : super(key: key);
+class FinishedSells extends StatefulWidget {
+  const FinishedSells({Key? key}) : super(key: key);
 
   @override
-  State<OpenSells> createState() => _OpenSellsState();
+  State<FinishedSells> createState() => _FinishedSellsState();
 }
 
-class _OpenSellsState extends State<OpenSells> {
+class _FinishedSellsState extends State<FinishedSells> {
   List<Sell> _sells = [];
 
   @override
@@ -21,7 +21,7 @@ class _OpenSellsState extends State<OpenSells> {
     // TODO: implement initState
     super.initState();
     CooperativeController controller = CooperativeController();
-    controller.getAllSells().then((value) {
+    controller.getAllFinishedSells().then((value) {
       setState(() {
         _sells = value;
       });
@@ -37,7 +37,7 @@ class _OpenSellsState extends State<OpenSells> {
             NameAndIcon(
               constraints: constraints,
               icon: Icons.star,
-              text: "Pedidos Abertos",
+              text: "Pedidos Finalizados ${_sells.length}",
             ),
             SizedBox(height: constraints.maxHeight * .05),
             SizedBox(

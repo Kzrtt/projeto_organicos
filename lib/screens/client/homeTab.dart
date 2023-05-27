@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
+import 'package:projeto_organicos/screens/client/boxSearchScreen.dart';
 import 'package:projeto_organicos/screens/client/cartScreen.dart';
 import 'package:projeto_organicos/screens/client/feedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/historicScreen.dart';
 import 'package:projeto_organicos/screens/client/homeScreen.dart';
 import 'package:projeto_organicos/screens/client/productScreen.dart';
+import 'package:projeto_organicos/screens/client/productsFromCategory.dart';
 import 'package:projeto_organicos/screens/client/profileScreen.dart';
 import 'package:projeto_organicos/screens/client/searchScreen.dart';
 import 'package:projeto_organicos/screens/client/sellDetails.dart';
@@ -105,6 +107,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
       const FeedbackScreen(),
       const WarningScreen(),
+      const BoxSearchScreen(),
     ];
 
     return Scaffold(

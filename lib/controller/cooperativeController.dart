@@ -7,17 +7,21 @@ import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:projeto_organicos/model/feedback.dart';
+import 'package:projeto_organicos/model/sell.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/producers.dart';
+import '../model/products.dart';
 
 class CooperativeController with ChangeNotifier {
   final String _baseUrl = "http://localhost:27017/auth";
   final String _cooperativeUrl = "http://localhost:27017/cooperative";
   final String _producerUrl = "http://localhost:27017/producer";
+  final String _sellUrl = "http://localhost:27017/sell";
   List<Producers> _producers = [];
   List<ClientFeedback> _feedbackList = [];
+  List<Sell> _sells = [];
   ProducerController producerController = ProducerController();
 
   CooperativeAdress adress = CooperativeAdress(
@@ -43,6 +47,135 @@ class CooperativeController with ChangeNotifier {
       complement: "",
     ),
   );
+
+  void updateStatus(String sellId, String status) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      String? id = prefs.getString('cooperativeId');
+      var response = await Dio().put(
+        "$_sellUrl/status/$sellId",
+        data: {
+          "status": status,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
+  Future<List<Sell>> getAllFinishedSells() async {
+    try {
+      List<Sell> vendas = await getAllSells();
+      for (var i = 0; i < vendas.length; i++) {
+        if (vendas[i].status == "Entregue") {
+          _sells.add(vendas[i]);
+        }
+      }
+      print(_sells.length);
+      return _sells;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _sells;
+    }
+  }
+
+  Future<List<Sell>> getAllSells() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      String? id = prefs.getString('cooperativeId');
+      var response = await Dio().get(
+        _sellUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('sells')) {
+        try {
+          Map<String, dynamic> endereco = {};
+          List<Map<String, dynamic>> produtos = [];
+          for (var element in response.data['sells']) {
+            endereco = {
+              "complement": element['userAddress']['complement'],
+              "street": element['userAddress']['street'],
+              "city": element['userAddress']['city'],
+              "state": element['userAddress']['state'],
+              "zipcode": element['userAddress']['zipcode'],
+            };
+
+            for (var element3 in element['products']) {
+              List<String> categories = [];
+              for (var e in element3['productId']['categories']) {
+                categories.add(e['categoryName']);
+              }
+              Products product = Products(
+                productId: element3['productId']['_id'],
+                productName: element3['productId']['productName'],
+                category: categories,
+                productPhoto: element3['productId']['productPhoto'],
+                productPrice: element3['productId']['productPrice'],
+                stockQuantity: element3['productId']['stockQuantity'],
+                unitValue: element3['productId']['unitValue'],
+                productDetails: element3['productId']['productDetails'],
+                cooperativeId: element3['productId']['cooperativeId'],
+                producerId: element3['productId']['producerId'],
+                measuremntUnit: element3['productId']['measurementUnit']
+                    ['measurementUnit'],
+              );
+              if (product.cooperativeId == id) {
+                produtos.add(
+                  {
+                    "produto": product,
+                    "quantidade": element3['quantity'],
+                  },
+                );
+              }
+            }
+            if (produtos.isNotEmpty) {
+              Sell sell = Sell(
+                address: endereco,
+                products: produtos,
+                sellId: element['_id'],
+                status: element['status'],
+                sellDate: element['sellDate'],
+              );
+              _sells.add(sell);
+            }
+
+            produtos = [];
+          }
+        } catch (e, stackTrace) {
+          print("erro: $e, stackTrace: $stackTrace");
+        }
+      }
+      return _sells;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      return _sells;
+    }
+  }
 
   Future<List<ClientFeedback>> getAllFeedbacks(String id) async {
     try {

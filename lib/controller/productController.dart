@@ -54,7 +54,7 @@ class ProductController {
           for (var element2 in element['products']) {
             List<String> categorias = [];
             for (var element3 in element2['product']['categories']) {
-              categorias.add(element3);
+              categorias.add(element3['categoryName']);
             }
 
             Products product = Products(
@@ -68,12 +68,14 @@ class ProductController {
               productDetails: element2['product']['productDetails'],
               cooperativeId: element2['product']['cooperativeId'],
               producerId: element2['product']['producerId'],
-              measuremntUnit: element2['product']['measurementUnit'],
+              measuremntUnit: element2['product']['measurementUnit']
+                  ['measurementUnit'],
             );
             ProductInBox productInBox = ProductInBox(
               product: product,
               quantity: element2['quantity'],
-              measurementUnity: element2['product']['measurementUnit'],
+              measurementUnity: element2['product']['measurementUnit']
+                  ['measurementUnit'],
             );
             products.add(productInBox);
           }

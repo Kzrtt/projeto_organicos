@@ -4,6 +4,7 @@ import 'package:projeto_organicos/components/whiteRoundedCornersBox.dart';
 import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/category.dart';
+import 'package:projeto_organicos/utils/appRoutes.dart';
 
 import '../../model/user.dart';
 
@@ -119,8 +120,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CommonButton(
-                            constraints: constraints, text: "Explorar"),
+                        InkWell(
+                          onTap: () => widget.callbackFunction(10),
+                          child: CommonButton(
+                            constraints: constraints,
+                            text: "Explorar",
+                          ),
+                        ),
                         SizedBox(height: constraints.maxHeight * .04),
                         Padding(
                           padding:
@@ -142,22 +148,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: categorias.length,
                             itemBuilder: (context, index) {
                               var item = categorias[index];
-                              return Padding(
-                                padding:
-                                    EdgeInsets.all(constraints.maxHeight * .02),
-                                child: Container(
-                                  height: constraints.maxHeight * .14,
-                                  width: constraints.maxWidth * .28,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                    AppRoutes.CATEGORYPRODUCTS,
+                                    arguments: item,
+                                  );
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                      constraints.maxHeight * .02),
+                                  child: Container(
+                                    height: constraints.maxHeight * .14,
+                                    width: constraints.maxWidth * .28,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5),
+                                      ),
+                                      color:
+                                          Color.fromRGBO(112, 250, 151, 0.33),
                                     ),
-                                    color: Color.fromRGBO(112, 250, 151, 0.33),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      item.categoryName,
-                                      textAlign: TextAlign.center,
+                                    child: Center(
+                                      child: Text(
+                                        item.categoryName,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                   ),
                                 ),
