@@ -48,6 +48,31 @@ class CooperativeController with ChangeNotifier {
     ),
   );
 
+  void deleteAccount() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      String? id = prefs.getString('cooperativeId');
+      var response = await Dio().put(
+        "$_cooperativeUrl/$id",
+        data: {
+          "active": false,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   void updateStatus(String sellId, String status) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,28 +95,6 @@ class CooperativeController with ChangeNotifier {
       } else {
         print('Erro inesperado: $e');
       }
-    }
-  }
-
-  Future<List<Sell>> getAllFinishedSells() async {
-    try {
-      List<Sell> vendas = await getAllSells();
-      for (var i = 0; i < vendas.length; i++) {
-        if (vendas[i].status == "Entregue") {
-          _sells.add(vendas[i]);
-        }
-      }
-      print(_sells.length);
-      return _sells;
-    } catch (e) {
-      if (e is DioError) {
-        print('Erro de requisição:');
-        print('Status code: ${e.response?.statusCode}');
-        print('Mensagem: ${e.response?.data}');
-      } else {
-        print('Erro inesperado: $e');
-      }
-      return _sells;
     }
   }
 

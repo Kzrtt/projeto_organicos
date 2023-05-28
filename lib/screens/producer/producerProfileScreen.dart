@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,10 +102,61 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                                             constraints: constraints,
                                             text: "Política de Privacidade",
                                           ),
-                                          SettingsText(
-                                            constraints: constraints,
-                                            text: "Desativar Conta",
-                                            isDesativarConta: true,
+                                          InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                        'Deseja mesmo deletar sua conta?'),
+                                                    content: Text(
+                                                        'Para reativar a conta, você deverá contatar nossa equipe e aguardar até 30 dias.'),
+                                                    actions: [
+                                                      TextButton(
+                                                        child: Text('Cancelar'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                          primary: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        child:
+                                                            Text('Confirmar'),
+                                                        onPressed: () {
+                                                          // Lógica para confirmar a exclusão da conta
+                                                          CooperativeController
+                                                              controller =
+                                                              CooperativeController();
+                                                          controller
+                                                              .deleteAccount();
+                                                          Navigator.of(context)
+                                                              .pushReplacementNamed(
+                                                                  AppRoutes
+                                                                      .OPENINGSCREEN);
+
+                                                          // TODO: Implemente a lógica de exclusão da conta aqui
+                                                        },
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                          primary: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: SettingsText(
+                                              constraints: constraints,
+                                              text: "Desativar Conta",
+                                              isDesativarConta: true,
+                                            ),
                                           ),
                                         ],
                                       ),

@@ -39,6 +39,31 @@ class UserController {
     isNutritious: false,
   );
 
+  void deleteAccount() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      var response = await Dio().put(
+        "$_userUrl/$id",
+        data: {
+          "active": false,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   Future<List<Box>> getAllBoxes() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
