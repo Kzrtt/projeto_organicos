@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/screens/producer/addProducerScreen.dart';
 import 'package:projeto_organicos/screens/producer/addProductScreen.dart';
@@ -29,6 +30,7 @@ class ProducerHomeTab extends StatefulWidget {
 class _ProducerHomeTabState extends State<ProducerHomeTab> {
   int _currentIndex = 0;
   final GlobalVariable globalVariable = GlobalVariable();
+  List<String> _urlsFotos = [];
 
   void changePage(int tabIndex) {
     setState(() {
@@ -75,6 +77,18 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ProductController controller = ProductController();
+    controller.loadImages().then((value) {
+      setState(() {
+        _urlsFotos = value;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cooperativeState = Provider.of<CooperativeState>(context);
     Cooperative? cooperative = cooperativeState.getCooperative;
@@ -98,9 +112,26 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
     ];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       bottomNavigationBar: bottomNavigationBar,
       body: _baseProducerScreens[globalVariable.getProducerTabValue],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          String urlPhoto = "";
+          for (String url in _urlsFotos) {
+            // Extrair o ID da URL
+            int inicioId = url.indexOf("%2F") + "%2F".length;
+            int fimId = url.lastIndexOf(".jpg");
+            String idUrl = url.substring(inicioId, fimId);
+            // Comparar com a string de comparação
+            if (idUrl == "6474f12f26fed5ce26a4c8d0") {
+              urlPhoto = url;
+              print("Achou, $urlPhoto");
+            }
+          }
+        },
+      ),
     );
   }
 }

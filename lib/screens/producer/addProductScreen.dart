@@ -1,11 +1,14 @@
 // ignore_for_file: unused_field
 
+import 'dart:io';
 import 'dart:math';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
@@ -100,6 +103,30 @@ class _AddProductScreenState extends State<AddProductScreen>
   final TextEditingController _boxNameController = TextEditingController();
   final TextEditingController _boxDetailsController = TextEditingController();
   final TextEditingController _boxStockQuantity = TextEditingController();
+
+  Future<XFile?> getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    return image;
+  }
+
+  Future<UploadTask> uploadImage(String path, String string) async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    File file = File(path);
+    try {
+      String ref = 'productsPhotos/$string.jpg';
+      return storage.ref(ref).putFile(file);
+    } on FirebaseException catch (e) {
+      throw Exception("erro");
+    }
+  }
+
+  pickAndUploadImage(String string) async {
+    XFile? file = await getImage();
+    if (file != null) {
+      await uploadImage(file.path, string);
+    }
+  }
 
   @override
   void initState() {
@@ -424,40 +451,37 @@ class _AddProductScreenState extends State<AddProductScreen>
                           }
                         } else if (_step == 2 && _selectedUnit != "") {
                           if (_secondFormKey.currentState!.validate()) {
-                            setState(() {
-                              _step = _step + 1;
-                            });
-                          }
-                        } else if (_step == 3) {
-                          List<String> listaDeId = [];
-                          for (var i = 0; i < _categoryList.length; i++) {
-                            if (_categoryBoolList[i]) {
-                              listaDeId.add(_categorias[i].categoryId);
+                            List<String> listaDeId = [];
+                            for (var i = 0; i < _categoryList.length; i++) {
+                              if (_categoryBoolList[i]) {
+                                listaDeId.add(_categorias[i].categoryId);
+                              }
                             }
+                            int index =
+                                _producerList.indexOf(_selectedProducer);
+                            int index2 = _unitList.indexOf(_selectedUnit);
+                            ProductController controller = ProductController();
+                            Products product = Products(
+                              productId: "",
+                              productName: _nameController.text,
+                              category: listaDeId,
+                              productPhoto: "",
+                              productPrice: double.parse(_priceController.text),
+                              stockQuantity:
+                                  double.parse(_stockQuantityController.text),
+                              unitValue: int.parse(_unitValueController.text),
+                              productDetails: _detailsController.text,
+                              cooperativeId: "",
+                              producerId: _p[index].producerId,
+                              measuremntUnit: _measurementList[index2].id,
+                            );
+                            controller.createProduct(product);
+                            widget.callbackFunction(2);
                           }
-                          int index = _producerList.indexOf(_selectedProducer);
-                          int index2 = _unitList.indexOf(_selectedUnit);
-                          ProductController controller = ProductController();
-                          Products product = Products(
-                            productId: "",
-                            productName: _nameController.text,
-                            category: listaDeId,
-                            productPhoto: "",
-                            productPrice: double.parse(_priceController.text),
-                            stockQuantity:
-                                double.parse(_stockQuantityController.text),
-                            unitValue: int.parse(_unitValueController.text),
-                            productDetails: _detailsController.text,
-                            cooperativeId: "",
-                            producerId: _p[index].producerId,
-                            measuremntUnit: _measurementList[index2].id,
-                          );
-                          controller.createProduct(product);
-                          widget.callbackFunction(2);
                         }
                       },
                       child: Text(
-                        _step <= 2 ? "Continuar" : "Finalizar",
+                        _step <= 1 ? "Continuar" : "Finalizar",
                       ),
                     ),
                   ),
@@ -679,43 +703,6 @@ class _AddProductScreenState extends State<AddProductScreen>
             ),
           ),
         ),
-        Step(
-          isActive: _step == 3,
-          state: _step > 3 ? StepState.complete : StepState.indexed,
-          title: const Text("Foto do Produto"),
-          content: Column(
-            children: [
-              SizedBox(height: constraints.maxHeight * .03),
-              Row(
-                children: [
-                  Container(
-                    height: constraints.maxHeight * .2,
-                    width: constraints.maxWidth * .3,
-                    color: Colors.grey,
-                    child: const Icon(Icons.camera_alt_rounded),
-                  ),
-                  SizedBox(width: constraints.maxWidth * .05),
-                  InkWell(
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        const Icon(Icons.camera_alt_outlined),
-                        SizedBox(width: constraints.maxWidth * .01),
-                        const Text(
-                          "Escolher Foto",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: constraints.maxHeight * .03)
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -726,7 +713,7 @@ class _AddProductScreenState extends State<AddProductScreen>
       builder: (context, constraints) {
         return SingleChildScrollView(
           child: SizedBox(
-            height: constraints.maxHeight * 1.3,
+            height: constraints.maxHeight * 1.4,
             child: Column(
               children: [
                 NameAndIcon(

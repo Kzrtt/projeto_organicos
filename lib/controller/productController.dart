@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/model/productInBox.dart';
@@ -7,11 +11,61 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/products.dart';
 
 class ProductController {
-  String _productUrl = "http://localhost:27017/product";
-  String _categoryUrl = "http://localhost:27017/category";
+  String _productUrl = "http://192.168.1.159:27017/product";
+  String _categoryUrl = "http://192.168.1.159:27017/category";
   List<Category> _categoryList = [];
   List<Products> _productList = [];
   List<Box> _boxList = [];
+  List<Reference> refs = [];
+  List<String> arquivos = [];
+
+  Future<String> getPhotoUrl(String id) async {
+    List<String> _urlsFotos = await loadImages();
+    for (String url in _urlsFotos) {
+      // Extrair o ID da URL
+      int inicioId = url.indexOf("%2F") + "%2F".length;
+      int fimId = url.lastIndexOf(".jpg");
+      String idUrl = url.substring(inicioId, fimId);
+      // Comparar com a string de comparação
+      if (idUrl == id) {
+        return url;
+      }
+    }
+    return "";
+  }
+
+  Future<XFile?> getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    return image;
+  }
+
+  Future<UploadTask> uploadImage(String path, String string) async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    File file = File(path);
+    try {
+      String ref = 'productsPhotos/$string.jpg';
+      return storage.ref(ref).putFile(file);
+    } on FirebaseException catch (e) {
+      throw Exception("erro");
+    }
+  }
+
+  pickAndUploadImage(String string) async {
+    XFile? file = await getImage();
+    if (file != null) {
+      await uploadImage(file.path, string);
+    }
+  }
+
+  Future<List<String>> loadImages() async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    refs = (await storage.ref('productsPhotos').listAll()).items;
+    for (var element in refs) {
+      arquivos.add(await element.getDownloadURL());
+    }
+    return arquivos;
+  }
 
   void deleteBox(String id, String boxName) async {
     try {
@@ -310,6 +364,40 @@ class ProductController {
       );
       if (!response.data.containsKey('product')) {
         print("erro");
+      } else {
+        await pickAndUploadImage(response.data['product']['_id']);
+        Future.delayed(Duration(seconds: 5));
+        List<String> fotos = await loadImages();
+        String urlPhoto = "";
+        if (fotos.isNotEmpty) {
+          for (String url in fotos) {
+            // Extrair o ID da URL
+            int inicioId = url.indexOf("%2F") + "%2F".length;
+            int fimId = url.lastIndexOf(".jpg");
+            String idUrl = url.substring(inicioId, fimId);
+            print(idUrl);
+            print(fotos.length);
+            // Comparar com a string de comparação
+            if (idUrl == response.data['product']['_id']) {
+              print(idUrl);
+              urlPhoto = url;
+              print("Achou");
+              break;
+            }
+          }
+          var response2 = await Dio().put(
+            "$_productUrl/${response.data['product']['_id']}",
+            data: {
+              "productPhoto": urlPhoto,
+            },
+            options: Options(
+              headers: {'Authorization': 'Bearer $token'},
+            ),
+          );
+          if (!response2.data.containsKey('product')) {
+            print('erro');
+          }
+        }
       }
     } catch (e) {
       if (e is DioError) {

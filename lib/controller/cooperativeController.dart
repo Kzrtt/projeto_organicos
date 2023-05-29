@@ -15,10 +15,10 @@ import '../model/producers.dart';
 import '../model/products.dart';
 
 class CooperativeController with ChangeNotifier {
-  final String _baseUrl = "http://localhost:27017/auth";
-  final String _cooperativeUrl = "http://localhost:27017/cooperative";
-  final String _producerUrl = "http://localhost:27017/producer";
-  final String _sellUrl = "http://localhost:27017/sell";
+  final String _baseUrl = "http://192.168.1.159:27017/auth";
+  final String _cooperativeUrl = "http://192.168.1.159:27017/cooperative";
+  final String _producerUrl = "http://192.168.1.159:27017/producer";
+  final String _sellUrl = "http://192.168.1.159:27017/sell";
   List<Producers> _producers = [];
   List<ClientFeedback> _feedbackList = [];
   List<Sell> _sells = [];

@@ -16,11 +16,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class UserController {
-  final String _baseUrl = "http://10.0.2.2:27017/auth";
-  final String _userUrl = "http://localhost:27017/user";
-  final String _categoryUrl = "http://localhost:27017/category";
-  final String _productsUrl = "http://localhost:27017/product";
-  final String _sellUrl = "http://localhost:27017/sell";
+  final String _baseUrl = "http://192.168.1.159:27017/auth";
+  final String _userUrl = "http://192.168.1.159:27017/user";
+  final String _categoryUrl = "http://192.168.1.159:27017/category";
+  final String _productsUrl = "http://192.168.1.159:27017/product";
+  final String _sellUrl = "http://192.168.1.159:27017/sell";
   List<Adress> _adressList = [];
   List<ClientFeedback> _feedbackList = [];
   List<Category> _categoryList = [];
@@ -737,6 +737,7 @@ class UserController {
         await _prefs.setString("cooperativeId", cooperativeId);
         return "telaCooperativa";
       }
+      print(response.data);
       return "erro";
     } catch (e) {
       if (e is DioError) {

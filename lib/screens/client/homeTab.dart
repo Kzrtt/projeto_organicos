@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/boxSearchScreen.dart';
@@ -83,6 +88,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     final userState = Provider.of<UserState>(context);
+    final Future<FirebaseApp> _initialize = Firebase.initializeApp();
     User? user = userState.getUser;
 
     late final List<Widget> _baseScreens = [

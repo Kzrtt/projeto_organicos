@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
 
 class ProducerController {
-  String _producerUrl = "http://localhost:27017/producer";
+  String _producerUrl = "http://192.168.1.159:27017/producer";
   List<CooperativeWithoutAdress> cooperativas = [];
 
   Future<List<CooperativeWithoutAdress>> getAllCooperativesFromProducer(

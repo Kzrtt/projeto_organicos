@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/addAdressScreen.dart';
 import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
@@ -24,6 +25,8 @@ import 'package:provider/provider.dart';
 import 'screens/client/openingScreen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

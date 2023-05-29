@@ -36,13 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
         categorias = value;
       });
     });
-    /*
+
     controller.getAllBoxes().then((value) {
       setState(() {
         boxes = value;
       });
     });
-    */
   }
 
   @override

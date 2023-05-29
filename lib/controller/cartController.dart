@@ -7,8 +7,8 @@ import 'package:projeto_organicos/controller/userController.dart';
 import '../model/user.dart';
 
 class CartController {
-  final String _userUrl = "http://localhost:27017/user";
-  final String _sellUrl = "http://localhost:27017/sell";
+  final String _userUrl = "http://192.168.1.159:27017/user";
+  final String _sellUrl = "http://192.168.1.159:27017/sell";
 
   List<Map<String, dynamic>> cart = [];
   List<Map<String, dynamic>> cartProductsInfo = [];

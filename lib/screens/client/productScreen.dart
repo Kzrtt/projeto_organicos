@@ -5,6 +5,7 @@ import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
 import 'package:projeto_organicos/controller/cartController.dart';
+import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:provider/provider.dart';

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projeto_organicos/model/measurementUnit.dart';
 
 class MeasuremntUnitController {
-  String _baseUrl = "http://localhost:27017/measurementUnit";
+  String _baseUrl = "http://192.168.1.159:27017/measurementUnit";
   List<Measurement> _list = [];
 
   Future<List<Measurement>> getAllMeasuremntUnits() async {

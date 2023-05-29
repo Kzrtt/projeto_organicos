@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
+import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
@@ -17,6 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Category> _categorias = [];
   List<Products> _produtos = [];
   List<Products> _filteredItems = [];
+  List<String> _urlsFotos = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -25,6 +27,12 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     _searchController.addListener(_filterItems);
     UserController controller = UserController();
+    ProductController pcontroller = ProductController();
+    pcontroller.loadImages().then((value) {
+      setState(() {
+        _urlsFotos = value;
+      });
+    });
     controller.getAllProducts().then((value) {
       setState(() {
         _produtos = value;
@@ -137,6 +145,19 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
                 var item = _filteredItems[index];
+                String urlPhoto = "";
+                for (String url in _urlsFotos) {
+                  // Extrair o ID da URL
+                  int inicioId = url.indexOf("%2F") + "%2F".length;
+                  int fimId = url.lastIndexOf(".jpg");
+                  String idUrl = url.substring(inicioId, fimId);
+                  // Comparar com a string de comparação
+                  if (idUrl == item.productId) {
+                    urlPhoto = url;
+                    print("Achou, $urlPhoto");
+                  }
+                }
+
                 return InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(
@@ -174,6 +195,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                   color: Colors.grey,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
+                                child: urlPhoto.isNotEmpty
+                                    ? Image.network(
+                                        urlPhoto,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Center(),
                               ),
                             ),
                           ),
