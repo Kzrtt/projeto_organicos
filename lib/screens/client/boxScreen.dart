@@ -17,6 +17,8 @@ class _BoxScreenState extends State<BoxScreen> {
   @override
   Widget build(BuildContext context) {
     Box box = ModalRoute.of(context)?.settings.arguments as Box;
+    List<num> quantidades = List.generate(
+        box.produtos.length, (index) => box.produtos[index].quantity);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -154,15 +156,32 @@ class _BoxScreenState extends State<BoxScreen> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  if (quantidades[index] > 1) {
+                                                    setState(() {
+                                                      quantidades[index] -= item
+                                                          .product.unitValue;
+                                                    });
+                                                    print(quantidades[index]);
+                                                  }
+                                                },
                                                 icon: const Icon(Icons.remove),
                                               ),
                                               Text(
-                                                "${item.quantity}${item.product.measuremntUnit}",
+                                                "${quantidades[index]}${item.product.measuremntUnit}",
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  if (quantidades[index] <
+                                                      item.quantity) {
+                                                    setState(() {
+                                                      quantidades[index] += item
+                                                          .product.unitValue;
+                                                    });
+                                                    print(quantidades[index]);
+                                                  }
+                                                },
                                                 icon: const Icon(Icons.add),
                                               ),
                                             ],

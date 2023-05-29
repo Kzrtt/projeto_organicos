@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class UserController {
-  final String _baseUrl = "http://localhost:27017/auth";
+  final String _baseUrl = "http://10.0.2.2:27017/auth";
   final String _userUrl = "http://localhost:27017/user";
   final String _categoryUrl = "http://localhost:27017/category";
   final String _productsUrl = "http://localhost:27017/product";

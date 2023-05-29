@@ -23,7 +23,9 @@ import 'package:provider/provider.dart';
 
 import 'screens/client/openingScreen.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -44,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Radix',
+        title: 'Projeto Orgânicos',
         theme: ThemeData(
           visualDensity: VisualDensity.comfortable,
           primaryColor: const Color.fromRGBO(83, 242, 166, 0.69),

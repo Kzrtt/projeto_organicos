@@ -6,6 +6,7 @@ import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 
+import '../../model/box.dart';
 import '../../model/user.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Category> categorias = [];
+  List<Box> boxes = [];
 
   @override
   void initState() {
@@ -34,6 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
         categorias = value;
       });
     });
+    /*
+    controller.getAllBoxes().then((value) {
+      setState(() {
+        boxes = value;
+      });
+    });
+    */
   }
 
   @override
@@ -101,19 +110,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Expanded(
                     flex: 5,
-                    child: GridView.count(
-                      primary: false,
-                      padding: EdgeInsets.all(constraints.maxWidth * .1),
-                      crossAxisSpacing: 30,
-                      mainAxisSpacing: 30,
-                      crossAxisCount: 2,
-                      children: const [
-                        WhiteRoundedCornersBox(text: "Personalizada"),
-                        WhiteRoundedCornersBox(text: "Inverno"),
-                        WhiteRoundedCornersBox(text: "Verão"),
-                        WhiteRoundedCornersBox(text: "Queijos"),
-                      ],
-                    ),
+                    child: boxes.isNotEmpty
+                        ? GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1.0,
+                            ),
+                            itemCount: boxes.length,
+                            itemBuilder: (context, index) {
+                              var item = boxes[index];
+                              return Padding(
+                                padding:
+                                    EdgeInsets.all(constraints.maxHeight * .01),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      AppRoutes.BOXSCREEN,
+                                      arguments: item,
+                                    );
+                                  },
+                                  child: WhiteRoundedCornersBox(
+                                      text: item.boxName),
+                                ),
+                              );
+                            },
+                            primary: false,
+                            padding: EdgeInsets.all(constraints.maxWidth * .1),
+                          )
+                        : Center(
+                            child: Text("Nenhuma Box disponivel no momento"),
+                          ),
                   ),
                   Expanded(
                     flex: 5,
