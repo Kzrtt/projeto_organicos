@@ -103,28 +103,37 @@ class _AddProductScreenState extends State<AddProductScreen>
   final TextEditingController _boxNameController = TextEditingController();
   final TextEditingController _boxDetailsController = TextEditingController();
   final TextEditingController _boxStockQuantity = TextEditingController();
+  final FirebaseStorage storage = FirebaseStorage.instance;
+  XFile? _storagedImage;
+  XFile? _storagedImageBox;
 
-  Future<XFile?> getImage() async {
+  Future<XFile?> getImage(String wich) async {
     final ImagePicker _picker = ImagePicker();
     XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (wich == "product") {
+      setState(() {
+        _storagedImage = image;
+      });
+    } else if (wich == "box") {
+      setState(() {
+        _storagedImageBox = image;
+      });
+    }
     return image;
   }
 
-  Future<UploadTask> uploadImage(String path, String string) async {
-    final FirebaseStorage storage = FirebaseStorage.instance;
+  Future<String> uploadImage(
+      String path, String string, String fotoPath) async {
     File file = File(path);
     try {
-      String ref = 'productsPhotos/$string.jpg';
-      return storage.ref(ref).putFile(file);
-    } on FirebaseException catch (e) {
-      throw Exception("erro");
-    }
-  }
+      String ref = '$fotoPath/$string.jpg';
+      UploadTask uploadTask = storage.ref(ref).putFile(file);
 
-  pickAndUploadImage(String string) async {
-    XFile? file = await getImage();
-    if (file != null) {
-      await uploadImage(file.path, string);
+      TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      throw Exception("erro: ${e.code}");
     }
   }
 
@@ -198,7 +207,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                           const Color.fromRGBO(83, 242, 166, 0.69),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_stepBox == 0) {
                           if (basicInfoBoxKey.currentState!.validate()) {
                             setState(() {
@@ -222,7 +231,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                               },
                             );
                           }
-                        } else if (_stepBox == 2) {
+                        } else if (_stepBox == 2 && _storagedImageBox != null) {
                           ProductController controller = ProductController();
                           print('criou controller');
 
@@ -233,13 +242,19 @@ class _AddProductScreenState extends State<AddProductScreen>
                                     _produtosNaBox[i].product.productPrice;
                           }
 
+                          String photoUrl = await uploadImage(
+                            _storagedImageBox!.path,
+                            _boxNameController.text.trim(),
+                            "boxPhotos",
+                          );
+
                           print(total);
 
                           Box box = Box(
                             id: "",
                             boxDetails: _boxDetailsController.text,
                             boxName: _boxNameController.text,
-                            boxPhoto: "",
+                            boxPhoto: photoUrl,
                             boxPrice: total,
                             boxQuantity: int.parse(_boxStockQuantity.text),
                             produtos: _produtosNaBox,
@@ -385,11 +400,16 @@ class _AddProductScreenState extends State<AddProductScreen>
                     height: constraints.maxHeight * .2,
                     width: constraints.maxWidth * .3,
                     color: Colors.grey,
-                    child: const Icon(Icons.camera_alt_rounded),
+                    child: _storagedImageBox != null
+                        ? Image.file(
+                            File(_storagedImageBox!.path),
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.camera_alt_rounded),
                   ),
                   SizedBox(width: constraints.maxWidth * .05),
                   InkWell(
-                    onTap: () {},
+                    onTap: () => getImage("box"),
                     child: Row(
                       children: [
                         const Icon(Icons.camera_alt_outlined),
@@ -435,7 +455,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                           const Color.fromRGBO(83, 242, 166, 0.69),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_step == 0) {
                           if (_firstFormKey.currentState!.validate()) {
                             setState(() {
@@ -451,37 +471,45 @@ class _AddProductScreenState extends State<AddProductScreen>
                           }
                         } else if (_step == 2 && _selectedUnit != "") {
                           if (_secondFormKey.currentState!.validate()) {
-                            List<String> listaDeId = [];
-                            for (var i = 0; i < _categoryList.length; i++) {
-                              if (_categoryBoolList[i]) {
-                                listaDeId.add(_categorias[i].categoryId);
-                              }
-                            }
-                            int index =
-                                _producerList.indexOf(_selectedProducer);
-                            int index2 = _unitList.indexOf(_selectedUnit);
-                            ProductController controller = ProductController();
-                            Products product = Products(
-                              productId: "",
-                              productName: _nameController.text,
-                              category: listaDeId,
-                              productPhoto: "",
-                              productPrice: double.parse(_priceController.text),
-                              stockQuantity:
-                                  double.parse(_stockQuantityController.text),
-                              unitValue: int.parse(_unitValueController.text),
-                              productDetails: _detailsController.text,
-                              cooperativeId: "",
-                              producerId: _p[index].producerId,
-                              measuremntUnit: _measurementList[index2].id,
-                            );
-                            controller.createProduct(product);
-                            widget.callbackFunction(2);
+                            setState(() {
+                              _step = _step + 1;
+                            });
                           }
+                        } else if (_step == 3 && _storagedImage != null) {
+                          List<String> listaDeId = [];
+                          for (var i = 0; i < _categoryList.length; i++) {
+                            if (_categoryBoolList[i]) {
+                              listaDeId.add(_categorias[i].categoryId);
+                            }
+                          }
+                          int index = _producerList.indexOf(_selectedProducer);
+                          int index2 = _unitList.indexOf(_selectedUnit);
+                          String photoUrl = await uploadImage(
+                            _storagedImage!.path,
+                            "${_nameController.text.trim()}${_p[index].producerId}",
+                            "productsPhotos",
+                          );
+                          ProductController controller = ProductController();
+                          Products product = Products(
+                            productId: "",
+                            productName: _nameController.text,
+                            category: listaDeId,
+                            productPhoto: photoUrl,
+                            productPrice: double.parse(_priceController.text),
+                            stockQuantity:
+                                double.parse(_stockQuantityController.text),
+                            unitValue: int.parse(_unitValueController.text),
+                            productDetails: _detailsController.text,
+                            cooperativeId: "",
+                            producerId: _p[index].producerId,
+                            measuremntUnit: _measurementList[index2].id,
+                          );
+                          controller.createProduct(product);
+                          widget.callbackFunction(2);
                         }
                       },
                       child: Text(
-                        _step <= 1 ? "Continuar" : "Finalizar",
+                        _step <= 2 ? "Continuar" : "Finalizar",
                       ),
                     ),
                   ),
@@ -701,6 +729,46 @@ class _AddProductScreenState extends State<AddProductScreen>
                 SizedBox(height: constraints.maxHeight * .03),
               ],
             ),
+          ),
+        ),
+        Step(
+          title: const Text("Foto"),
+          content: Column(
+            children: [
+              SizedBox(height: constraints.maxHeight * .03),
+              Row(
+                children: [
+                  Container(
+                    height: constraints.maxHeight * .2,
+                    width: constraints.maxWidth * .3,
+                    color: Colors.grey,
+                    child: _storagedImage != null
+                        ? Image.file(
+                            File(_storagedImage!.path),
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.camera_alt_rounded),
+                  ),
+                  SizedBox(width: constraints.maxWidth * .05),
+                  InkWell(
+                    onTap: () => getImage("product"),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.camera_alt_outlined),
+                        SizedBox(width: constraints.maxWidth * .01),
+                        const Text(
+                          "Escolher Foto",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: constraints.maxHeight * .03)
+            ],
           ),
         ),
       ],

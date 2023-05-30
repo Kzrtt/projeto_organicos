@@ -116,22 +116,6 @@ class _ProducerHomeTabState extends State<ProducerHomeTab> {
       backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
       bottomNavigationBar: bottomNavigationBar,
       body: _baseProducerScreens[globalVariable.getProducerTabValue],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          String urlPhoto = "";
-          for (String url in _urlsFotos) {
-            // Extrair o ID da URL
-            int inicioId = url.indexOf("%2F") + "%2F".length;
-            int fimId = url.lastIndexOf(".jpg");
-            String idUrl = url.substring(inicioId, fimId);
-            // Comparar com a string de comparação
-            if (idUrl == "6474f12f26fed5ce26a4c8d0") {
-              urlPhoto = url;
-              print("Achou, $urlPhoto");
-            }
-          }
-        },
-      ),
     );
   }
 }

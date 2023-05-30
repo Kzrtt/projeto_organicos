@@ -184,7 +184,7 @@ class ProductController {
           "boxName": box.boxName,
           "boxDetails": box.boxDetails,
           "boxPrice": box.boxPrice,
-          "boxPhoto": "",
+          "boxPhoto": box.boxPhoto,
           "stockQuantity": box.boxQuantity,
           "products": productsList,
         },
@@ -364,40 +364,6 @@ class ProductController {
       );
       if (!response.data.containsKey('product')) {
         print("erro");
-      } else {
-        await pickAndUploadImage(response.data['product']['_id']);
-        Future.delayed(Duration(seconds: 5));
-        List<String> fotos = await loadImages();
-        String urlPhoto = "";
-        if (fotos.isNotEmpty) {
-          for (String url in fotos) {
-            // Extrair o ID da URL
-            int inicioId = url.indexOf("%2F") + "%2F".length;
-            int fimId = url.lastIndexOf(".jpg");
-            String idUrl = url.substring(inicioId, fimId);
-            print(idUrl);
-            print(fotos.length);
-            // Comparar com a string de comparação
-            if (idUrl == response.data['product']['_id']) {
-              print(idUrl);
-              urlPhoto = url;
-              print("Achou");
-              break;
-            }
-          }
-          var response2 = await Dio().put(
-            "$_productUrl/${response.data['product']['_id']}",
-            data: {
-              "productPhoto": urlPhoto,
-            },
-            options: Options(
-              headers: {'Authorization': 'Bearer $token'},
-            ),
-          );
-          if (!response2.data.containsKey('product')) {
-            print('erro');
-          }
-        }
       }
     } catch (e) {
       if (e is DioError) {

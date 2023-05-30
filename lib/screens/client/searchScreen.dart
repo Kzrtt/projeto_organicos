@@ -145,18 +145,6 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
                 var item = _filteredItems[index];
-                String urlPhoto = "";
-                for (String url in _urlsFotos) {
-                  // Extrair o ID da URL
-                  int inicioId = url.indexOf("%2F") + "%2F".length;
-                  int fimId = url.lastIndexOf(".jpg");
-                  String idUrl = url.substring(inicioId, fimId);
-                  // Comparar com a string de comparação
-                  if (idUrl == item.productId) {
-                    urlPhoto = url;
-                    print("Achou, $urlPhoto");
-                  }
-                }
 
                 return InkWell(
                   onTap: () {
@@ -195,9 +183,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   color: Colors.grey,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: urlPhoto.isNotEmpty
+                                child: item.productPhoto.isNotEmpty
                                     ? Image.network(
-                                        urlPhoto,
+                                        item.productPhoto,
                                         fit: BoxFit.cover,
                                       )
                                     : Center(),

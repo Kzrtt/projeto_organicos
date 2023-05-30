@@ -73,6 +73,12 @@ class _BoxScreenState extends State<BoxScreen> {
                           color: Colors.grey,
                           borderRadius: BorderRadius.circular(20),
                         ),
+                        child: box.boxPhoto != ""
+                            ? Image.network(
+                                box.boxPhoto,
+                                fit: BoxFit.cover,
+                              )
+                            : Center(),
                       ),
                       SizedBox(height: constraints.maxHeight * .03),
                       Padding(
@@ -211,6 +217,7 @@ class _BoxScreenState extends State<BoxScreen> {
                             scrollDirection: Axis.horizontal,
                             itemCount: box.produtos.length,
                             itemBuilder: (context, index) {
+                              var item = box.produtos[index];
                               return Row(
                                 children: [
                                   SizedBox(width: constraints.maxWidth * .05),
@@ -221,7 +228,12 @@ class _BoxScreenState extends State<BoxScreen> {
                                       borderRadius: BorderRadius.circular(20),
                                       color: Colors.grey,
                                     ),
-                                    child: Center(),
+                                    child: item.product.productPhoto != ""
+                                        ? Image.network(
+                                            item.product.productPhoto,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Center(),
                                   ),
                                 ],
                               );

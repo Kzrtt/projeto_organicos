@@ -168,6 +168,12 @@ class _CartScreenState extends State<CartScreen> {
                                                       const BoxDecoration(
                                                     color: Colors.grey,
                                                   ),
+                                                  child: item.productPhoto != ""
+                                                      ? Image.network(
+                                                          item.productPhoto,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Center(),
                                                 ),
                                               ),
                                             ),
@@ -283,8 +289,7 @@ class _CartScreenState extends State<CartScreen> {
                                                               return AlertDialog(
                                                                 title: const Text(
                                                                     'Deseja Remover o produto do carrinho?'),
-                                                                actions: <
-                                                                    Widget>[
+                                                                actions: <Widget>[
                                                                   TextButton(
                                                                     child:
                                                                         const Text(

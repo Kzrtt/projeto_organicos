@@ -172,6 +172,12 @@ class _ProductsFromCategoryState extends State<ProductsFromCategory> {
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
+                                      child: item.productPhoto != ""
+                                          ? Image.network(
+                                              item.productPhoto,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Center(),
                                     ),
                                   ),
                                 ),

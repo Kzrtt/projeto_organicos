@@ -104,14 +104,18 @@ class _ProductScreenState extends State<ProductScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: constraints.maxHeight * .35,
-                        width: constraints.maxWidth * .7,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.grey,
-                        ),
-                        child: Center(),
-                      ),
+                          height: constraints.maxHeight * .35,
+                          width: constraints.maxWidth * .7,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey,
+                          ),
+                          child: product.productPhoto != ""
+                              ? Image.network(
+                                  product.productPhoto,
+                                  fit: BoxFit.cover,
+                                )
+                              : Center()),
                       SizedBox(height: constraints.maxHeight * .03),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
