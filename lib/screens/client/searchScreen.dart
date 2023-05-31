@@ -28,11 +28,6 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.addListener(_filterItems);
     UserController controller = UserController();
     ProductController pcontroller = ProductController();
-    pcontroller.loadImages().then((value) {
-      setState(() {
-        _urlsFotos = value;
-      });
-    });
     controller.getAllProducts().then((value) {
       setState(() {
         _produtos = value;

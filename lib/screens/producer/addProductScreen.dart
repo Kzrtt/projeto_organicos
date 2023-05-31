@@ -239,7 +239,8 @@ class _AddProductScreenState extends State<AddProductScreen>
                           for (var i = 0; i < _produtosNaBox.length; i++) {
                             total = total +
                                 _produtosNaBox[i].quantity *
-                                    _produtosNaBox[i].product.productPrice;
+                                    _produtosNaBox[i].product.productPrice /
+                                    _produtosNaBox[i].product.unitValue;
                           }
 
                           String photoUrl = await uploadImage(

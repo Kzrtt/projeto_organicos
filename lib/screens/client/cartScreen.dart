@@ -68,6 +68,7 @@ class _CartScreenState extends State<CartScreen> {
       final provider = Provider.of<CartProvider>(context, listen: false);
       List<int> temp = [];
       for (var element in value) {
+        print(element['quantity']);
         temp.add(element['quantity']);
       }
       provider.setQuantity(temp);
@@ -84,7 +85,8 @@ class _CartScreenState extends State<CartScreen> {
     List<String> items = addresses.map((e) => e.nickname).toList();
     num subTotal = 0;
     for (var i = 0; i < cartMongodb.length; i++) {
-      subTotal += cartMongodb[i]['product'].productPrice * quantity[i];
+      subTotal +=
+          cartMongodb[i]['product'].productPrice * cartMongodb[i]['quantity'];
     }
 
     return LayoutBuilder(
@@ -339,6 +341,14 @@ class _CartScreenState extends State<CartScreen> {
                                                                     ),
                                                                     onPressed:
                                                                         () {
+                                                                      CartController
+                                                                          controller =
+                                                                          CartController();
+                                                                      controller
+                                                                          .incrementOrSubtractQuantity(
+                                                                        item,
+                                                                        "+",
+                                                                      );
                                                                       Navigator.of(
                                                                               context)
                                                                           .pop();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/sellBoxClientEdition.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/sell.dart';
 
 class SellDetails extends StatefulWidget {
@@ -34,9 +35,9 @@ class _SellDetailsState extends State<SellDetails> {
             color: Color.fromRGBO(108, 168, 129, 0.7),
           ),
         ),
-        actions: [
+        actions: const [
           Row(
-            children: const [
+            children: [
               Icon(Icons.receipt, color: Color.fromRGBO(108, 168, 129, 0.7)),
               SizedBox(width: 10),
               Text(
@@ -112,6 +113,34 @@ class _SellDetailsState extends State<SellDetails> {
                         child: Center(
                           child: Text(
                             "Cancelar Pedido",
+                            style: TextStyle(
+                              color: const Color.fromRGBO(255, 255, 255, 1),
+                              fontWeight: FontWeight.bold,
+                              fontSize: constraints.maxHeight * .024,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: constraints.maxHeight * .05),
+                  Center(
+                    child: InkWell(
+                      onTap: () {
+                        UserController controller = UserController();
+                        controller.buyAgain(sell[0].sellId);
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: constraints.maxHeight * .06,
+                        width: constraints.maxWidth * .6,
+                        decoration: const BoxDecoration(
+                          color: Color.fromRGBO(113, 227, 154, 1),
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Pedir Novamente",
                             style: TextStyle(
                               color: const Color.fromRGBO(255, 255, 255, 1),
                               fontWeight: FontWeight.bold,

@@ -39,6 +39,52 @@ class UserController {
     isNutritious: false,
   );
 
+  void buyAgain(String sellId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      var response = await Dio().get(
+        "$_sellUrl/$sellId",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('sell')) {
+        try {
+          List<Map<String, dynamic>> cart = [];
+          for (var element in response.data['sell']['products']) {
+            cart.add({
+              "productId": element['productId']['_id'],
+              "quantity": element['quantity'],
+            });
+          }
+          var response2 = await Dio().put(
+            "$_userUrl/$id",
+            data: {
+              "cart": [
+                ...cart,
+              ],
+            },
+            options: Options(
+              headers: {'Authorization': 'Bearer $token'},
+            ),
+          );
+        } catch (e, stackTrace) {
+          print("erro: $e, stackTrace: $stackTrace");
+        }
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   void deleteAccount() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
