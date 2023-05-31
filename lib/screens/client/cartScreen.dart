@@ -376,7 +376,7 @@ class _CartScreenState extends State<CartScreen> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    "${quantia}${item.measuremntUnit}",
+                                                    "${quantia * item.unitValue}${item.measuremntUnit}",
                                                     style:
                                                         TextStyle(fontSize: 16),
                                                   ),

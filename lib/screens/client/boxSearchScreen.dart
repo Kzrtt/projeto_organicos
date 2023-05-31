@@ -189,11 +189,13 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                             height: constraints.maxHeight * .03,
                                           ),
                                           SizedBox(
-                                            height:
-                                                constraints.maxHeight * .115,
+                                            height: constraints.maxHeight * .10,
                                             width: constraints.maxWidth,
                                             child: ListView.builder(
-                                              itemCount: 3,
+                                              itemCount:
+                                                  item.produtos.length < 3
+                                                      ? item.produtos.length
+                                                      : 3,
                                               itemBuilder: (context, index) {
                                                 var products =
                                                     item.produtos[index];

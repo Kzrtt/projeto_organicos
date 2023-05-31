@@ -92,7 +92,8 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                     var quantity = widget.sell.products[index]['quantidade'];
                     return ListTile(
                       title: Text(item.productName),
-                      subtitle: Text("$quantity${item.measuremntUnit}"),
+                      subtitle: Text(
+                          "${quantity * item.unitValue}${item.measuremntUnit}"),
                       trailing: Text("R\$ ${item.productPrice * quantity}"),
                     );
                   },

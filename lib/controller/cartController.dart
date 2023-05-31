@@ -79,12 +79,10 @@ class CartController {
       List<Map<String, dynamic>> userCart = await getAllProductsFromCart();
       if (operation == "+") {
         userCart.firstWhere((element) =>
-                element['productId']['_id'] == product.productId)['quantity'] +=
-            product.unitValue;
+            element['productId']['_id'] == product.productId)['quantity'] += 1;
       } else if (operation == "-") {
         userCart.firstWhere((element) =>
-                element['productId']['_id'] == product.productId)['quantity'] -=
-            product.unitValue;
+            element['productId']['_id'] == product.productId)['quantity'] -= 1;
       }
       var response = await Dio().put(
         "$_userUrl/$id",

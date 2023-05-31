@@ -35,8 +35,12 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
     });
     productController.getAllProducts().then((value) {
       setState(() {
-        _produtos = value;
-        _filteredProducts = value;
+        for (var element in value) {
+          if (element.stockQuantity > 0) {
+            _produtos.add(element);
+          }
+        }
+        _filteredProducts = _produtos;
         _quantidades = List.generate(_produtos.length, (index) => 0);
       });
     });
@@ -112,7 +116,7 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                 ),
                 SizedBox(height: constraints.maxHeight * .02),
                 SizedBox(
-                  height: constraints.maxHeight * .5,
+                  height: constraints.maxHeight * .7,
                   child: ListView.builder(
                     itemCount: _filteredProducts.length,
                     itemBuilder: (context, index) {
@@ -124,7 +128,7 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Quantidade: ${item.stockQuantity} ${item.measuremntUnit}',
+                              'Quantidade: ${item.stockQuantity} unidades',
                             ),
                             Text("Preço: \$${item.productPrice}"),
                           ],
@@ -138,12 +142,12 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                                 if (_quantidades[index] > 0) {
                                   setState(() {
                                     _quantidades[index] =
-                                        _quantidades[index] - item.unitValue;
+                                        _quantidades[index] - 1;
                                   });
                                 }
                               },
                             ),
-                            Text(_quantidades[index].toString()),
+                            Text("${_quantidades[index] * item.unitValue}"),
                             IconButton(
                               icon: Icon(Icons.add),
                               onPressed: () {
@@ -151,7 +155,7 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                                     _quantidades[index]) {
                                   setState(() {
                                     _quantidades[index] =
-                                        _quantidades[index] + item.unitValue;
+                                        _quantidades[index] + 1;
                                   });
                                 }
                               },

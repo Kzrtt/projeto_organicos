@@ -239,8 +239,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                           for (var i = 0; i < _produtosNaBox.length; i++) {
                             total = total +
                                 _produtosNaBox[i].quantity *
-                                    _produtosNaBox[i].product.productPrice /
-                                    _produtosNaBox[i].product.unitValue;
+                                    _produtosNaBox[i].product.productPrice;
                           }
 
                           String photoUrl = await uploadImage(
@@ -349,7 +348,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                           return ListTile(
                             title: Text(item.product.productName),
                             subtitle: Text(
-                              "Quantidade: ${item.quantity.toString()} ${item.measurementUnity}",
+                              "Quantidade: ${item.quantity * item.product.unitValue} ${item.measurementUnity}",
                             ),
                             trailing: InkWell(
                               onTap: () {
@@ -490,6 +489,10 @@ class _AddProductScreenState extends State<AddProductScreen>
                             "${_nameController.text.trim()}${_p[index].producerId}",
                             "productsPhotos",
                           );
+                          double stockQuantity =
+                              double.parse(_stockQuantityController.text);
+                          double unitValue =
+                              double.parse(_unitValueController.text);
                           ProductController controller = ProductController();
                           Products product = Products(
                             productId: "",
@@ -497,8 +500,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                             category: listaDeId,
                             productPhoto: photoUrl,
                             productPrice: double.parse(_priceController.text),
-                            stockQuantity:
-                                double.parse(_stockQuantityController.text),
+                            stockQuantity: stockQuantity / unitValue,
                             unitValue: int.parse(_unitValueController.text),
                             productDetails: _detailsController.text,
                             cooperativeId: "",

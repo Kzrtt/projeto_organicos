@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -6,9 +8,12 @@ import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
 import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/controller/productController.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:provider/provider.dart';
+
+import '../../utils/appRoutes.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({Key? key}) : super(key: key);
@@ -19,40 +24,70 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   int value = 1;
+  int quantity = 0;
+  List<Products> produtos = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    UserController controller = UserController();
+    controller.getAllProducts().then((value) {
+      setState(() {
+        Random random = Random();
+
+        for (int i = 0; i < 3; i++) {
+          int index = random.nextInt(value.length);
+          Products elemento = value[index];
+          produtos.add(elemento);
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     Products product = ModalRoute.of(context)?.settings.arguments as Products;
 
-    Widget box(BoxConstraints constraints) {
-      return Column(
+    Widget box(BoxConstraints constraints, Products product) {
+      return Row(
         children: [
-          Container(
-            height: constraints.maxHeight * .12,
-            width: constraints.maxWidth * .2,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.grey,
-            ),
-            child: Center(),
+          Column(
+            children: [
+              Container(
+                height: constraints.maxHeight * .12,
+                width: constraints.maxWidth * .2,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey,
+                ),
+                child: product.productPhoto != ""
+                    ? Image.network(
+                        product.productPhoto,
+                        fit: BoxFit.cover,
+                      )
+                    : Center(),
+              ),
+              SizedBox(height: constraints.maxHeight * .03),
+              Text(
+                product.productName,
+                style: TextStyle(
+                  fontSize: constraints.maxHeight * .02,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: constraints.maxHeight * .01),
+              Text(
+                "R\$${product.productPrice}",
+                style: TextStyle(
+                  fontSize: constraints.maxHeight * .02,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromRGBO(113, 227, 154, 1),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: constraints.maxHeight * .03),
-          Text(
-            product.productName,
-            style: TextStyle(
-              fontSize: constraints.maxHeight * .02,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: constraints.maxHeight * .01),
-          Text(
-            "R\$${product.productPrice}",
-            style: TextStyle(
-              fontSize: constraints.maxHeight * .02,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromRGBO(113, 227, 154, 1),
-            ),
-          ),
+          SizedBox(width: constraints.maxWidth * .08),
         ],
       );
     }
@@ -104,18 +139,19 @@ class _ProductScreenState extends State<ProductScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                          height: constraints.maxHeight * .35,
-                          width: constraints.maxWidth * .7,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.grey,
-                          ),
-                          child: product.productPhoto != ""
-                              ? Image.network(
-                                  product.productPhoto,
-                                  fit: BoxFit.cover,
-                                )
-                              : Center()),
+                        height: constraints.maxHeight * .35,
+                        width: constraints.maxWidth * .7,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey,
+                        ),
+                        child: product.productPhoto != ""
+                            ? Image.network(
+                                product.productPhoto,
+                                fit: BoxFit.cover,
+                              )
+                            : Center(),
+                      ),
                       SizedBox(height: constraints.maxHeight * .03),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -165,21 +201,21 @@ class _ProductScreenState extends State<ProductScreen> {
                             onPressed: () {
                               if (value > 1) {
                                 setState(() {
-                                  value = value - product.unitValue;
+                                  value -= 1;
                                 });
                               }
                             },
                             icon: const Icon(Icons.remove),
                           ),
                           Text(
-                            "${value}${product.measuremntUnit}",
+                            "${value * product.unitValue}${product.measuremntUnit}",
                             style: TextStyle(fontSize: 16),
                           ),
                           IconButton(
                             onPressed: () {
                               if (value <= product.stockQuantity) {
                                 setState(() {
-                                  value = value + product.unitValue;
+                                  value += 1;
                                 });
                               }
                             },
@@ -220,14 +256,25 @@ class _ProductScreenState extends State<ProductScreen> {
                           padding: EdgeInsets.only(
                             left: constraints.maxWidth * .05,
                           ),
-                          child: Row(
-                            children: [
-                              box(constraints),
-                              SizedBox(width: constraints.maxWidth * .05),
-                              box(constraints),
-                              SizedBox(width: constraints.maxWidth * .05),
-                              box(constraints),
-                            ],
+                          child: SizedBox(
+                            height: constraints.maxHeight * .3,
+                            width: constraints.maxWidth,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 3,
+                              itemBuilder: (context, index) {
+                                var item = produtos[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pushReplacementNamed(
+                                      AppRoutes.PRODUCTSCREEN,
+                                      arguments: item,
+                                    );
+                                  },
+                                  child: box(constraints, item),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
