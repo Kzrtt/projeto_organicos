@@ -19,6 +19,7 @@ import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/globalVariable.dart';
+import 'package:projeto_organicos/utils/quantityProvider.dart';
 import 'package:projeto_organicos/utils/userState.dart';
 import 'package:provider/provider.dart';
 

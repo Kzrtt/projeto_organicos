@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/components/bar_graph/bar_graph.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,16 @@ class _ProducerHomeScreenState extends State<ProducerHomeScreen> {
       ),
     );
   }
+
+  List<double> monthSummary = [
+    4.40,
+    2.50,
+    42.42,
+    10.50,
+    100.20,
+    88.99,
+    90.10,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +96,11 @@ class _ProducerHomeScreenState extends State<ProducerHomeScreen> {
                 ),
                 SizedBox(height: constraints.maxHeight * .05),
                 Container(
-                  color: Colors.blueGrey,
                   height: constraints.maxHeight * .3,
-                  width: constraints.maxWidth * .6,
+                  width: constraints.maxWidth * .85,
+                  child: MyBarGraph(
+                    weeklySummary: monthSummary,
+                  ),
                 ),
               ],
             )
