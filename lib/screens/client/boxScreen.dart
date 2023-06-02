@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/controller/cartController.dart';
-import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/box.dart';
-import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:projeto_organicos/utils/quantityProvider.dart';
 import 'package:provider/provider.dart';
 
