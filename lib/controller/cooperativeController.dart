@@ -122,11 +122,17 @@ class CooperativeController with ChangeNotifier {
               "zipcode": element['userAddress']['zipcode'],
             };
 
+            List<String> _cooperatives = [];
+            for (var element2 in element['cooperatives']) {
+              _cooperatives.add(element2['cooperativeName']);
+            }
+
             for (var element3 in element['products']) {
               List<String> categories = [];
               for (var e in element3['productId']['categories']) {
                 categories.add(e['categoryName']);
               }
+
               Products product = Products(
                 productId: element3['productId']['_id'],
                 productName: element3['productId']['productName'],
@@ -157,10 +163,13 @@ class CooperativeController with ChangeNotifier {
                 sellId: element['_id'],
                 status: element['status'],
                 sellDate: element['sellDate'],
+                deliveryDate: element['deliveryDate'],
+                cooperatives: _cooperatives,
               );
               _sells.add(sell);
             }
 
+            _cooperatives = [];
             produtos = [];
           }
         } catch (e, stackTrace) {

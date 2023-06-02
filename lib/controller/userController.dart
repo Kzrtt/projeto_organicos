@@ -127,27 +127,27 @@ class UserController {
           for (var element in response.data['boxes']) {
             for (var element2 in element['products']) {
               List<String> categories = [];
-              for (var e in element2['product']['categories']) {
+              for (var e in element2['productId']['categories']) {
                 categories.add(e['categoryName']);
               }
               Products product = Products(
-                productId: element2['product']['_id'],
-                productName: element2['product']['productName'],
+                productId: element2['productId']['_id'],
+                productName: element2['productId']['productName'],
                 category: categories,
-                productPhoto: element2['product']['productPhoto'],
-                productPrice: element2['product']['productPrice'],
-                stockQuantity: element2['product']['stockQuantity'],
-                unitValue: element2['product']['unitValue'],
-                productDetails: element2['product']['productDetails'],
-                cooperativeId: element2['product']['cooperativeId'],
-                producerId: element2['product']['producerId'],
-                measuremntUnit: element2['product']['measurementUnit']
+                productPhoto: element2['productId']['productPhoto'],
+                productPrice: element2['productId']['productPrice'],
+                stockQuantity: element2['productId']['stockQuantity'],
+                unitValue: element2['productId']['unitValue'],
+                productDetails: element2['productId']['productDetails'],
+                cooperativeId: element2['productId']['cooperativeId'],
+                producerId: element2['productId']['producerId'],
+                measuremntUnit: element2['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               ProductInBox productInBox = ProductInBox(
                 product: product,
                 quantity: element2['quantity'],
-                measurementUnity: element2['product']['measurementUnit']
+                measurementUnity: element2['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               produtos.add(productInBox);
@@ -242,7 +242,12 @@ class UserController {
               "zipcode": element['userAddress']['zipcode'],
             };
 
-            for (var element3 in element['products']) {
+            List<String> cooperatives = [];
+            for (var element2 in element['cooperatives']) {
+              cooperatives.add(element2['cooperativeName']);
+            }
+
+            for (var element3 in element['items']['products']) {
               List<String> categories = [];
               for (var e in element3['productId']['categories']) {
                 categories.add(e['categoryName']);
@@ -268,15 +273,20 @@ class UserController {
                 },
               );
             }
-            Sell sell = Sell(
-              address: endereco,
-              products: produtos,
-              sellId: element['_id'],
-              status: element['status'],
-              sellDate: element['sellDate'],
-            );
-            _sells.add(sell);
+            if (element['userId']['_id'] == id) {
+              Sell sell = Sell(
+                address: endereco,
+                products: produtos,
+                sellId: element['_id'],
+                status: element['status'],
+                sellDate: element['sellDate'],
+                deliveryDate: element['deliveryDate'],
+                cooperatives: cooperatives,
+              );
+              _sells.add(sell);
+            }
             produtos = [];
+            cooperatives = [];
           }
         } catch (e, stackTrace) {
           print("erro: $e, stackTrace: $stackTrace");

@@ -142,6 +142,12 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),
+                                            child: item.boxPhoto != ""
+                                                ? Image.network(
+                                                    item.boxPhoto,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Center(),
                                           ),
                                         ),
                                       ),

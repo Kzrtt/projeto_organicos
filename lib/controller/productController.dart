@@ -107,28 +107,28 @@ class ProductController {
           List<ProductInBox> products = [];
           for (var element2 in element['products']) {
             List<String> categorias = [];
-            for (var element3 in element2['product']['categories']) {
+            for (var element3 in element2['productId']['categories']) {
               categorias.add(element3['categoryName']);
             }
 
             Products product = Products(
-              productId: element2['product']['_id'],
-              productName: element2['product']['productName'],
+              productId: element2['productId']['_id'],
+              productName: element2['productId']['productName'],
               category: categorias,
-              productPhoto: element2['product']['productPhoto'],
-              productPrice: element2['product']['productPrice'],
-              stockQuantity: element2['product']['stockQuantity'],
-              unitValue: element2['product']['unitValue'],
-              productDetails: element2['product']['productDetails'],
-              cooperativeId: element2['product']['cooperativeId'],
-              producerId: element2['product']['producerId'],
-              measuremntUnit: element2['product']['measurementUnit']
+              productPhoto: element2['productId']['productPhoto'],
+              productPrice: element2['productId']['productPrice'],
+              stockQuantity: element2['productId']['stockQuantity'],
+              unitValue: element2['productId']['unitValue'],
+              productDetails: element2['productId']['productDetails'],
+              cooperativeId: element2['productId']['cooperativeId'],
+              producerId: element2['productId']['producerId'],
+              measuremntUnit: element2['productId']['measurementUnit']
                   ['measurementUnit'],
             );
             ProductInBox productInBox = ProductInBox(
               product: product,
               quantity: element2['quantity'],
-              measurementUnity: element2['product']['measurementUnit']
+              measurementUnity: element2['productId']['measurementUnit']
                   ['measurementUnit'],
             );
             products.add(productInBox);
@@ -172,7 +172,7 @@ class ProductController {
 
       for (var produto in box.produtos) {
         Map<String, dynamic> productMap = {
-          'product': produto.product.productId,
+          'productId': produto.product.productId,
           'quantity': produto.quantity,
         };
         productsList.add(productMap);
@@ -186,25 +186,12 @@ class ProductController {
           "boxPrice": box.boxPrice,
           "boxPhoto": box.boxPhoto,
           "stockQuantity": box.boxQuantity,
-          "products": productsList,
+          "products": [...productsList],
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      if (response.data.containsKey('box')) {
-        for (var element in box.produtos) {
-          var response2 = await Dio().put(
-            "$_productUrl/${element.product.productId}",
-            data: {
-              "stockQuantity": element.product.stockQuantity - element.quantity
-            },
-            options: Options(
-              headers: {'Authorization': 'Bearer $token'},
-            ),
-          );
-        }
-      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');

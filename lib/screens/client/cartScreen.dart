@@ -23,6 +23,7 @@ class _CartScreenState extends State<CartScreen> {
   List<Adress> addresses = [];
   List<String> addressesId = [];
   List<Map<String, dynamic>> cartMongodb = [];
+  List<Map<String, dynamic>> boxCartMongodb = [];
   Adress defaultAddress = Adress(
     adressId: "",
     nickname: "",
@@ -73,6 +74,11 @@ class _CartScreenState extends State<CartScreen> {
       }
       provider.setQuantity(temp);
     });
+    cartController.getAllBoxesInfo().then((value) {
+      setState(() {
+        boxCartMongodb = value;
+      });
+    });
     loadAdresses();
   }
 
@@ -93,7 +99,7 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context, constraints) {
         return SingleChildScrollView(
           child: Container(
-            height: constraints.maxHeight * 1.2,
+            height: constraints.maxHeight * 2,
             width: constraints.maxWidth,
             decoration: const BoxDecoration(
               color: Color.fromRGBO(238, 238, 238, 1),
@@ -106,241 +112,344 @@ class _CartScreenState extends State<CartScreen> {
                   text: "Carrinho",
                 ),
                 SizedBox(height: constraints.maxHeight * .03),
-                cartMongodb.isNotEmpty
+                cartMongodb.isNotEmpty || boxCartMongodb.isNotEmpty
                     ? SizedBox(
-                        height: constraints.maxHeight,
+                        height: constraints.maxHeight * 1.4,
                         width: constraints.maxWidth,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: constraints.maxHeight *
-                                      cartMongodb.length /
-                                      10 +
-                                  50,
-                              width: constraints.maxWidth,
-                              child: ListView.builder(
-                                itemCount: cartMongodb.length,
-                                itemBuilder: (context, index) {
-                                  var item = cartMongodb[index]['product'];
-                                  var quantia = quantity[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                        AppRoutes.PRODUCTSCREEN,
-                                        arguments: item,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.all(
-                                          constraints.maxHeight * .02),
-                                      child: Container(
-                                        height: constraints.maxHeight * .14,
-                                        width: constraints.maxWidth * .9,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                            cartMongodb.isNotEmpty
+                                ? Container(
+                                    height: constraints.maxHeight *
+                                            cartMongodb.length /
+                                            10 +
+                                        80,
+                                    width: constraints.maxWidth,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: constraints.maxWidth * .05,
+                                          ),
+                                          child: const Text(
+                                            "Produtos:",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromRGBO(0, 0, 0, .81),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              height:
-                                                  constraints.maxHeight * .14,
-                                              width: constraints.maxWidth * .25,
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft:
-                                                      Radius.circular(20.0),
-                                                  bottomLeft:
-                                                      Radius.circular(20.0),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.all(
-                                                    constraints.maxHeight *
-                                                        .02),
-                                                child: Container(
-                                                  height:
+                                        SizedBox(
+                                          height: constraints.maxHeight * .03,
+                                        ),
+                                        SizedBox(
+                                          height: constraints.maxHeight *
+                                                  cartMongodb.length /
+                                                  10 +
+                                              40,
+                                          child: ListView.builder(
+                                            itemCount: cartMongodb.length,
+                                            itemBuilder: (context, index) {
+                                              var item =
+                                                  cartMongodb[index]['product'];
+                                              var quantia = quantity[index];
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context)
+                                                      .pushNamed(
+                                                    AppRoutes.PRODUCTSCREEN,
+                                                    arguments: item,
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(
                                                       constraints.maxHeight *
-                                                          .14,
-                                                  width: constraints.maxWidth *
-                                                      .15,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color: Colors.grey,
-                                                  ),
-                                                  child: item.productPhoto != ""
-                                                      ? Image.network(
-                                                          item.productPhoto,
-                                                          fit: BoxFit.cover,
-                                                        )
-                                                      : Center(),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                                height:
-                                                    constraints.maxWidth * .05),
-                                            Container(
-                                              height:
-                                                  constraints.maxHeight * .14,
-                                              width: constraints.maxWidth * .3,
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topRight:
-                                                      Radius.circular(20.0),
-                                                  bottomRight:
-                                                      Radius.circular(20.0),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                  top: constraints.maxHeight *
-                                                      .025,
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      item.productName,
-                                                      style: TextStyle(
-                                                        fontSize: constraints
-                                                                .maxHeight *
-                                                            .02,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                          .02),
+                                                  child: Container(
+                                                    height:
+                                                        constraints.maxHeight *
+                                                            .14,
+                                                    width:
+                                                        constraints.maxWidth *
+                                                            .9,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
                                                     ),
-                                                    SizedBox(
-                                                      height: constraints
-                                                              .maxHeight *
-                                                          .002,
-                                                    ),
-                                                    Text(
-                                                      item.productDetails,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        fontSize: constraints
-                                                                .maxHeight *
-                                                            .019,
-                                                        color: const Color
-                                                                .fromRGBO(
-                                                            0, 0, 0, 0.68),
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: constraints
-                                                              .maxHeight *
-                                                          .009,
-                                                    ),
-                                                    Text(
-                                                      "R\$${item.productPrice}",
-                                                      style: TextStyle(
-                                                        fontSize: constraints
-                                                                .maxHeight *
-                                                            .02,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: const Color
-                                                                .fromRGBO(
-                                                            113, 227, 154, 1),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              height:
-                                                  constraints.maxHeight * .1,
-                                              width: constraints.maxWidth * .35,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      if (quantity[index] > 0) {
-                                                        setState(() {
-                                                          quantity[index] =
-                                                              quantity[index] -
-                                                                  1;
-                                                          subTotal = subTotal -
-                                                              item.productPrice;
-                                                          CartController
-                                                              controller =
-                                                              CartController();
-                                                          controller
-                                                              .incrementOrSubtractQuantity(
-                                                            item,
-                                                            "-",
-                                                          );
-                                                        });
-                                                        if (quantity[index] ==
-                                                            0) {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return AlertDialog(
-                                                                title: const Text(
-                                                                    'Deseja Remover o produto do carrinho?'),
-                                                                actions: <Widget>[
-                                                                  TextButton(
-                                                                    child:
-                                                                        const Text(
-                                                                      'Remover',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ),
-                                                                    onPressed:
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          height: constraints
+                                                                  .maxHeight *
+                                                              .14,
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .25,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .all(constraints
+                                                                        .maxHeight *
+                                                                    .02),
+                                                            child: Container(
+                                                              height: constraints
+                                                                      .maxHeight *
+                                                                  .14,
+                                                              width: constraints
+                                                                      .maxWidth *
+                                                                  .15,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                              child: item.productPhoto !=
+                                                                      ""
+                                                                  ? Image
+                                                                      .network(
+                                                                      item.productPhoto,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    )
+                                                                  : Center(),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height: constraints
+                                                                    .maxWidth *
+                                                                .05),
+                                                        Container(
+                                                          height: constraints
+                                                                  .maxHeight *
+                                                              .14,
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .3,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          20.0),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                              top: constraints
+                                                                      .maxHeight *
+                                                                  .025,
+                                                            ),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  item.productName,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .02,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: constraints
+                                                                          .maxHeight *
+                                                                      .002,
+                                                                ),
+                                                                Text(
+                                                                  item.productDetails,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .019,
+                                                                    color: const Color
+                                                                            .fromRGBO(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0.68),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: constraints
+                                                                          .maxHeight *
+                                                                      .009,
+                                                                ),
+                                                                Text(
+                                                                  "R\$${item.productPrice}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .02,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: const Color
+                                                                            .fromRGBO(
+                                                                        113,
+                                                                        227,
+                                                                        154,
+                                                                        1),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          height: constraints
+                                                                  .maxHeight *
+                                                              .1,
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .35,
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  if (quantity[
+                                                                          index] >
+                                                                      0) {
+                                                                    setState(
                                                                         () {
-                                                                      // Lógica para remover o produto
+                                                                      quantity[
+                                                                              index] =
+                                                                          quantity[index] -
+                                                                              1;
+                                                                      subTotal =
+                                                                          subTotal -
+                                                                              item.productPrice;
                                                                       CartController
                                                                           controller =
                                                                           CartController();
                                                                       controller
-                                                                          .removeProductFromCart(
-                                                                        item.productId,
+                                                                          .incrementOrSubtractQuantity(
+                                                                        item,
+                                                                        "-",
                                                                       );
-                                                                      setState(
-                                                                          () {
-                                                                        cartMongodb
-                                                                            .removeWhere((element) {
-                                                                          quantity.removeWhere((element) =>
-                                                                              element ==
-                                                                              0);
-                                                                          return element['product'].productId ==
-                                                                              item.productId;
-                                                                        });
-                                                                      });
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                      Provider.of<
-                                                                              CartProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false);
-                                                                    },
-                                                                  ),
-                                                                  TextButton(
-                                                                    child:
-                                                                        const Text(
-                                                                      'Cancelar',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.grey),
-                                                                    ),
-                                                                    onPressed:
-                                                                        () {
+                                                                    });
+                                                                    if (quantity[
+                                                                            index] ==
+                                                                        0) {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AlertDialog(
+                                                                            title:
+                                                                                const Text('Deseja Remover o produto do carrinho?'),
+                                                                            actions: <Widget>[
+                                                                              TextButton(
+                                                                                child: const Text(
+                                                                                  'Remover',
+                                                                                  style: TextStyle(color: Colors.red),
+                                                                                ),
+                                                                                onPressed: () {
+                                                                                  // Lógica para remover o produto
+                                                                                  CartController controller = CartController();
+                                                                                  controller.removeProductFromCart(
+                                                                                    item.productId,
+                                                                                  );
+                                                                                  setState(() {
+                                                                                    cartMongodb.removeWhere((element) {
+                                                                                      quantity.removeWhere((element) => element == 0);
+                                                                                      return element['product'].productId == item.productId;
+                                                                                    });
+                                                                                  });
+                                                                                  Navigator.of(context).pop();
+                                                                                  Provider.of<CartProvider>(context, listen: false);
+                                                                                },
+                                                                              ),
+                                                                              TextButton(
+                                                                                child: const Text(
+                                                                                  'Cancelar',
+                                                                                  style: TextStyle(color: Colors.grey),
+                                                                                ),
+                                                                                onPressed: () {
+                                                                                  CartController controller = CartController();
+                                                                                  controller.incrementOrSubtractQuantity(
+                                                                                    item,
+                                                                                    "+",
+                                                                                  );
+                                                                                  Navigator.of(context).pop();
+                                                                                  setState(() {
+                                                                                    quantity[index] = quantity[index] + 1;
+                                                                                    subTotal = subTotal + item.productPrice;
+                                                                                  });
+                                                                                },
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  }
+                                                                },
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons.remove,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "${quantia * item.unitValue}${item.measuremntUnit}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16),
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    if (item.stockQuantity >
+                                                                        quantity[
+                                                                            index]) {
+                                                                      quantity[
+                                                                              index] =
+                                                                          quantity[index] +
+                                                                              1;
                                                                       CartController
                                                                           controller =
                                                                           CartController();
@@ -349,69 +458,264 @@ class _CartScreenState extends State<CartScreen> {
                                                                         item,
                                                                         "+",
                                                                       );
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                      setState(
-                                                                          () {
-                                                                        quantity[
-                                                                            index] = quantity[
-                                                                                index] +
-                                                                            1;
-                                                                        subTotal =
-                                                                            subTotal +
-                                                                                item.productPrice;
-                                                                      });
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.remove,
+                                                                    }
+                                                                  });
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  Text(
-                                                    "${quantia * item.unitValue}${item.measuremntUnit}",
-                                                    style:
-                                                        TextStyle(fontSize: 16),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        if (item.stockQuantity >
-                                                            quantity[index]) {
-                                                          quantity[index] =
-                                                              quantity[index] +
-                                                                  1;
-                                                          CartController
-                                                              controller =
-                                                              CartController();
-                                                          controller
-                                                              .incrementOrSubtractQuantity(
-                                                            item,
-                                                            "+",
-                                                          );
-                                                        }
-                                                      });
-                                                    },
-                                                    icon: const Icon(Icons.add),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
+                                  )
+                                : Center(),
+                            boxCartMongodb.isNotEmpty
+                                ? Container(
+                                    height: constraints.maxHeight *
+                                            boxCartMongodb.length /
+                                            10 +
+                                        80,
+                                    width: constraints.maxWidth,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: constraints.maxWidth * .05,
+                                          ),
+                                          child: const Text(
+                                            "Boxes:",
+                                            style: TextStyle(
+                                              color:
+                                                  Color.fromRGBO(0, 0, 0, .81),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: constraints.maxHeight * .03,
+                                        ),
+                                        SizedBox(
+                                          height: constraints.maxHeight *
+                                                  boxCartMongodb.length /
+                                                  10 +
+                                              40,
+                                          width: constraints.maxWidth,
+                                          child: ListView.builder(
+                                            itemCount: boxCartMongodb.length,
+                                            itemBuilder: (context, index) {
+                                              var item = boxCartMongodb[index];
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context)
+                                                      .pushNamed(
+                                                    AppRoutes.BOXSCREEN,
+                                                    arguments: item,
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(
+                                                      constraints.maxHeight *
+                                                          .02),
+                                                  child: Container(
+                                                    height:
+                                                        constraints.maxHeight *
+                                                            .14,
+                                                    width:
+                                                        constraints.maxWidth *
+                                                            .9,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          height: constraints
+                                                                  .maxHeight *
+                                                              .14,
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .25,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .all(constraints
+                                                                        .maxHeight *
+                                                                    .02),
+                                                            child: Container(
+                                                              height: constraints
+                                                                      .maxHeight *
+                                                                  .14,
+                                                              width: constraints
+                                                                      .maxWidth *
+                                                                  .15,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                              child: item['box']
+                                                                          .boxPhoto !=
+                                                                      ""
+                                                                  ? Image
+                                                                      .network(
+                                                                      item['box']
+                                                                          .boxPhoto,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    )
+                                                                  : Center(),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height: constraints
+                                                                    .maxWidth *
+                                                                .05),
+                                                        Container(
+                                                          height: constraints
+                                                                  .maxHeight *
+                                                              .14,
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .3,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          20.0),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                              top: constraints
+                                                                      .maxHeight *
+                                                                  .025,
+                                                            ),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  item['box']
+                                                                      .boxName,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .02,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: constraints
+                                                                          .maxHeight *
+                                                                      .002,
+                                                                ),
+                                                                Text(
+                                                                  item['box']
+                                                                      .boxDetails,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .019,
+                                                                    color: const Color
+                                                                            .fromRGBO(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0.68),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: constraints
+                                                                          .maxHeight *
+                                                                      .009,
+                                                                ),
+                                                                Text(
+                                                                  "R\$${item['box'].boxPrice}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        constraints.maxHeight *
+                                                                            .02,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: const Color
+                                                                            .fromRGBO(
+                                                                        113,
+                                                                        227,
+                                                                        154,
+                                                                        1),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: constraints
+                                                                  .maxWidth *
+                                                              .21,
+                                                        ),
+                                                        Icon(Icons.edit),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Placeholder(),
                             SizedBox(height: constraints.maxHeight * .03),
                             thinDivider(constraints),
                             SizedBox(height: constraints.maxHeight * .05),
@@ -551,10 +855,10 @@ class _CartScreenState extends State<CartScreen> {
                                     ],
                                   ),
                                   SizedBox(height: constraints.maxHeight * .01),
-                                  Row(
+                                  const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    children: const [
+                                    children: [
                                       Text(
                                         "Taxa de Entrega: ",
                                         style: TextStyle(
@@ -606,7 +910,10 @@ class _CartScreenState extends State<CartScreen> {
                                 provider.setQuantity(quantity);
                                 int index = items.indexOf(_selectedItem);
                                 CartController controller = CartController();
-                                controller.createSell(addressesId[index]);
+                                controller.createSell(
+                                  addressesId[index],
+                                  "2023-06-07",
+                                );
                                 Navigator.of(context).pushNamed(
                                   AppRoutes.PAYMENTSCREEN,
                                 );
@@ -629,7 +936,7 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             SizedBox(height: constraints.maxHeight * .07),
                             Text(
-                              "Seu Carrinho está vaizo :(",
+                              "Seu Carrinho está vazio :(",
                               style: TextStyle(
                                 fontSize: constraints.maxHeight * .025,
                                 fontWeight: FontWeight.w500,

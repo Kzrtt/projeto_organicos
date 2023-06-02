@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
+import 'package:projeto_organicos/controller/cartController.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/box.dart';
+import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:projeto_organicos/utils/quantityProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -159,7 +162,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                                     Text(item
                                                         .product.productName),
                                                     Text(
-                                                      "Quantiade: ${item.quantity}${item.product.measuremntUnit}",
+                                                      "Quantidade: ${item.product.unitValue}${item.product.measuremntUnit}",
                                                     ),
                                                   ],
                                                 ),
@@ -254,9 +257,32 @@ class _BoxScreenState extends State<BoxScreen> {
                             ),
                           ),
                           SizedBox(height: constraints.maxHeight * .05),
-                          CommonButton(
-                            constraints: constraints,
-                            text: "Adicioar ao Carrinho",
+                          InkWell(
+                            onTap: () async {
+                              CartController controller = CartController();
+                              List<Map<String, dynamic>> produtos = [];
+                              for (var i = 0; i < box.produtos.length; i++) {
+                                final provider = Provider.of<QuantityProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                                produtos.add({
+                                  "productId":
+                                      box.produtos[i].product.productId,
+                                  "quantity": provider.quantity[i],
+                                });
+                              }
+                              controller.addBoxToCart(
+                                box,
+                                produtos,
+                                1,
+                              );
+                              Navigator.of(context).pop();
+                            },
+                            child: CommonButton(
+                              constraints: constraints,
+                              text: "Adicioar ao Carrinho",
+                            ),
                           ),
                         ],
                       ),

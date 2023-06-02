@@ -65,9 +65,32 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
             padding: EdgeInsets.only(left: widget.constraints.maxWidth * .05),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Cooperativa: nome da Cooperativa"),
-                Text("Endereço: endereço"),
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: 'Cooperativa: ',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: widget.sell.cooperatives[0],
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: widget.constraints.maxHeight * .01),
+                Text.rich(
+                  TextSpan(
+                    text: 'Endereço: ',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: widget.sell.address['street'],
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
