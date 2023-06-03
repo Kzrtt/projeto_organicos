@@ -89,6 +89,7 @@ class CartController {
       String? token = prefs.getString('userToken');
       String? id = prefs.getString('userId');
       List<Map<String, dynamic>> userCart = await getAllProductsFromCart();
+      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
       if (operation == "+") {
         userCart.firstWhere((element) =>
             element['productId']['_id'] == product.productId)['quantity'] += 1;
@@ -100,9 +101,8 @@ class CartController {
         "$_userUrl/$id",
         data: {
           "cart": {
-            "products": [
-              ...cart,
-            ],
+            "products": [...cart],
+            "boxes": [...boxCart],
           },
         },
         options: Options(
@@ -312,7 +312,7 @@ class CartController {
               });
             }
             boxCart.add({
-              "boxId": element['boxId'],
+              "boxId": element['boxId']['_id'],
               "boxProducts": [...productsInBox],
               "quantity": element['quantity'],
             });
@@ -334,19 +334,52 @@ class CartController {
     }
   }
 
+  void removeBoxFromCart(String boxId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      List<Map<String, dynamic>> cart = await getAllProductsFromCart();
+      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
+      boxCart.removeWhere((element) => element['boxId'] == boxId);
+      var response = await Dio().put(
+        "$_userUrl/$id",
+        data: {
+          "cart": {
+            "products": [...cart],
+            "boxes": [...boxCart],
+          },
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   void removeProductFromCart(String productId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
       String? id = prefs.getString('userId');
       List<Map<String, dynamic>> cart = await getAllProductsFromCart();
+      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
       cart.removeWhere((element) => element['productId']['_id'] == productId);
       var response = await Dio().put(
         "$_userUrl/$id",
         data: {
-          "cart": [
-            ...cart,
-          ],
+          "cart": {
+            "products": [...cart],
+            "boxes": [...boxCart],
+          },
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},

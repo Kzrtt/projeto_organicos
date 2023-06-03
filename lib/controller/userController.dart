@@ -53,18 +53,35 @@ class UserController {
       if (response.data.containsKey('sell')) {
         try {
           List<Map<String, dynamic>> cart = [];
-          for (var element in response.data['sell']['products']) {
+          List<Map<String, dynamic>> boxCart = [];
+          for (var element in response.data['sell']['items']['products']) {
             cart.add({
               "productId": element['productId']['_id'],
               "quantity": element['quantity'],
             });
           }
+          for (var element in response.data['sell']['items']['boxes']) {
+            List<Map<String, dynamic>> produtosNaBox = [];
+            for (var element2 in element['boxProducts']) {
+              produtosNaBox.add({
+                "productId": element2['productId'],
+                "quantity": element2['quantity'],
+              });
+            }
+
+            boxCart.add({
+              "boxId": element['boxId']['_id'],
+              "boxProducts": [...produtosNaBox],
+              "quantity": 1,
+            });
+          }
           var response2 = await Dio().put(
             "$_userUrl/$id",
             data: {
-              "cart": [
-                ...cart,
-              ],
+              "cart": {
+                "products": [...cart],
+                "boxes": [...boxCart],
+              },
             },
             options: Options(
               headers: {'Authorization': 'Bearer $token'},
@@ -233,6 +250,7 @@ class UserController {
         try {
           Map<String, dynamic> endereco = {};
           List<Map<String, dynamic>> produtos = [];
+          List<Map<String, dynamic>> boxes = [];
           for (var element in response.data['sells']) {
             endereco = {
               "complement": element['userAddress']['complement'],
@@ -273,10 +291,61 @@ class UserController {
                 },
               );
             }
+
+            for (var element4 in element['items']['boxes']) {
+              List<ProductInBox> products = [];
+              for (var element5 in element4['boxId']['products']) {
+                List<String> categorias = [];
+                for (var e2 in element5['productId']['categories']) {
+                  categorias.add(e2['categoryName']);
+                }
+
+                Products product = Products(
+                  productId: element5['productId']['_id'],
+                  productName: element5['productId']['productName'],
+                  category: categorias,
+                  productPhoto: element5['productId']['productPhoto'],
+                  productPrice: element5['productId']['productPrice'],
+                  stockQuantity: element5['productId']['stockQuantity'],
+                  unitValue: element5['productId']['unitValue'],
+                  productDetails: element5['productId']['productDetails'],
+                  cooperativeId: element5['productId']['cooperativeId'],
+                  producerId: element5['productId']['producerId'],
+                  measuremntUnit: element5['productId']['measurementUnit']
+                      ['measurementUnit'],
+                );
+
+                ProductInBox productInBox = ProductInBox(
+                  product: product,
+                  quantity: element5['quantity'],
+                  measurementUnity: element5['productId']['measurementUnit']
+                      ['measurementUnit'],
+                );
+
+                products.add(productInBox);
+              }
+
+              Box box = Box(
+                id: element4['boxId']['_id'],
+                boxDetails: element4['boxId']['boxDetails'],
+                boxName: element4['boxId']['boxName'],
+                boxPhoto: element4['boxId']['boxPhoto'],
+                boxPrice: element4['boxId']['boxPrice'],
+                boxQuantity: element4['boxId']['stockQuantity'],
+                produtos: products,
+              );
+              boxes.add({
+                "box": box,
+                "quantity": element4['quantity'],
+              });
+              products = [];
+            }
+
             if (element['userId']['_id'] == id) {
               Sell sell = Sell(
                 address: endereco,
                 products: produtos,
+                boxes: boxes,
                 sellId: element['_id'],
                 status: element['status'],
                 sellDate: element['sellDate'],
@@ -287,6 +356,7 @@ class UserController {
             }
             produtos = [];
             cooperatives = [];
+            boxes = [];
           }
         } catch (e, stackTrace) {
           print("erro: $e, stackTrace: $stackTrace");

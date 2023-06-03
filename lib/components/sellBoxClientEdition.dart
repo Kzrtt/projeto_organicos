@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/model/sell.dart';
 
@@ -26,9 +27,16 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
           widget.sell.products[i]['quantidade'] as int;
     }
 
+    for (var i = 0; i < widget.sell.boxes.length; i++) {
+      total += widget.sell.boxes[i]['box'].boxPrice *
+          widget.sell.boxes[i]['quantity'] as int;
+    }
+
     return Container(
-      height:
-          widget.constraints.maxHeight * widget.sell.products.length / 10 + 190,
+      height: widget.constraints.maxHeight *
+              (widget.sell.products.length + (widget.sell.boxes.length * 3.5)) /
+              10 +
+          212,
       width: widget.constraints.maxWidth * .9,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -95,36 +103,101 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
             ),
           ),
           SizedBox(height: widget.constraints.maxHeight * .02),
-          Padding(
-            padding: EdgeInsets.only(left: widget.constraints.maxWidth * .05),
-            child: const Text(
-              "Produtos comprados:",
-              style: TextStyle(
-                color: Color.fromRGBO(0, 0, 0, 0.58),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: widget.constraints.maxHeight *
-                    widget.sell.products.length /
-                    10 +
-                20,
-            width: widget.constraints.maxWidth,
-            child: ListView.builder(
-              itemCount: widget.sell.products.length,
-              itemBuilder: (context, index) {
-                Products item = widget.sell.products[index]['produto'];
-                var quantity = widget.sell.products[index]['quantidade'];
-                return ListTile(
-                  title: Text(item.productName),
-                  subtitle: Text(
-                      "${quantity * item.unitValue}${item.measuremntUnit}"),
-                  trailing: Text("R\$ ${item.productPrice * quantity}"),
-                );
-              },
-            ),
-          ),
+          widget.sell.products.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: widget.constraints.maxWidth * .05),
+                      child: const Text(
+                        "Produtos comprados:",
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 0.58),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: widget.constraints.maxHeight *
+                              widget.sell.products.length /
+                              10 +
+                          20,
+                      width: widget.constraints.maxWidth,
+                      child: ListView.builder(
+                        itemCount: widget.sell.products.length,
+                        itemBuilder: (context, index) {
+                          Products item =
+                              widget.sell.products[index]['produto'];
+                          var quantity =
+                              widget.sell.products[index]['quantidade'];
+                          return ListTile(
+                            title: Text(item.productName),
+                            subtitle: Text(
+                                "${quantity * item.unitValue}${item.measuremntUnit}"),
+                            trailing:
+                                Text("R\$ ${item.productPrice * quantity}"),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : Center(),
+          widget.sell.boxes.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: widget.constraints.maxWidth * .05),
+                      child: const Text(
+                        "Boxes compradas:",
+                        style: TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 0.58),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: widget.constraints.maxHeight * .025),
+                    SizedBox(
+                      height: widget.constraints.maxHeight *
+                              widget.sell.boxes.length /
+                              10 +
+                          150,
+                      width: widget.constraints.maxWidth,
+                      child: ListView.builder(
+                        itemCount: widget.sell.boxes.length,
+                        itemBuilder: (context, index) {
+                          Box item = widget.sell.boxes[index]['box'];
+                          var quantity = widget.sell.boxes[index]['quantity'];
+                          return ListTile(
+                            title: Text(item.boxName),
+                            subtitle: SizedBox(
+                              height: widget.constraints.maxHeight * .4,
+                              width: widget.constraints.maxWidth,
+                              child: ListView.builder(
+                                itemCount: item.produtos.length,
+                                itemBuilder: (context, index) {
+                                  var product = item.produtos[index].product;
+                                  var q = item.produtos[index].quantity;
+                                  return ListTile(
+                                    title: Text(product.productName),
+                                    subtitle: Text(
+                                        "${q * product.unitValue}${product.measuremntUnit}"),
+                                  );
+                                },
+                              ),
+                            ),
+                            trailing: Text("R\$ ${item.boxPrice * quantity}"),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : Center(),
+          SizedBox(height: widget.constraints.maxHeight * .02),
           Padding(
             padding: EdgeInsets.only(
               left: widget.constraints.maxWidth * .05,

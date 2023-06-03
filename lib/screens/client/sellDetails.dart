@@ -20,7 +20,12 @@ class _SellDetailsState extends State<SellDetails> {
     String month = sell[0].sellDate.substring(5, 7);
     String day = sell[0].sellDate.substring(8, 10);
 
+    String year2 = sell[0].deliveryDate.substring(0, 4);
+    String month2 = sell[0].deliveryDate.substring(5, 7);
+    String day2 = sell[0].deliveryDate.substring(8, 10);
+
     String formattedDate = '$day-$month-$year';
+    String formattedDate2 = '$day2-$month2-$year2';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -56,12 +61,20 @@ class _SellDetailsState extends State<SellDetails> {
         builder: (context, constraints) {
           return SingleChildScrollView(
             child: SizedBox(
-              height: constraints.maxHeight * 1.2,
+              height: constraints.maxHeight * 1.4,
               child: Column(
                 children: [
                   SizedBox(height: constraints.maxHeight * .03),
                   Text(
                     "Data do pedido: $formattedDate",
+                    style: const TextStyle(
+                      color: Color.fromRGBO(0, 0, 0, .68),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: constraints.maxHeight * .04),
+                  Text(
+                    "Data da Entrega: $formattedDate2",
                     style: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, .68),
                       fontWeight: FontWeight.w600,

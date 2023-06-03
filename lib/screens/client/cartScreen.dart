@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
+import 'package:projeto_organicos/components/myDialog.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
+import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/adress.dart';
 import '../../utils/appRoutes.dart';
+import '../../utils/quantityProvider.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -20,6 +24,8 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  String _selectedDate = "";
   List<Adress> addresses = [];
   List<String> addressesId = [];
   List<Map<String, dynamic>> cartMongodb = [];
@@ -84,15 +90,20 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String _selectedItem = defaultAddress.nickname;
-    String _selectedDate = "";
     List<Products> cart = Provider.of<CartProvider>(context).getCart;
     List<int> quantity = Provider.of<CartProvider>(context).getQuantity;
     List<String> items = addresses.map((e) => e.nickname).toList();
+    String _selectedItem = defaultAddress.nickname;
+    List<String> dias = ['Terça', 'Sexta'];
     num subTotal = 0;
     for (var i = 0; i < cartMongodb.length; i++) {
       subTotal +=
           cartMongodb[i]['product'].productPrice * cartMongodb[i]['quantity'];
+    }
+
+    for (var i = 0; i < boxCartMongodb.length; i++) {
+      subTotal +=
+          boxCartMongodb[i]['box'].boxPrice * boxCartMongodb[i]['quantity'];
     }
 
     return LayoutBuilder(
@@ -521,7 +532,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   Navigator.of(context)
                                                       .pushNamed(
                                                     AppRoutes.BOXSCREEN,
-                                                    arguments: item,
+                                                    arguments: item['box'],
                                                   );
                                                 },
                                                 child: Padding(
@@ -703,7 +714,31 @@ class _CartScreenState extends State<CartScreen> {
                                                                   .maxWidth *
                                                               .21,
                                                         ),
-                                                        Icon(Icons.edit),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            CartController
+                                                                controller =
+                                                                CartController();
+                                                            controller
+                                                                .removeBoxFromCart(
+                                                              item['box'].id,
+                                                            );
+                                                            setState(() {
+                                                              boxCartMongodb
+                                                                  .removeWhere(
+                                                                (element) =>
+                                                                    element['box']
+                                                                        .id ==
+                                                                    item['box']
+                                                                        .id,
+                                                              );
+                                                            });
+                                                          },
+                                                          child: Icon(
+                                                            Icons.delete,
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -715,7 +750,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ],
                                     ),
                                   )
-                                : Placeholder(),
+                                : Center(),
                             SizedBox(height: constraints.maxHeight * .03),
                             thinDivider(constraints),
                             SizedBox(height: constraints.maxHeight * .05),
@@ -779,8 +814,8 @@ class _CartScreenState extends State<CartScreen> {
                                   SizedBox(
                                     width: constraints.maxWidth * .9,
                                     child: DropdownButtonFormField<String>(
-                                      value: _selectedItem.isNotEmpty
-                                          ? _selectedItem
+                                      value: _selectedDate.isNotEmpty
+                                          ? _selectedDate
                                           : null,
                                       decoration: InputDecoration(
                                         filled: true,
@@ -796,14 +831,14 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       hint: const Text(
-                                        "Escolha o horário para entrega",
+                                        "Escolha o dia para entrega",
                                       ),
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedDate = value.toString();
                                         });
                                       },
-                                      items: items
+                                      items: dias
                                           .map(
                                             (item) => DropdownMenuItem(
                                               value: item,
@@ -910,9 +945,30 @@ class _CartScreenState extends State<CartScreen> {
                                 provider.setQuantity(quantity);
                                 int index = items.indexOf(_selectedItem);
                                 CartController controller = CartController();
+                                DateTime nextDay;
+                                String formattedDate = "";
+                                print(_selectedItem);
+                                if (_selectedDate == "Terça") {
+                                  print('entrou no if');
+                                  DateTime now = DateTime.now();
+                                  int daysUntilNextDay =
+                                      (DateTime.tuesday - now.weekday + 7) % 7;
+                                  nextDay =
+                                      now.add(Duration(days: daysUntilNextDay));
+                                  formattedDate = _dateFormat.format(nextDay);
+                                } else if (_selectedDate == "Sexta") {
+                                  DateTime now = DateTime.now();
+                                  int daysUntilNextDay =
+                                      (DateTime.friday - now.weekday + 7) % 7;
+                                  nextDay =
+                                      now.add(Duration(days: daysUntilNextDay));
+                                  formattedDate = _dateFormat.format(nextDay);
+                                }
+                                print('depois dos ifs $formattedDate');
+
                                 controller.createSell(
                                   addressesId[index],
-                                  "2023-06-07",
+                                  formattedDate,
                                 );
                                 Navigator.of(context).pushNamed(
                                   AppRoutes.PAYMENTSCREEN,

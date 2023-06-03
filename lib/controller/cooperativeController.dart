@@ -11,7 +11,9 @@ import 'package:projeto_organicos/model/sell.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/box.dart';
 import '../model/producers.dart';
+import '../model/productInBox.dart';
 import '../model/products.dart';
 
 class CooperativeController with ChangeNotifier {
@@ -113,6 +115,7 @@ class CooperativeController with ChangeNotifier {
         try {
           Map<String, dynamic> endereco = {};
           List<Map<String, dynamic>> produtos = [];
+          List<Map<String, dynamic>> boxes = [];
           for (var element in response.data['sells']) {
             endereco = {
               "complement": element['userAddress']['complement'],
@@ -125,6 +128,55 @@ class CooperativeController with ChangeNotifier {
             List<String> _cooperatives = [];
             for (var element2 in element['cooperatives']) {
               _cooperatives.add(element2['cooperativeName']);
+            }
+
+            for (var element4 in element['items']['boxes']) {
+              List<ProductInBox> products = [];
+              for (var element5 in element4['boxId']['products']) {
+                List<String> categorias = [];
+                for (var e2 in element5['productId']['categories']) {
+                  categorias.add(e2['categoryName']);
+                }
+
+                Products product = Products(
+                  productId: element5['productId']['_id'],
+                  productName: element5['productId']['productName'],
+                  category: categorias,
+                  productPhoto: element5['productId']['productPhoto'],
+                  productPrice: element5['productId']['productPrice'],
+                  stockQuantity: element5['productId']['stockQuantity'],
+                  unitValue: element5['productId']['unitValue'],
+                  productDetails: element5['productId']['productDetails'],
+                  cooperativeId: element5['productId']['cooperativeId'],
+                  producerId: element5['productId']['producerId'],
+                  measuremntUnit: element5['productId']['measurementUnit']
+                      ['measurementUnit'],
+                );
+
+                ProductInBox productInBox = ProductInBox(
+                  product: product,
+                  quantity: element5['quantity'],
+                  measurementUnity: element5['productId']['measurementUnit']
+                      ['measurementUnit'],
+                );
+
+                products.add(productInBox);
+              }
+
+              Box box = Box(
+                id: element4['boxId']['_id'],
+                boxDetails: element4['boxId']['boxDetails'],
+                boxName: element4['boxId']['boxName'],
+                boxPhoto: element4['boxId']['boxPhoto'],
+                boxPrice: element4['boxId']['boxPrice'],
+                boxQuantity: element4['boxId']['stockQuantity'],
+                produtos: products,
+              );
+              boxes.add({
+                "box": box,
+                "quantity": element4['quantity'],
+              });
+              products = [];
             }
 
             for (var element3 in element['products']) {
@@ -160,6 +212,7 @@ class CooperativeController with ChangeNotifier {
               Sell sell = Sell(
                 address: endereco,
                 products: produtos,
+                boxes: boxes,
                 sellId: element['_id'],
                 status: element['status'],
                 sellDate: element['sellDate'],
@@ -171,6 +224,7 @@ class CooperativeController with ChangeNotifier {
 
             _cooperatives = [];
             produtos = [];
+            boxes = [];
           }
         } catch (e, stackTrace) {
           print("erro: $e, stackTrace: $stackTrace");

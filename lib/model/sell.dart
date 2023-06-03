@@ -1,6 +1,7 @@
 class Sell {
   final String sellId;
   final List<Map<String, dynamic>> products;
+  final List<Map<String, dynamic>> boxes;
   final String status;
   final Map<String, dynamic> address;
   final String sellDate;
@@ -10,6 +11,7 @@ class Sell {
   Sell({
     required this.address,
     required this.products,
+    required this.boxes,
     required this.sellId,
     required this.status,
     required this.sellDate,
