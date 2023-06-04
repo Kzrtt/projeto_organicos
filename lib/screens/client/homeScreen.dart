@@ -38,9 +38,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     controller.getAllBoxes().then((value) {
-      setState(() {
-        boxes = value;
-      });
+      for (var element in value) {
+        if (element.boxQuantity > 0) {
+          boxes.add(element);
+        }
+      }
     });
   }
 

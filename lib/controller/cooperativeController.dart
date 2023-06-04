@@ -179,7 +179,7 @@ class CooperativeController with ChangeNotifier {
               products = [];
             }
 
-            for (var element3 in element['products']) {
+            for (var element3 in element['items']['products']) {
               List<String> categories = [];
               for (var e in element3['productId']['categories']) {
                 categories.add(e['categoryName']);

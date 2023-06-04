@@ -9,6 +9,7 @@ class AppRoutes {
   static const SELLDETAILS = "/sell-details";
   static const BOXSCREEN = "/box-screen";
   static const CATEGORYPRODUCTS = "products-from-category";
+  static const FORGOTPASSWORD = "/forgot-password";
 }
 
 class ProducerAppRoutes {

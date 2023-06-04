@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/addAdressScreen.dart';
 import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/boxScreen.dart';
+import 'package:projeto_organicos/screens/client/forgotPassword.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/paymentScreen.dart';
 import 'package:projeto_organicos/screens/client/productScreen.dart';
@@ -68,6 +69,7 @@ class _MyAppState extends State<MyApp> {
           AppRoutes.SELLDETAILS: (ctx) => const SellDetails(),
           AppRoutes.BOXSCREEN: (ctx) => const BoxScreen(),
           AppRoutes.CATEGORYPRODUCTS: (ctx) => const ProductsFromCategory(),
+          AppRoutes.FORGOTPASSWORD: (ctx) => const ForgotPassword(),
           //Producer app routes
           ProducerAppRoutes.PRODUCERHOMETAB: (ctx) => const ProducerHomeTab(),
           ProducerAppRoutes.OPENSELLDETAILS: (ctx) => const OpenSellsDetails(),

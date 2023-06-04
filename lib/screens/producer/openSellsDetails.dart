@@ -30,7 +30,12 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
     String month = sell[0].sellDate.substring(5, 7);
     String day = sell[0].sellDate.substring(8, 10);
 
+    String year2 = sell[0].deliveryDate.substring(0, 4);
+    String month2 = sell[0].deliveryDate.substring(5, 7);
+    String day2 = sell[0].deliveryDate.substring(8, 10);
+
     String formattedDate = '$day-$month-$year';
+    String formattedDate2 = '$day2-$month2-$year2';
 
     return Scaffold(
       appBar: AppBar(
@@ -72,6 +77,14 @@ class _OpenSellsDetailsState extends State<OpenSellsDetails> {
                   SizedBox(height: constraints.maxHeight * .03),
                   Text(
                     "Data do Pedido: $day/$month/$year",
+                    style: const TextStyle(
+                      color: Color.fromRGBO(0, 0, 0, 0.58),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: constraints.maxHeight * .04),
+                  Text(
+                    "Data da Entrega: $day2/$month2/$year2",
                     style: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.58),
                       fontWeight: FontWeight.w600,

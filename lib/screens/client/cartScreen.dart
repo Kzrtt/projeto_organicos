@@ -26,6 +26,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
   String _selectedDate = "";
+  String _selectedItem = "";
   List<Adress> addresses = [];
   List<String> addressesId = [];
   List<Map<String, dynamic>> cartMongodb = [];
@@ -93,7 +94,6 @@ class _CartScreenState extends State<CartScreen> {
     List<Products> cart = Provider.of<CartProvider>(context).getCart;
     List<int> quantity = Provider.of<CartProvider>(context).getQuantity;
     List<String> items = addresses.map((e) => e.nickname).toList();
-    String _selectedItem = defaultAddress.nickname;
     List<String> dias = ['Terça', 'Sexta'];
     num subTotal = 0;
     for (var i = 0; i < cartMongodb.length; i++) {

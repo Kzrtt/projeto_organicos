@@ -89,7 +89,31 @@ class _OpeningScreenState extends State<OpeningScreen> {
                   SizedBox(height: constraints.maxHeight * .022),
                   _textField1(
                       55, 330, constraints, 'Senha', passwordController),
-                  SizedBox(height: constraints.maxHeight * .05),
+                  SizedBox(height: constraints.maxHeight * .02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(right: constraints.maxWidth * .1),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(AppRoutes.FORGOTPASSWORD);
+                          },
+                          child: Text(
+                            "Esqueceu a senha?",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: constraints.maxHeight * .017,
+                              color: const Color.fromRGBO(0, 0, 0, 0.58),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: constraints.maxHeight * .04),
                   Padding(
                     padding: EdgeInsets.only(left: constraints.maxWidth * .075),
                     child: Row(
