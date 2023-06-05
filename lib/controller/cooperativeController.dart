@@ -100,6 +100,145 @@ class CooperativeController with ChangeNotifier {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getAllProductsFromSells() async {
+    try {
+      /**
+       * "produto": instancia de produto
+       * "quantidade": quantidade que tem 
+       * "data": unidade de medida
+       * ==================================
+       * - Verificar todas as vendas
+       * - Ver se a produto ja existe na lista
+       *    ? aumentar a quantidade 
+       *    : adicionar ele na lista
+       * - Ver os produtos dentro da box estão dentro da lista
+       *    ? aumentar a quantidade
+       *    : adicionar na lista
+       * -Verificar se os produtos tem a mesma data de entrega
+       * ==================================
+       * - for(produto in listaDeVendas)
+       * - if(produto in newList)
+       * - for(boxes in listaDeVendas)
+       * - for(products in box)
+       * - if(produto in newList) 
+      */
+      List<Map<String, dynamic>> newList = [];
+      List<Sell> sells = await getAllSells();
+      for (var venda in sells) {
+        if (venda.products.isNotEmpty) {
+          for (var product in venda.products) {
+            if (newList.any((element) =>
+                element['produto'].productId == product['produto'].productId)) {
+              if (venda.deliveryDate ==
+                  newList.firstWhere((element) =>
+                      element['produto'].productId ==
+                      product['produto'].productId)['data']) {
+                newList.firstWhere((element) =>
+                        element['produto'].productId ==
+                        product['produto'].productId)['quantidade'] +=
+                    product['quantidade'];
+              } else {
+                newList.add({
+                  "produto": product['produto'],
+                  "quantidade": product['quantidade'],
+                  "data": venda.deliveryDate,
+                });
+              }
+            } else {
+              newList.add({
+                "produto": product['produto'],
+                "quantidade": product['quantidade'],
+                "data": venda.deliveryDate,
+              });
+            }
+          }
+        } else if (venda.boxes.isNotEmpty) {
+          for (var box in venda.boxes) {
+            for (var productInBox in box['box'].produtos) {
+              if (newList.any((element) =>
+                  element['produto'].productId ==
+                  productInBox.product.productId)) {
+                if (venda.deliveryDate ==
+                    newList.firstWhere((element) =>
+                        element['produto'].productId ==
+                        productInBox.product.productId)['data']) {
+                  newList.firstWhere((element) =>
+                          element['produto'].productId ==
+                          productInBox.product.productId)['quantidade'] +=
+                      productInBox.quantity;
+                } else {
+                  newList.add({
+                    "produto": productInBox.product,
+                    "quantidade": productInBox.quantity,
+                    "data": venda.deliveryDate,
+                  });
+                }
+              } else {
+                newList.add({
+                  "produto": productInBox.product,
+                  "quantidade": productInBox.quantity,
+                  "data": venda.deliveryDate,
+                });
+              }
+            }
+          }
+        }
+      }
+      /**
+       * datas: [{
+       *  "data": xx/xx/xxxx,
+       *  "produtosNaData": [{"produto": x, "quantidade": y, "data": z}],
+       * }]
+       */
+      List<Map<String, dynamic>> datas = [];
+      for (var i = 0; i < newList.length; i++) {
+        String currentDate = newList[i]['data'];
+        if (newList[i]['data'] == currentDate) {
+          List<Map<String, dynamic>> result = [];
+          for (var element in newList) {
+            if (element['data'] == currentDate) {
+              result.add(element);
+            }
+          }
+          if (datas.any((element) => element['data'] == currentDate)) {
+            datas
+                .firstWhere((element) => element['data'] == currentDate)[
+                    'produtosNaData']
+                .add(newList[i]);
+          } else {
+            datas.add({
+              "data": currentDate,
+              "produtosNaData": result,
+            });
+          }
+        } else {
+          String newCurrentDate = newList[i]['data'];
+          if (datas.any((element) => element['data'] == newCurrentDate)) {
+            datas
+                .firstWhere((element) => element['data'] == newCurrentDate)[
+                    'produtosNaData']
+                .add(newList[i]);
+          } else {
+            datas.add({
+              "data": currentDate,
+              "produtosNaData": newCurrentDate,
+            });
+          }
+        }
+      }
+      return datas;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      throw Exception('erro: $e');
+    }
+  }
+
   Future<List<Sell>> getAllSells() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();

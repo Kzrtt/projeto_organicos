@@ -923,7 +923,7 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       Text(
-                                        "R\$${subTotal + 10}",
+                                        "R\$${(subTotal + 10).toStringAsFixed(2)}",
                                         style: const TextStyle(
                                           color: Color.fromRGBO(0, 0, 0, .81),
                                           fontWeight: FontWeight.w600,

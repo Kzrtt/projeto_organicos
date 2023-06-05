@@ -15,6 +15,7 @@ class OpenSells extends StatefulWidget {
 
 class _OpenSellsState extends State<OpenSells> {
   List<Sell> _sells = [];
+  List<Map<String, dynamic>> produtosNecessarios = [];
 
   @override
   void initState() {
@@ -26,48 +27,80 @@ class _OpenSellsState extends State<OpenSells> {
         _sells = value;
       });
     });
+    controller.getAllProductsFromSells().then((value) {
+      setState(() {
+        produtosNecessarios = value;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          children: [
-            NameAndIcon(
-              constraints: constraints,
-              icon: Icons.star,
-              text: "Pedidos Abertos",
+        return SingleChildScrollView(
+          child: SizedBox(
+            height: constraints.maxHeight * 1.3,
+            width: constraints.maxWidth,
+            child: Column(
+              children: [
+                NameAndIcon(
+                  constraints: constraints,
+                  icon: Icons.star,
+                  text: "Pedidos Abertos",
+                ),
+                SizedBox(height: constraints.maxHeight * .05),
+                SizedBox(
+                  height: constraints.maxHeight * 1.2,
+                  width: constraints.maxWidth * .9,
+                  child: ListView.builder(
+                    itemCount: produtosNecessarios.length,
+                    itemBuilder: (context, index) {
+                      var item = produtosNecessarios[index]['produtosNaData'];
+                      var data = produtosNecessarios[index]['data'];
+                      return Column(
+                        children: [
+                          Container(
+                            height: constraints.maxHeight * .3,
+                            width: constraints.maxWidth * .9,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(data),
+                                SizedBox(height: constraints.maxHeight * .03),
+                                SizedBox(
+                                  height: constraints.maxHeight * .2,
+                                  width: constraints.maxWidth,
+                                  child: ListView.builder(
+                                    itemCount: item.length,
+                                    itemBuilder: (context, index) {
+                                      var product = item[index]['produto'];
+                                      var itemQuantity =
+                                          item[index]['quantidade'];
+                                      return ListTile(
+                                        title: Text(product.productName),
+                                        subtitle: Text(
+                                            "${itemQuantity * product.unitValue}${product.measuremntUnit}"),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: constraints.maxHeight * .03),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: constraints.maxHeight * .06),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: constraints.maxHeight * .05),
-            SizedBox(
-              height: constraints.maxHeight * .8,
-              width: constraints.maxWidth,
-              child: ListView.builder(
-                itemCount: _sells.length,
-                itemBuilder: (context, index) {
-                  var item = _sells[index];
-                  return Padding(
-                    padding: EdgeInsets.all(constraints.maxHeight * .03),
-                    child: InkWell(
-                      onTap: () {
-                        List<dynamic> list = [item, index];
-                        Navigator.of(context).pushNamed(
-                          ProducerAppRoutes.OPENSELLDETAILS,
-                          arguments: list,
-                        );
-                      },
-                      child: SellBoxProducerEdition(
-                        constraints: constraints,
-                        sell: item,
-                        index: index,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         );
       },
     );

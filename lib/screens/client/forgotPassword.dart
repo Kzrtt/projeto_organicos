@@ -154,6 +154,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: PinCodeTextField(
                               appContext: context,
                               length: 6,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(5),
+                                fieldHeight: 50,
+                                fieldWidth: 40,
+                              ),
                               onChanged: (value) {},
                               onCompleted: (value) {
                                 setState(() {
