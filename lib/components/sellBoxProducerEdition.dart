@@ -51,28 +51,38 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: widget.constraints.maxWidth * .05,
-                  vertical: widget.constraints.maxHeight * .02,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Pedido N°${widget.index + 1}",
-                      style: const TextStyle(
-                        color: Color.fromRGBO(0, 0, 0, 0.58),
-                        fontWeight: FontWeight.w700,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: widget.constraints.maxWidth * .05,
+                    vertical: widget.constraints.maxHeight * .02,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Pedido N°${widget.index + 1}",
+                        style: const TextStyle(
+                          color: Color.fromRGBO(0, 0, 0, 0.58),
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "R\$ $total",
-                      style: const TextStyle(
-                        color: Color.fromRGBO(113, 227, 154, 1),
-                      ),
-                    )
-                  ],
+                      Text(
+                        "R\$ $total",
+                        style: const TextStyle(
+                          color: Color.fromRGBO(113, 227, 154, 1),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: widget.constraints.maxHeight * .02),

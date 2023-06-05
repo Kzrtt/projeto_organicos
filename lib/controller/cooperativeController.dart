@@ -102,207 +102,35 @@ class CooperativeController with ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> getAllProductsFromSells() async {
     try {
-      /**
-       * "produto": instancia de produto
-       * "quantidade": quantidade que tem 
-       * "data": xx/xx/xxxx
-       * ==================================
-       * - Verificar todas as vendas
-       * - Ver se a produto ja existe na lista
-       *    ? aumentar a quantidade 
-       *    : adicionar ele na lista
-       * - Ver os produtos dentro da box estão dentro da lista
-       *    ? aumentar a quantidade
-       *    : adicionar na lista
-       * -Verificar se os produtos tem a mesma data de entrega
-       * ==================================
-       * - for(produto in listaDeVendas)
-       * - if(produto in newList)
-       * - for(boxes in listaDeVendas)
-       * - for(products in box)
-       * - if(produto in newList) 
-      */
-      List<Map<String, dynamic>> newList = [];
-      List<Map<String, dynamic>> datas = [];
-      List<Map<String, dynamic>> datas2 = [];
+      Map<String, List<Sell>> dataMap =
+          {}; // Usando um Map para agrupar os produtos vendidos por data
       List<Sell> sells = await getAllSells();
+      print(sells.length);
 
-      //Ordenando os produtos pela data
       for (var element in sells) {
-        if (datas2.isEmpty) {
-          datas2.add({
-            "data": element.deliveryDate,
-            "produtos": element.products,
-          });
+        String deliveryDate = element.deliveryDate;
+
+        if (dataMap.containsKey(deliveryDate)) {
+          // Se a data já está presente no Map, adiciona o produto vendido à lista existente
+          dataMap[deliveryDate]!.add(element);
         } else {
-          if (datas2.any((e) => e['data'] == element.deliveryDate)) {
-            datas2.firstWhere(
-                    (e) => e['data'] == element.deliveryDate)['produtos'] +=
-                element.products;
-          } else {
-            datas2.add({
-              "data": element.deliveryDate,
-              "produtos": element.products,
-            });
-          }
+          // Se a data não está presente no Map, cria uma nova lista com o produto vendido
+          dataMap[deliveryDate] = [element];
         }
       }
 
-      /*
-      // Verificar produtos repetidos e atualizar a lista
-      for (int i = 0; i < datas2.length; i++) {
-        for (int j = i + 1; j < datas2.length; j++) {
-          if (datas2[i]['produto'] == datas2[j]['produto']) {
-            datas2[i]['quantidade'] += datas2[j]['quantidade'];
-            datas2.removeAt(j);
-            j--;
-          }
-        }
+      // Converter o Map para uma lista de Map<String, dynamic>
+      List<Map<String, dynamic>> datas = dataMap.entries.map((entry) {
+        return {
+          "data": entry.key,
+          "vendas": entry.value,
+        };
+      }).toList();
+
+      for (var element in datas) {
+        print(element);
       }
 
-      for (var element in datas2) {
-        print("$element, ${element['produtos'].productName}");
-      }
-      */
-
-      for (var venda in sells) {
-        if (venda.products.isNotEmpty) {
-          for (var product in venda.products) {
-            if (newList.any((element) =>
-                element['produto'].productId == product['produto'].productId)) {
-              if (venda.deliveryDate ==
-                  newList.firstWhere((element) =>
-                      element['produto'].productId ==
-                      product['produto'].productId)['data']) {
-                newList.firstWhere((element) =>
-                        element['produto'].productId ==
-                        product['produto'].productId)['quantidade'] +=
-                    product['quantidade'];
-              } else {
-                newList.add({
-                  "produto": product['produto'],
-                  "quantidade": product['quantidade'],
-                  "data": venda.deliveryDate,
-                });
-              }
-            } else {
-              newList.add({
-                "produto": product['produto'],
-                "quantidade": product['quantidade'],
-                "data": venda.deliveryDate,
-              });
-            }
-          }
-          if (venda.boxes.isNotEmpty) {
-            for (var box in venda.boxes) {
-              for (var productInBox in box['box'].produtos) {
-                if (newList.any((element) =>
-                    element['produto'].productId ==
-                    productInBox.product.productId)) {
-                  if (venda.deliveryDate ==
-                      newList.firstWhere((element) =>
-                          element['produto'].productId ==
-                          productInBox.product.productId)['data']) {
-                    newList.firstWhere((element) =>
-                            element['produto'].productId ==
-                            productInBox.product.productId)['quantidade'] +=
-                        productInBox.quantity;
-                  } else {
-                    newList.add({
-                      "produto": productInBox.product,
-                      "quantidade": productInBox.quantity,
-                      "data": venda.deliveryDate,
-                    });
-                  }
-                } else {
-                  newList.add({
-                    "produto": productInBox.product,
-                    "quantidade": productInBox.quantity,
-                    "data": venda.deliveryDate,
-                  });
-                }
-              }
-            }
-          }
-        } else if (venda.boxes.isNotEmpty) {
-          for (var box in venda.boxes) {
-            for (var productInBox in box['box'].produtos) {
-              if (newList.any((element) =>
-                  element['produto'].productId ==
-                  productInBox.product.productId)) {
-                if (venda.deliveryDate ==
-                    newList.firstWhere((element) =>
-                        element['produto'].productId ==
-                        productInBox.product.productId)['data']) {
-                  newList.firstWhere((element) =>
-                          element['produto'].productId ==
-                          productInBox.product.productId)['quantidade'] +=
-                      productInBox.quantity;
-                } else {
-                  newList.add({
-                    "produto": productInBox.product,
-                    "quantidade": productInBox.quantity,
-                    "data": venda.deliveryDate,
-                  });
-                }
-              } else {
-                newList.add({
-                  "produto": productInBox.product,
-                  "quantidade": productInBox.quantity,
-                  "data": venda.deliveryDate,
-                });
-              }
-            }
-          }
-        }
-      }
-      /**
-       * datas: [{
-       *  "data": xx/xx/xxxx,
-       *  "produtosNaData": [{"produto": x, "quantidade": y, "data": z}],
-       * }]
-       */
-      /*
-      for (var element in newList) {
-        print("$element, ${element['produto'].productName}");
-      }
-      */
-
-      for (var i = 0; i < newList.length; i++) {
-        String currentDate = newList[i]['data'];
-        if (newList[i]['data'] == currentDate) {
-          List<Map<String, dynamic>> result = [];
-          for (var element in newList) {
-            if (element['data'] == currentDate) {
-              result.add(element);
-            }
-          }
-          if (datas.any((element) => element['data'] == currentDate)) {
-            datas
-                .firstWhere((element) => element['data'] == currentDate)[
-                    'produtosNaData']
-                .add(newList[i]);
-          } else {
-            datas.add({
-              "data": currentDate,
-              "produtosNaData": result,
-            });
-          }
-        } else {
-          String newCurrentDate = newList[i]['data'];
-          if (datas.any((element) => element['data'] == newCurrentDate)) {
-            datas
-                .firstWhere((element) => element['data'] == newCurrentDate)[
-                    'produtosNaData']
-                .add(newList[i]);
-          } else {
-            datas.add({
-              "data": currentDate,
-              "produtosNaData": newCurrentDate,
-            });
-          }
-        }
-      }
       return datas;
     } catch (e, stackTrace) {
       if (e is DioError) {
@@ -341,9 +169,41 @@ class CooperativeController with ChangeNotifier {
               "zipcode": element['userAddress']['zipcode'],
             };
 
-            List<String> _cooperatives = [];
+            List<String> cooperatives = [];
             for (var element2 in element['cooperatives']) {
-              _cooperatives.add(element2['cooperativeName']);
+              cooperatives.add(element2['cooperativeName']);
+            }
+
+            List<String> cooperativesId = [];
+            for (var element2 in element['cooperatives']) {
+              cooperativesId.add(element2['_id']);
+            }
+
+            for (var element3 in element['items']['products']) {
+              List<String> categories = [];
+              for (var e in element3['productId']['categories']) {
+                categories.add(e['categoryName']);
+              }
+              Products product = Products(
+                productId: element3['productId']['_id'],
+                productName: element3['productId']['productName'],
+                category: categories,
+                productPhoto: element3['productId']['productPhoto'],
+                productPrice: element3['productId']['productPrice'],
+                stockQuantity: element3['productId']['stockQuantity'],
+                unitValue: element3['productId']['unitValue'],
+                productDetails: element3['productId']['productDetails'],
+                cooperativeId: element3['productId']['cooperativeId'],
+                producerId: element3['productId']['producerId'],
+                measuremntUnit: element3['productId']['measurementUnit']
+                    ['measurementUnit'],
+              );
+              produtos.add(
+                {
+                  "produto": product,
+                  "quantidade": element3['quantity'],
+                },
+              );
             }
 
             for (var element4 in element['items']['boxes']) {
@@ -395,36 +255,7 @@ class CooperativeController with ChangeNotifier {
               products = [];
             }
 
-            for (var element3 in element['items']['products']) {
-              List<String> categories = [];
-              for (var e in element3['productId']['categories']) {
-                categories.add(e['categoryName']);
-              }
-
-              Products product = Products(
-                productId: element3['productId']['_id'],
-                productName: element3['productId']['productName'],
-                category: categories,
-                productPhoto: element3['productId']['productPhoto'],
-                productPrice: element3['productId']['productPrice'],
-                stockQuantity: element3['productId']['stockQuantity'],
-                unitValue: element3['productId']['unitValue'],
-                productDetails: element3['productId']['productDetails'],
-                cooperativeId: element3['productId']['cooperativeId'],
-                producerId: element3['productId']['producerId'],
-                measuremntUnit: element3['productId']['measurementUnit']
-                    ['measurementUnit'],
-              );
-              if (product.cooperativeId == id) {
-                produtos.add(
-                  {
-                    "produto": product,
-                    "quantidade": element3['quantity'],
-                  },
-                );
-              }
-            }
-            if (produtos.isNotEmpty) {
+            if (cooperativesId.any((element) => element == id)) {
               Sell sell = Sell(
                 address: endereco,
                 products: produtos,
@@ -433,13 +264,13 @@ class CooperativeController with ChangeNotifier {
                 status: element['status'],
                 sellDate: element['sellDate'],
                 deliveryDate: element['deliveryDate'],
-                cooperatives: _cooperatives,
+                cooperatives: cooperatives,
               );
               _sells.add(sell);
             }
-
-            _cooperatives = [];
             produtos = [];
+            cooperatives = [];
+            cooperativesId = [];
             boxes = [];
           }
         } catch (e, stackTrace) {

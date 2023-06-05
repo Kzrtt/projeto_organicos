@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/sellBoxProducerEdition.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
+import 'package:projeto_organicos/controller/productController.dart';
+import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 
 import '../../model/sell.dart';
@@ -15,6 +17,7 @@ class OpenSells extends StatefulWidget {
 
 class _OpenSellsState extends State<OpenSells> {
   List<Sell> _sells = [];
+  List<Products> _products = [];
   List<Map<String, dynamic>> produtosNecessarios = [];
 
   @override
@@ -22,6 +25,12 @@ class _OpenSellsState extends State<OpenSells> {
     // TODO: implement initState
     super.initState();
     CooperativeController controller = CooperativeController();
+    ProductController productController = ProductController();
+    productController.getAllProducts().then((value) {
+      setState(() {
+        _products = value;
+      });
+    });
     controller.getAllSells().then((value) {
       setState(() {
         _sells = value;
@@ -34,71 +43,44 @@ class _OpenSellsState extends State<OpenSells> {
     });
   }
 
-  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
-          height: constraints.maxHeight,
-          width: constraints.maxWidth,
-          child: Column(
-            children: [
-              NameAndIcon(
-                constraints: constraints,
-                icon: Icons.star,
-                text: "Pedidos Abertos",
+        return Column(
+          children: [
+            NameAndIcon(
+              constraints: constraints,
+              icon: Icons.star,
+              text: "Pedidos Abertos",
+            ),
+            SizedBox(
+              height: constraints.maxHeight * .9,
+              width: constraints.maxWidth,
+              child: ListView.builder(
+                itemCount: _sells.length,
+                itemBuilder: (context, index) {
+                  var item = _sells[index];
+                  return Padding(
+                    padding: EdgeInsets.all(constraints.maxHeight * .03),
+                    child: InkWell(
+                      onTap: () {
+                        List<dynamic> list = [item, index];
+                        Navigator.of(context).pushNamed(
+                          ProducerAppRoutes.OPENSELLDETAILS,
+                          arguments: list,
+                        );
+                      },
+                      child: SellBoxProducerEdition(
+                        constraints: constraints,
+                        sell: item,
+                        index: index,
+                      ),
+                    ),
+                  );
+                },
               ),
-              SizedBox(height: constraints.maxHeight * .05),
-              SizedBox(
-                height: constraints.maxHeight * .85,
-                width: constraints.maxWidth * .9,
-                child: ListView.builder(
-                  itemCount: produtosNecessarios.length,
-                  itemBuilder: (context, index) {
-                    var item = produtosNecessarios[index]['produtosNaData'];
-                    var data = produtosNecessarios[index]['data'];
-                    return Column(
-                      children: [
-                        Container(
-                          height: constraints.maxHeight * .3,
-                          width: constraints.maxWidth * .9,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(data),
-                              SizedBox(height: constraints.maxHeight * .03),
-                              SizedBox(
-                                height: constraints.maxHeight * .2,
-                                width: constraints.maxWidth,
-                                child: ListView.builder(
-                                  itemCount: item.length,
-                                  itemBuilder: (context, index) {
-                                    var product = item[index]['produto'];
-                                    var itemQuantity =
-                                        item[index]['quantidade'];
-                                    return ListTile(
-                                      title: Text(product.productName),
-                                      subtitle: Text(
-                                          "${itemQuantity * product.unitValue}${product.measuremntUnit}"),
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: constraints.maxHeight * .03),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: constraints.maxHeight * .06),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
