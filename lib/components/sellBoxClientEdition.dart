@@ -36,7 +36,7 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
       height: widget.constraints.maxHeight *
               (widget.sell.products.length + (widget.sell.boxes.length * 3.5)) /
               10 +
-          212,
+          220,
       width: widget.constraints.maxWidth * .9,
       decoration: BoxDecoration(
         color: Colors.white,

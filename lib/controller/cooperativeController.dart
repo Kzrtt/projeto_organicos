@@ -105,7 +105,7 @@ class CooperativeController with ChangeNotifier {
       /**
        * "produto": instancia de produto
        * "quantidade": quantidade que tem 
-       * "data": unidade de medida
+       * "data": xx/xx/xxxx
        * ==================================
        * - Verificar todas as vendas
        * - Ver se a produto ja existe na lista
@@ -123,7 +123,48 @@ class CooperativeController with ChangeNotifier {
        * - if(produto in newList) 
       */
       List<Map<String, dynamic>> newList = [];
+      List<Map<String, dynamic>> datas = [];
+      List<Map<String, dynamic>> datas2 = [];
       List<Sell> sells = await getAllSells();
+
+      //Ordenando os produtos pela data
+      for (var element in sells) {
+        if (datas2.isEmpty) {
+          datas2.add({
+            "data": element.deliveryDate,
+            "produtos": element.products,
+          });
+        } else {
+          if (datas2.any((e) => e['data'] == element.deliveryDate)) {
+            datas2.firstWhere(
+                    (e) => e['data'] == element.deliveryDate)['produtos'] +=
+                element.products;
+          } else {
+            datas2.add({
+              "data": element.deliveryDate,
+              "produtos": element.products,
+            });
+          }
+        }
+      }
+
+      /*
+      // Verificar produtos repetidos e atualizar a lista
+      for (int i = 0; i < datas2.length; i++) {
+        for (int j = i + 1; j < datas2.length; j++) {
+          if (datas2[i]['produto'] == datas2[j]['produto']) {
+            datas2[i]['quantidade'] += datas2[j]['quantidade'];
+            datas2.removeAt(j);
+            j--;
+          }
+        }
+      }
+
+      for (var element in datas2) {
+        print("$element, ${element['produtos'].productName}");
+      }
+      */
+
       for (var venda in sells) {
         if (venda.products.isNotEmpty) {
           for (var product in venda.products) {
@@ -150,6 +191,37 @@ class CooperativeController with ChangeNotifier {
                 "quantidade": product['quantidade'],
                 "data": venda.deliveryDate,
               });
+            }
+          }
+          if (venda.boxes.isNotEmpty) {
+            for (var box in venda.boxes) {
+              for (var productInBox in box['box'].produtos) {
+                if (newList.any((element) =>
+                    element['produto'].productId ==
+                    productInBox.product.productId)) {
+                  if (venda.deliveryDate ==
+                      newList.firstWhere((element) =>
+                          element['produto'].productId ==
+                          productInBox.product.productId)['data']) {
+                    newList.firstWhere((element) =>
+                            element['produto'].productId ==
+                            productInBox.product.productId)['quantidade'] +=
+                        productInBox.quantity;
+                  } else {
+                    newList.add({
+                      "produto": productInBox.product,
+                      "quantidade": productInBox.quantity,
+                      "data": venda.deliveryDate,
+                    });
+                  }
+                } else {
+                  newList.add({
+                    "produto": productInBox.product,
+                    "quantidade": productInBox.quantity,
+                    "data": venda.deliveryDate,
+                  });
+                }
+              }
             }
           }
         } else if (venda.boxes.isNotEmpty) {
@@ -190,7 +262,12 @@ class CooperativeController with ChangeNotifier {
        *  "produtosNaData": [{"produto": x, "quantidade": y, "data": z}],
        * }]
        */
-      List<Map<String, dynamic>> datas = [];
+      /*
+      for (var element in newList) {
+        print("$element, ${element['produto'].productName}");
+      }
+      */
+
       for (var i = 0; i < newList.length; i++) {
         String currentDate = newList[i]['data'];
         if (newList[i]['data'] == currentDate) {
@@ -227,15 +304,15 @@ class CooperativeController with ChangeNotifier {
         }
       }
       return datas;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e');
+        print('Erro inesperado: $e, stackTrace: $stackTrace');
       }
-      throw Exception('erro: $e');
+      throw Exception('erro: $e, stackTrace: $stackTrace');
     }
   }
 
