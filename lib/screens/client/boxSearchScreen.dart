@@ -25,9 +25,15 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
     _searchController.addListener(_filterItems);
     UserController controller = UserController();
     controller.getAllBoxes().then((value) {
+      for (var element in value) {
+        if (element.boxQuantity > 0) {
+          setState(() {
+            _boxes.add(element);
+          });
+        }
+      }
       setState(() {
-        _boxes = value;
-        _filteredItems = value;
+        _filteredItems = _boxes;
       });
     });
   }
@@ -38,6 +44,13 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
     _searchController.removeListener(_filterItems);
     _searchController.dispose();
     super.dispose();
+  }
+
+  String truncateString(String text, int maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength - 3) + '...';
+    }
+    return text;
   }
 
   void _filterItems() {
@@ -225,7 +238,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                                                   .maxWidth *
                                                               .02),
                                                       Text(
-                                                        "${products.product.productName}  ",
+                                                        "${truncateString(products.product.productName, 14)} ",
                                                       ),
                                                       Text(
                                                         "${products.quantity.toString()}${products.product.measuremntUnit}",
