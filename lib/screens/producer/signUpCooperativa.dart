@@ -21,6 +21,8 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
       mask: '###.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
   var maskedFormatterCep = MaskTextInputFormatter(
       mask: '#####-###', filter: {'#': RegExp(r'[0-9]')});
+  var maskFormatterPhone = MaskTextInputFormatter(
+      mask: '(##) #####-####', filter: {'#': RegExp(r'[0-9]')});
   final _passwordFormKey = GlobalKey<FormState>();
   final _personalInformationFormKey = GlobalKey<FormState>();
   final _adressFormKey = GlobalKey<FormState>();
@@ -86,6 +88,42 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
       width: width,
       child: TextFormField(
         inputFormatters: [isCnpj ? maskFormatterCnpj : maskedFormatterCep],
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _textField3(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        inputFormatters: [maskFormatterPhone],
         validator: validator,
         controller: controller,
         decoration: InputDecoration(
@@ -310,7 +348,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                   _cnpjController,
                                   _validators.cpnjValidator,
                                   true),
-                              _textField1(
+                              _textField3(
                                 55,
                                 330,
                                 constraints,

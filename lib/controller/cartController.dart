@@ -150,7 +150,7 @@ class CartController {
                 productDetails: element['productId']['productDetails'],
                 cooperativeId: element['productId']['cooperativeId'],
                 producerId: element['productId']['producerId'],
-                measuremntUnit: element['productId']['measurementUnit']
+                measurementUnit: element['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               cartProductsInfo.add({
@@ -209,7 +209,7 @@ class CartController {
                   productDetails: element2['productId']['productDetails'],
                   cooperativeId: element2['productId']['cooperativeId'],
                   producerId: element2['productId']['producerId'],
-                  measuremntUnit: element2['productId']['measurementUnit']
+                  measurementUnit: element2['productId']['measurementUnit']
                       ['measurementUnit'],
                 );
                 ProductInBox productInBox = ProductInBox(

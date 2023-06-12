@@ -100,47 +100,67 @@ class CooperativeController with ChangeNotifier {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllProductsFromSells() async {
+  Future<List<Map<String, dynamic>>> getAllNeededProducts() async {
     try {
-      Map<String, List<Sell>> dataMap =
-          {}; // Usando um Map para agrupar os produtos vendidos por data
-      List<Sell> sells = await getAllSells();
-      print(sells.length);
-
-      for (var element in sells) {
-        String deliveryDate = element.deliveryDate;
-
-        if (dataMap.containsKey(deliveryDate)) {
-          // Se a data já está presente no Map, adiciona o produto vendido à lista existente
-          dataMap[deliveryDate]!.add(element);
-        } else {
-          // Se a data não está presente no Map, cria uma nova lista com o produto vendido
-          dataMap[deliveryDate] = [element];
-        }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      String? id = prefs.getString('cooperativeId');
+      var response = await Dio().get(
+        "$_sellUrl/list_products_by_date",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      List<Map<String, dynamic>> productsByDate = [];
+      if (response.data.containsKey('sellsByDate')) {
+        response.data['sellsByDate'].forEach(
+          (date, products) {
+            String year = date.substring(0, 4);
+            String month = date.substring(5, 7);
+            String day = date.substring(8, 10);
+            List<Map<String, dynamic>> produtos = [];
+            print("quantidade de produtos: ${products.length}");
+            products.forEach((productId, productData) {
+              List<String> categorias = [];
+              for (var element in productData['product']['categories']) {
+                categorias.add(element['categoryName']);
+              }
+              Products product = Products(
+                productId: productId,
+                productName: productData['product']['productName'],
+                category: categorias,
+                productPhoto: productData['product']['productPhoto'],
+                productPrice: productData['product']['productPrice'],
+                stockQuantity: productData['product']['stockQuantity'],
+                unitValue: productData['product']['unitValue'],
+                productDetails: productData['product']['productDetails'],
+                cooperativeId: productData['product']['cooperativeId'],
+                producerId: productData['product']['producerId'],
+                measurementUnit: productData['product']['measurementUnit']
+                    ['measurementUnit'],
+              );
+              produtos.add({
+                "product": product,
+                "quantity": productData['quantity'],
+              });
+            });
+            productsByDate.add({
+              "date": "$day/$month/$year",
+              "products": produtos,
+            });
+          },
+        );
       }
-
-      // Converter o Map para uma lista de Map<String, dynamic>
-      List<Map<String, dynamic>> datas = dataMap.entries.map((entry) {
-        return {
-          "data": entry.key,
-          "vendas": entry.value,
-        };
-      }).toList();
-
-      for (var element in datas) {
-        print(element);
-      }
-
-      return datas;
+      return productsByDate;
     } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e, stackTrace: $stackTrace');
+        print('Erro inesperado: $e');
       }
-      throw Exception('erro: $e, stackTrace: $stackTrace');
+      throw Exception(stackTrace);
     }
   }
 
@@ -195,7 +215,7 @@ class CooperativeController with ChangeNotifier {
                 productDetails: element3['productId']['productDetails'],
                 cooperativeId: element3['productId']['cooperativeId'],
                 producerId: element3['productId']['producerId'],
-                measuremntUnit: element3['productId']['measurementUnit']
+                measurementUnit: element3['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               produtos.add(
@@ -225,7 +245,7 @@ class CooperativeController with ChangeNotifier {
                   productDetails: element5['productId']['productDetails'],
                   cooperativeId: element5['productId']['cooperativeId'],
                   producerId: element5['productId']['producerId'],
-                  measuremntUnit: element5['productId']['measurementUnit']
+                  measurementUnit: element5['productId']['measurementUnit']
                       ['measurementUnit'],
                 );
 

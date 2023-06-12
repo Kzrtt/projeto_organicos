@@ -175,7 +175,7 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                         ProductInBox productInBox = ProductInBox(
                           product: _produtos[i],
                           quantity: _quantidades[i],
-                          measurementUnity: _produtos[i].measuremntUnit,
+                          measurementUnity: _produtos[i].measurementUnit,
                         );
                         produtosNaBox.add(productInBox);
                       }

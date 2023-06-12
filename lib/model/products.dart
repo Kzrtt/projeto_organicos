@@ -9,7 +9,7 @@ class Products {
   final List<String> category;
   final num stockQuantity;
   final int unitValue;
-  final String measuremntUnit;
+  final String measurementUnit;
   final String cooperativeId;
   final String producerId;
 
@@ -24,6 +24,6 @@ class Products {
     required this.productDetails,
     required this.cooperativeId,
     required this.producerId,
-    required this.measuremntUnit,
+    required this.measurementUnit,
   });
 }

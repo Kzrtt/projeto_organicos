@@ -143,7 +143,7 @@ class _AddProductScreenState extends State<AddProductScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     CooperativeController coopController = CooperativeController();
-    MeasuremntUnitController unityController = MeasuremntUnitController();
+    measurementUnitController unityController = measurementUnitController();
     ProductController productController = ProductController();
     productController.getAllProducts().then((value) {
       List<String> nomesProdutos = value.map((e) => e.productName).toList();
@@ -168,7 +168,7 @@ class _AddProductScreenState extends State<AddProductScreen>
             List.generate(_categoryList.length, (index) => false);
       });
     });
-    unityController.getAllMeasuremntUnits().then((value) {
+    unityController.getAllmeasurementUnits().then((value) {
       List<String> nomesUnidadesDeMedida =
           value.map((e) => e.measurementUnit).toList();
       setState(() {
@@ -505,7 +505,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                             productDetails: _detailsController.text,
                             cooperativeId: "",
                             producerId: _p[index].producerId,
-                            measuremntUnit: _measurementList[index2].id,
+                            measurementUnit: _measurementList[index2].id,
                           );
                           controller.createProduct(product);
                           widget.callbackFunction(2);

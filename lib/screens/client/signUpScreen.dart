@@ -11,13 +11,10 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-enum UserType { user, seller }
-
 enum DietType { vegan, carnivore, vegetarian }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   int _step = 0;
-  UserType _character = UserType.user;
   DietType _type = DietType.vegan;
   var maskFormatterCpf = MaskTextInputFormatter(
       mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});

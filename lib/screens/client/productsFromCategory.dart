@@ -225,7 +225,7 @@ class _ProductsFromCategoryState extends State<ProductsFromCategory> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "${item.unitValue}${item.measuremntUnit}",
+                                              "${item.unitValue}${item.measurementUnit}",
                                               style: TextStyle(
                                                 fontSize:
                                                     constraints.maxHeight * .02,

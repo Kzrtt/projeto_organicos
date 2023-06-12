@@ -21,15 +21,15 @@ class SellBoxClientEdition extends StatefulWidget {
 class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
   @override
   Widget build(BuildContext context) {
-    int total = 0;
+    num total = 0;
     for (var i = 0; i < widget.sell.products.length; i++) {
       total += widget.sell.products[i]['produto'].productPrice *
-          widget.sell.products[i]['quantidade'] as int;
+          widget.sell.products[i]['quantidade'] as num;
     }
 
     for (var i = 0; i < widget.sell.boxes.length; i++) {
       total += widget.sell.boxes[i]['box'].boxPrice *
-          widget.sell.boxes[i]['quantity'] as int;
+          widget.sell.boxes[i]['quantity'] as num;
     }
 
     return Container(
@@ -69,7 +69,7 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
                     ),
                   ),
                   Text(
-                    "R\$ $total",
+                    "R\$ ${total.toStringAsFixed(2)}",
                     style: const TextStyle(
                       color: Color.fromRGBO(113, 227, 154, 1),
                       fontWeight: FontWeight.w700,
@@ -145,7 +145,7 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
                           return ListTile(
                             title: Text(item.productName),
                             subtitle: Text(
-                                "${quantity * item.unitValue}${item.measuremntUnit}"),
+                                "${quantity * item.unitValue}${item.measurementUnit}"),
                             trailing:
                                 Text("R\$ ${item.productPrice * quantity}"),
                           );
@@ -195,7 +195,7 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
                                   return ListTile(
                                     title: Text(product.productName),
                                     subtitle: Text(
-                                        "${q * product.unitValue}${product.measuremntUnit}"),
+                                        "${q * product.unitValue}${product.measurementUnit}"),
                                   );
                                 },
                               ),

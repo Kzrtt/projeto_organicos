@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projeto_organicos/model/measurementUnit.dart';
 
-class MeasuremntUnitController {
+class measurementUnitController {
   String _baseUrl = "http://192.168.1.159:27017/measurementUnit";
   List<Measurement> _list = [];
 
-  Future<List<Measurement>> getAllMeasuremntUnits() async {
+  Future<List<Measurement>> getAllmeasurementUnits() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("cooperativeToken");
@@ -18,11 +18,11 @@ class MeasuremntUnitController {
       );
       if (response.data.containsKey('measurementUnits')) {
         for (var element in response.data['measurementUnits']) {
-          Measurement measuremntUnit = Measurement(
+          Measurement measurementUnit = Measurement(
             id: element['_id'],
             measurementUnit: element['measurementUnit'],
           );
-          _list.add(measuremntUnit);
+          _list.add(measurementUnit);
         }
       }
       return _list;

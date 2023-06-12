@@ -110,7 +110,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     CooperativeController coopController = CooperativeController();
-    MeasuremntUnitController unityController = MeasuremntUnitController();
+    measurementUnitController unityController = measurementUnitController();
     coopController.getAllProducers().then((value) {
       List<String> nomesProdutores = value.map((e) => e.producerName).toList();
       setState(() {
@@ -129,7 +129,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen>
             List.generate(_categoryList.length, (index) => false);
       });
     });
-    unityController.getAllMeasuremntUnits().then((value) {
+    unityController.getAllmeasurementUnits().then((value) {
       List<String> nomesUnidadesDeMedida =
           value.map((e) => e.measurementUnit).toList();
       setState(() {
@@ -169,7 +169,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen>
     }
 
     for (var element in _measurementList) {
-      if (element.id == product.measuremntUnit) {
+      if (element.id == product.measurementUnit) {
         measurement = element;
         break;
       }

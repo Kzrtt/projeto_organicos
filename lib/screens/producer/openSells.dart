@@ -18,7 +18,7 @@ class OpenSells extends StatefulWidget {
 class _OpenSellsState extends State<OpenSells> {
   List<Sell> _sells = [];
   List<Products> _products = [];
-  List<Map<String, dynamic>> produtosNecessarios = [];
+  List<Map<String, dynamic>> neededProduts = [];
 
   @override
   void initState() {
@@ -36,9 +36,9 @@ class _OpenSellsState extends State<OpenSells> {
         _sells = value;
       });
     });
-    controller.getAllProductsFromSells().then((value) {
+    controller.getAllNeededProducts().then((value) {
       setState(() {
-        produtosNecessarios = value;
+        neededProduts = value;
       });
     });
   }
@@ -57,23 +57,100 @@ class _OpenSellsState extends State<OpenSells> {
               height: constraints.maxHeight * .9,
               width: constraints.maxWidth,
               child: ListView.builder(
-                itemCount: _sells.length,
+                itemCount: neededProduts.length,
                 itemBuilder: (context, index) {
-                  var item = _sells[index];
+                  var item = neededProduts[index];
                   return Padding(
-                    padding: EdgeInsets.all(constraints.maxHeight * .03),
-                    child: InkWell(
-                      onTap: () {
-                        List<dynamic> list = [item, index];
-                        Navigator.of(context).pushNamed(
-                          ProducerAppRoutes.OPENSELLDETAILS,
-                          arguments: list,
-                        );
-                      },
-                      child: SellBoxProducerEdition(
-                        constraints: constraints,
-                        sell: item,
-                        index: index,
+                    padding: EdgeInsets.all(constraints.maxHeight * .02),
+                    child: Container(
+                      height: constraints.maxHeight *
+                              neededProduts[index]['products'].length /
+                              10 +
+                          71,
+                      width: constraints.maxWidth * .8,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SizedBox(
+                        height: constraints.maxHeight *
+                                neededProduts[index]['products'].length /
+                                10 +
+                            71,
+                        width: constraints.maxWidth * .8,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: constraints.maxHeight * .08,
+                              width: constraints.maxWidth,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: constraints.maxWidth * .05,
+                                  vertical: constraints.maxHeight * .02,
+                                ),
+                                child: Text(
+                                  "Data para Entrega: ${item['date']}",
+                                  style: const TextStyle(
+                                    color: Color.fromRGBO(0, 0, 0, 0.58),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: constraints.maxHeight * .04),
+                            SizedBox(
+                              height: constraints.maxHeight *
+                                  neededProduts[index]['products'].length /
+                                  12,
+                              width: constraints.maxWidth * .8,
+                              child: ListView.builder(
+                                itemCount: item['products'].length,
+                                itemBuilder: (context, index) {
+                                  var i = item['products'][index];
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "${i['product'].productName}",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  constraints.maxHeight * .023,
+                                              color: const Color.fromRGBO(
+                                                  0, 0, 0, 0.58),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${i['quantity'] * i['product'].unitValue}${i['product'].measurementUnit}",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  constraints.maxHeight * .023,
+                                              color: const Color.fromRGBO(
+                                                  0, 0, 0, 0.58),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: constraints.maxHeight * .025),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

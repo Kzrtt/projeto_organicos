@@ -117,7 +117,7 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                               return ListTile(
                                 title: Text(item.productName),
                                 subtitle: Text(
-                                    "${quantity * item.unitValue}${item.measuremntUnit}"),
+                                    "${quantity * item.unitValue}${item.measurementUnit}"),
                                 trailing:
                                     Text("R\$ ${item.productPrice * quantity}"),
                               );
@@ -169,7 +169,7 @@ class _SellBoxProducerEditionState extends State<SellBoxProducerEdition> {
                                       return ListTile(
                                         title: Text(product.productName),
                                         subtitle: Text(
-                                            "${q * product.unitValue}${product.measuremntUnit}"),
+                                            "${q * product.unitValue}${product.measurementUnit}"),
                                       );
                                     },
                                   ),

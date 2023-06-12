@@ -24,7 +24,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  final DateFormat _dateFormat = DateFormat('YYYY/MM/DD');
   String _selectedDate = "";
   String _selectedItem = "";
   List<Adress> addresses = [];
@@ -59,7 +59,10 @@ class _CartScreenState extends State<CartScreen> {
     List<Adress> temp = await userController.getAllAdresses(userId!);
     setState(() {
       addresses = temp;
-      defaultAddress = temp.singleWhere((element) => element.isDefault == true);
+      if (temp.any((element) => element.isDefault == true)) {
+        defaultAddress =
+            temp.singleWhere((element) => element.isDefault == true);
+      }
       for (var element in temp) {
         addressesId.add(element.adressId);
       }
@@ -110,7 +113,7 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context, constraints) {
         return SingleChildScrollView(
           child: Container(
-            height: constraints.maxHeight * 2,
+            height: constraints.maxHeight * 1.8,
             width: constraints.maxWidth,
             decoration: const BoxDecoration(
               color: Color.fromRGBO(238, 238, 238, 1),
@@ -125,7 +128,7 @@ class _CartScreenState extends State<CartScreen> {
                 SizedBox(height: constraints.maxHeight * .03),
                 cartMongodb.isNotEmpty || boxCartMongodb.isNotEmpty
                     ? SizedBox(
-                        height: constraints.maxHeight * 1.4,
+                        height: constraints.maxHeight * 1.5,
                         width: constraints.maxWidth,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +449,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                 ),
                                                               ),
                                                               Text(
-                                                                "${quantia * item.unitValue}${item.measuremntUnit}",
+                                                                "${quantia * item.unitValue}${item.measurementUnit}",
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         16),
@@ -881,7 +884,7 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       ),
                                       Text(
-                                        "R\$${subTotal.toString()}",
+                                        "R\$${subTotal.toStringAsFixed(2)}",
                                         style: const TextStyle(
                                           color: Color.fromRGBO(0, 0, 0, .81),
                                           fontWeight: FontWeight.w600,
@@ -945,34 +948,34 @@ class _CartScreenState extends State<CartScreen> {
                                 provider.setQuantity(quantity);
                                 int index = items.indexOf(_selectedItem);
                                 CartController controller = CartController();
-                                DateTime nextDay;
-                                String formattedDate = "";
+                                DateTime nextDay = DateTime.now();
                                 print(_selectedItem);
                                 if (_selectedDate == "Terça") {
-                                  print('entrou no if');
                                   DateTime now = DateTime.now();
                                   int daysUntilNextDay =
                                       (DateTime.tuesday - now.weekday + 7) % 7;
                                   nextDay =
                                       now.add(Duration(days: daysUntilNextDay));
-                                  formattedDate = _dateFormat.format(nextDay);
                                 } else if (_selectedDate == "Sexta") {
                                   DateTime now = DateTime.now();
                                   int daysUntilNextDay =
                                       (DateTime.friday - now.weekday + 7) % 7;
                                   nextDay =
                                       now.add(Duration(days: daysUntilNextDay));
-                                  formattedDate = _dateFormat.format(nextDay);
                                 }
-                                print('depois dos ifs $formattedDate');
 
-                                controller.createSell(
-                                  addressesId[index],
-                                  formattedDate,
-                                );
-                                Navigator.of(context).pushNamed(
-                                  AppRoutes.PAYMENTSCREEN,
-                                );
+                                String date =
+                                    nextDay.toIso8601String().split('T')[0];
+
+                                if (nextDay != DateTime.now()) {
+                                  controller.createSell(
+                                    addressesId[index],
+                                    date,
+                                  );
+                                  Navigator.of(context).pushNamed(
+                                    AppRoutes.PAYMENTSCREEN,
+                                  );
+                                }
                               },
                               child: CommonButton(
                                 constraints: constraints,

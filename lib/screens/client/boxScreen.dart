@@ -158,7 +158,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                                     Text(item
                                                         .product.productName),
                                                     Text(
-                                                      "Quantidade: ${item.product.unitValue}${item.product.measuremntUnit}",
+                                                      "Quantidade: ${item.product.unitValue}${item.product.measurementUnit}",
                                                     ),
                                                   ],
                                                 ),

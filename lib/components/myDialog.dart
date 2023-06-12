@@ -51,7 +51,7 @@ class _MyDialogState extends State<MyDialog> {
                           children: [
                             Text(item2.product.productName),
                             Text(
-                              "Quantidade: ${item2.product.unitValue}${item2.product.measuremntUnit}",
+                              "Quantidade: ${item2.product.unitValue}${item2.product.measurementUnit}",
                             ),
                           ],
                         ),

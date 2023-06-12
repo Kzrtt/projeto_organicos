@@ -45,7 +45,10 @@ class _AdressScreenState extends State<AdressScreen> {
     userState.setAdressList(temp);
     print(userState.adressList.length);
     setState(() {
-      defaultAddress = temp.singleWhere((element) => element.isDefault == true);
+      if (temp.any((e) => e.isDefault == true)) {
+        defaultAddress =
+            temp.singleWhere((element) => element.isDefault == true);
+      }
       adress = temp;
     });
     print(adress.length);
@@ -154,7 +157,7 @@ class _AdressScreenState extends State<AdressScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: constraints.maxHeight * .05),
+                    SizedBox(height: constraints.maxHeight * .03),
                     SizedBox(
                       height: constraints.maxHeight * .7,
                       child: ListView.builder(

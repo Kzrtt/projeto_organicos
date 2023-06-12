@@ -208,7 +208,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             icon: const Icon(Icons.remove),
                           ),
                           Text(
-                            "${value * product.unitValue}${product.measuremntUnit}",
+                            "${value * product.unitValue}${product.measurementUnit}",
                             style: TextStyle(fontSize: 16),
                           ),
                           IconButton(

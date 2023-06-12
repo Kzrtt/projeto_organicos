@@ -227,7 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "${item.unitValue}${item.measuremntUnit}",
+                                        "${item.unitValue}${item.measurementUnit}",
                                         style: TextStyle(
                                           fontSize: constraints.maxHeight * .02,
                                           fontWeight: FontWeight.w700,

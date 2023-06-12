@@ -241,7 +241,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                                         "${truncateString(products.product.productName, 14)} ",
                                                       ),
                                                       Text(
-                                                        "${products.quantity.toString()}${products.product.measuremntUnit}",
+                                                        "${products.quantity.toString()}${products.product.measurementUnit}",
                                                       ),
                                                       SizedBox(
                                                           height: constraints

@@ -158,7 +158,7 @@ class UserController {
                 productDetails: element2['productId']['productDetails'],
                 cooperativeId: element2['productId']['cooperativeId'],
                 producerId: element2['productId']['producerId'],
-                measuremntUnit: element2['productId']['measurementUnit']
+                measurementUnit: element2['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               ProductInBox productInBox = ProductInBox(
@@ -281,7 +281,7 @@ class UserController {
                 productDetails: element3['productId']['productDetails'],
                 cooperativeId: element3['productId']['cooperativeId'],
                 producerId: element3['productId']['producerId'],
-                measuremntUnit: element3['productId']['measurementUnit']
+                measurementUnit: element3['productId']['measurementUnit']
                     ['measurementUnit'],
               );
               produtos.add(
@@ -311,7 +311,7 @@ class UserController {
                   productDetails: element5['productId']['productDetails'],
                   cooperativeId: element5['productId']['cooperativeId'],
                   producerId: element5['productId']['producerId'],
-                  measuremntUnit: element5['productId']['measurementUnit']
+                  measurementUnit: element5['productId']['measurementUnit']
                       ['measurementUnit'],
                 );
 
@@ -404,7 +404,7 @@ class UserController {
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
       var response = await Dio().put(
-        "$_userUrl/setDefaultAddress/$id",
+        "$_userUrl/set_default_address/$id",
         data: {
           "addressId": addressId,
         },
@@ -451,7 +451,7 @@ class UserController {
               productDetails: element['productDetails'],
               cooperativeId: element['cooperativeId'],
               producerId: element['producerId'],
-              measuremntUnit: element['measurementUnit']['measurementUnit'],
+              measurementUnit: element['measurementUnit']['measurementUnit'],
             );
             _productList.add(products);
           }

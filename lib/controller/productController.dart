@@ -122,7 +122,7 @@ class ProductController {
               productDetails: element2['productId']['productDetails'],
               cooperativeId: element2['productId']['cooperativeId'],
               producerId: element2['productId']['producerId'],
-              measuremntUnit: element2['productId']['measurementUnit']
+              measurementUnit: element2['productId']['measurementUnit']
                   ['measurementUnit'],
             );
             ProductInBox productInBox = ProductInBox(
@@ -227,9 +227,9 @@ class ProductController {
               : oldProduct.stockQuantity,
           "unitValue":
               product.unitValue != 0 ? product.unitValue : oldProduct.unitValue,
-          "measurementUnit": product.measuremntUnit.isNotEmpty
-              ? product.measuremntUnit
-              : oldProduct.measuremntUnit,
+          "measurementUnit": product.measurementUnit.isNotEmpty
+              ? product.measurementUnit
+              : oldProduct.measurementUnit,
           "producerId": product.producerId.isNotEmpty
               ? product.producerId
               : oldProduct.producerId,
@@ -305,7 +305,7 @@ class ProductController {
               productDetails: element['productDetails'],
               cooperativeId: element['cooperativeId'],
               producerId: element['producerId'],
-              measuremntUnit: element['measurementUnit']['measurementUnit'],
+              measurementUnit: element['measurementUnit']['measurementUnit'],
             );
             _productList.add(products);
           }
@@ -342,7 +342,7 @@ class ProductController {
           "categories": [...product.category],
           "stockQuantity": product.stockQuantity,
           "unitValue": product.unitValue,
-          "measurementUnit": product.measuremntUnit,
+          "measurementUnit": product.measurementUnit,
           "producerId": product.producerId,
         },
         options: Options(
