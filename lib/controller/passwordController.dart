@@ -29,6 +29,14 @@ class PasswordController {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: Text("Usuário não encontrado"),
+            );
+          },
+        );
       } else {
         print('Erro inesperado: $e');
       }
@@ -62,6 +70,14 @@ class PasswordController {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: Text("Erro ao atualizar sua senha"),
+            );
+          },
+        );
       } else {
         print('Erro inesperado: $e');
       }

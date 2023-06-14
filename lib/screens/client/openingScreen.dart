@@ -23,6 +23,7 @@ class OpeningScreen extends StatefulWidget {
 class _OpeningScreenState extends State<OpeningScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool obscureText = true;
 
   Widget _textField1(double height, double width, BoxConstraints constraints,
       String text, TextEditingController controller) {
@@ -44,6 +45,51 @@ class _OpeningScreenState extends State<OpeningScreen> {
           hintText: text,
           hintStyle: TextStyle(
             fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _textField2(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.white,
+              width: constraints.maxWidth * .03,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+          suffixIcon: GestureDetector(
+            onTap: () {
+              setState(() {
+                obscureText = !obscureText;
+              });
+            },
+            child: Icon(
+              obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.grey,
+            ),
           ),
         ),
       ),
@@ -87,7 +133,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
                   SizedBox(height: constraints.maxHeight * .03),
                   _textField1(55, 330, constraints, 'E-mail', emailController),
                   SizedBox(height: constraints.maxHeight * .022),
-                  _textField1(
+                  _textField2(
                       55, 330, constraints, 'Senha', passwordController),
                   SizedBox(height: constraints.maxHeight * .02),
                   Row(

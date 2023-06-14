@@ -24,6 +24,7 @@ import 'package:projeto_organicos/utils/globalVariable.dart';
 import 'package:projeto_organicos/utils/quantityProvider.dart';
 import 'package:projeto_organicos/utils/userState.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/client/openingScreen.dart';
 
@@ -34,7 +35,9 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();

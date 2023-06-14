@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Validators {
   String? precoValidate(String? preco) {
     int precoInt = int.parse(preco!);
@@ -13,7 +15,12 @@ class Validators {
     if (birthDate == "") {
       return null;
     }
-    DateTime dateOfBirth = DateTime.parse(birthDate!);
+    final inputFormat = DateFormat("dd/MM/yyyy");
+    DateTime dateOfBirth = inputFormat.parse(birthDate!);
+
+    final outputFormat = DateFormat("yyyy-MM-dd");
+    final outputDate = outputFormat.format(dateOfBirth);
+    dateOfBirth = DateTime.parse(outputDate);
 
     // Calcula a idade com base na data de nascimento
     final age = DateTime.now().difference(dateOfBirth).inDays ~/ 365;
@@ -170,9 +177,9 @@ class Validators {
   String? passwordValidator(String? password) {
     if (password == "") {
       return "Por favor, insira sua senha";
-    } else if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+    } else if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~._-]).{8,}$')
         .hasMatch(password!)) {
-      return 'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial';
+      return 'A senha deve conter pelo menos uma letra\nmaiúscula, uma letra minúscula, um número\ne um caractere especial';
     }
     return null;
   }

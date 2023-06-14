@@ -41,6 +41,17 @@ class UserController {
     isNutritious: false,
   );
 
+  Future<Map<String, dynamic>> searchCep(String cep) async {
+    try {
+      var response = await Dio().get(
+        "https://viacep.com.br/ws/$cep/json/",
+      );
+      return response.data;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   void buyAgain(String sellId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -814,7 +825,7 @@ class UserController {
           "diets": dietType,
         },
       );
-      if (response.data['error'] == 'This user already exists') {
+      if (response.data.containsKey('error')) {
         // ignore: use_build_context_synchronously
         showDialog(
           context: context,
@@ -822,8 +833,14 @@ class UserController {
             title: Text(response.data["error"]),
           ),
         );
+      } else if (response.data.containsKey('token')) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Usuário cadastrado com sucesso!"),
+          ),
+        );
       }
-      print(response.data["token"]);
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');

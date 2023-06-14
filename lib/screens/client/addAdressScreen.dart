@@ -96,6 +96,36 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
           hintStyle: TextStyle(
             fontSize: constraints.maxHeight * .02,
           ),
+          suffixIcon: GestureDetector(
+            onTap: () {
+              UserController controller = UserController();
+              controller
+                  .searchCep(
+                _zipCodeController.text.replaceAll(RegExp(r'\D'), ''),
+              )
+                  .then((value) {
+                setState(() {
+                  _streetController.text = value['logradouro'];
+                  _stateController.text = value['uf'];
+                  _cityController.text = value['localidade'];
+                });
+              });
+            },
+            child: Container(
+              height: constraints.maxHeight,
+              width: constraints.maxWidth * .12,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(14),
+                    bottomRight: Radius.circular(14),
+                  ),
+                  color: Color.fromRGBO(83, 242, 166, 0.69)),
+              child: Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -143,8 +173,23 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: constraints.maxHeight * .05),
-                    _textField1(55, 330, constraints, "Apelido do Endereço",
-                        _nickNameController, validators.nameValidator),
+                    _textField2(
+                      55,
+                      330,
+                      constraints,
+                      "Cep",
+                      _zipCodeController,
+                      validators.cepValidator,
+                    ),
+                    SizedBox(height: constraints.maxHeight * .03),
+                    _textField1(
+                      55,
+                      330,
+                      constraints,
+                      "Apelido do Endereço",
+                      _nickNameController,
+                      validators.nameValidator,
+                    ),
                     SizedBox(height: constraints.maxHeight * .03),
                     _textField1(
                       55,
@@ -180,15 +225,6 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
                       "Estado",
                       _stateController,
                       validators.adressValidator,
-                    ),
-                    SizedBox(height: constraints.maxHeight * .03),
-                    _textField2(
-                      55,
-                      330,
-                      constraints,
-                      "Cep",
-                      _zipCodeController,
-                      validators.cepValidator,
                     ),
                     SizedBox(height: constraints.maxHeight * .05),
                     InkWell(

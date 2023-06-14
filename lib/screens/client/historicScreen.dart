@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/sellBoxClientEdition.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
@@ -76,7 +77,38 @@ class _HistoricScreenState extends State<HistoricScreen> {
                       },
                     ),
                   )
-                : Center(),
+                : Center(
+                    child: Column(
+                      children: [
+                        SizedBox(height: constraints.maxHeight * .1),
+                        SvgPicture.asset(
+                          'assets/images/undraw_shopping_app.svg',
+                          height: constraints.maxHeight * .3,
+                          width: constraints.maxWidth * .3,
+                        ),
+                        SizedBox(height: constraints.maxHeight * .07),
+                        Text(
+                          "Seu Histórico está vazio :(",
+                          style: TextStyle(
+                            fontSize: constraints.maxHeight * .025,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: constraints.maxHeight * .015),
+                        SizedBox(
+                          width: constraints.maxWidth * .65,
+                          child: Text(
+                            "Faça compras e retorne para está página",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: constraints.maxHeight * .02,
+                              color: const Color.fromRGBO(0, 0, 0, 0.7),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
           ],
         );
       },

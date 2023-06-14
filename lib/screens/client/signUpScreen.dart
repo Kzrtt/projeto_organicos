@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/model/user.dart';
 import 'package:projeto_organicos/controller/userController.dart';
@@ -21,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var maskFormatterPhone = MaskTextInputFormatter(
       mask: '(##) #####-####', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterBirth = MaskTextInputFormatter(
-      mask: '####-##-##', filter: {'#': RegExp(r'[0-9]')});
+      mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
   Validators validators = Validators();
   final _personalInfoFormKey = GlobalKey<FormState>();
   final _passwordFormKey = GlobalKey<FormState>();
@@ -249,20 +250,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             diet = "6466b3b550187706d6d3f2a8";
                                           }
 
+                                          final inputFormat =
+                                              DateFormat("dd/MM/yyyy");
+                                          DateTime dateOfBirth = inputFormat
+                                              .parse(birthDayController.text);
+
+                                          final outputFormat =
+                                              DateFormat("yyyy-MM-dd");
+                                          final outputDate =
+                                              outputFormat.format(dateOfBirth);
+                                          dateOfBirth =
+                                              DateTime.parse(outputDate);
+
                                           User userData = User(
                                             userName: nameController.text,
                                             userCpf: cpfController.text,
                                             userEmail: emailController.text,
                                             userCell: cellphoneController.text,
                                             password: passwordController.text,
-                                            birthdate: birthDayController.text,
+                                            birthdate: dateOfBirth.toString(),
                                             isSubscriber: false,
                                             isNutritious: false,
                                           );
                                           UserController provider =
                                               UserController();
                                           provider.createClient(
-                                              userData, diet, context);
+                                            userData,
+                                            diet,
+                                            context,
+                                          );
                                           Navigator.of(context).pop();
                                         } else {
                                           showDialog(
@@ -271,7 +287,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               backgroundColor: Colors.white,
                                               title: Center(
                                                 child: Text(
-                                                    "As senhas não cooencidem"),
+                                                  "As senhas não cooencidem",
+                                                ),
                                               ),
                                             ),
                                           );
@@ -391,6 +408,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           key: _passwordFormKey,
                           child: Column(
                             children: [
+                              SizedBox(height: constraints.maxHeight * .03),
                               _textField2(
                                 55,
                                 330,
@@ -399,13 +417,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 passwordController,
                                 validators.passwordValidator,
                               ),
+                              SizedBox(height: constraints.maxHeight * .04),
                               _textField2(
                                 55,
                                 330,
                                 constraints,
                                 'Confirmar senha',
                                 confirmPasswordController,
-                                validators.passwordValidator,
+                                (value) => null,
                               ),
                             ],
                           ),
