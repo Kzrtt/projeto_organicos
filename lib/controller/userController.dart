@@ -16,11 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class UserController {
-  final String _baseUrl = "http://192.168.1.159:27017/auth";
-  final String _userUrl = "http://192.168.1.159:27017/user";
-  final String _categoryUrl = "http://192.168.1.159:27017/category";
-  final String _productsUrl = "http://192.168.1.159:27017/product";
-  final String _sellUrl = "http://192.168.1.159:27017/sell";
+  final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
+  final String _userUrl = "https://api-production-696d.up.railway.app/user";
+  final String _categoryUrl =
+      "https://api-production-696d.up.railway.app/category";
+  final String _productsUrl =
+      "https://api-production-696d.up.railway.app/product";
+  final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
   List<Adress> _adressList = [];
   List<ClientFeedback> _feedbackList = [];
   List<Category> _categoryList = [];

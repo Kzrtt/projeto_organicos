@@ -82,6 +82,8 @@ class _AddProductScreenState extends State<AddProductScreen>
   final TextEditingController _unitValueController = TextEditingController();
   final TextEditingController _measurementUnityController =
       TextEditingController();
+  final TextEditingController _recommendedPriceController =
+      TextEditingController();
   String _selectedProducer = "";
   String _selectedUnit = "";
   List<String> _unitList = [];
@@ -143,7 +145,7 @@ class _AddProductScreenState extends State<AddProductScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     CooperativeController coopController = CooperativeController();
-    measurementUnitController unityController = measurementUnitController();
+    MeasurementUnitController unityController = MeasurementUnitController();
     ProductController productController = ProductController();
     productController.getAllProducts().then((value) {
       List<String> nomesProdutos = value.map((e) => e.productName).toList();
@@ -183,6 +185,15 @@ class _AddProductScreenState extends State<AddProductScreen>
     // TODO: implement dispose
     _tabController?.dispose();
     super.dispose();
+  }
+
+  double getRecommendedValue() {
+    double total = 0;
+    for (var i = 0; i < _produtosNaBox.length; i++) {
+      total = total +
+          _produtosNaBox[i].quantity * _produtosNaBox[i].product.productPrice;
+    }
+    return total;
   }
 
   Widget addBoxForm(BoxConstraints constraints, BuildContext context) {
@@ -235,27 +246,19 @@ class _AddProductScreenState extends State<AddProductScreen>
                           ProductController controller = ProductController();
                           print('criou controller');
 
-                          double total = 0;
-                          for (var i = 0; i < _produtosNaBox.length; i++) {
-                            total = total +
-                                _produtosNaBox[i].quantity *
-                                    _produtosNaBox[i].product.productPrice;
-                          }
-
                           String photoUrl = await uploadImage(
                             _storagedImageBox!.path,
                             _boxNameController.text.trim(),
                             "boxPhotos",
                           );
 
-                          print(total);
-
                           Box box = Box(
                             id: "",
                             boxDetails: _boxDetailsController.text,
                             boxName: _boxNameController.text,
                             boxPhoto: photoUrl,
-                            boxPrice: total,
+                            boxPrice:
+                                double.parse(_recommendedPriceController.text),
                             boxQuantity: int.parse(_boxStockQuantity.text),
                             produtos: _produtosNaBox,
                           );
@@ -384,6 +387,15 @@ class _AddProductScreenState extends State<AddProductScreen>
                   constraints: constraints,
                   text: "Selecionar Produtos",
                 ),
+              ),
+              SizedBox(height: constraints.maxHeight * .03),
+              _textField1(
+                .1,
+                .9,
+                constraints,
+                "Preço sugerido: ${getRecommendedValue()} reais",
+                _recommendedPriceController,
+                (p0) => null,
               ),
               SizedBox(height: constraints.maxHeight * .03),
             ],

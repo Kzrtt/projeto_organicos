@@ -11,8 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/products.dart';
 
 class ProductController {
-  String _productUrl = "http://192.168.1.159:27017/product";
-  String _categoryUrl = "http://192.168.1.159:27017/category";
+  String _productUrl = "https://api-production-696d.up.railway.app/product";
+  String _categoryUrl = "https://api-production-696d.up.railway.app/category";
   List<Category> _categoryList = [];
   List<Products> _productList = [];
   List<Box> _boxList = [];
@@ -67,6 +67,39 @@ class ProductController {
     return arquivos;
   }
 
+  void updateBox(Box newBox, Box oldBox) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('cooperativeToken');
+      var response = await Dio().put(
+        "$_productUrl/${newBox.id}",
+        data: {
+          "boxName": newBox.boxName,
+          "boxDetails": newBox.boxDetails,
+          "boxPrice": newBox.boxPrice,
+          "stockQuantity": newBox.boxQuantity,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (newBox.boxPhoto != "") {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        String photoPath = "boxPhotos/${oldBox.boxName}.jpg";
+        Reference photoRef = storage.ref().child(photoPath);
+        await photoRef.delete();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   void deleteBox(String id, String boxName) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -75,12 +108,15 @@ class ProductController {
         "$_productUrl/$id",
         data: {
           "boxName": boxName,
-          "active": false,
+          "active": "false",
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
+      if (response.data.containsKey('box')) {
+        print('sucesso');
+      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');
@@ -204,6 +240,59 @@ class ProductController {
     }
   }
 
+  void updateQuantity(Products product, int newQuantity) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("cooperativeToken");
+      num q = newQuantity + product.stockQuantity;
+      var response = await Dio().put(
+        "$_productUrl/${product.productId}",
+        data: {
+          "productName": product.productName,
+          "stockQuantity": q,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+        print(StackTrace.current);
+      }
+    }
+  }
+
+  void clearStock(Products product) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("cooperativeToken");
+      var response = await Dio().put(
+        "$_productUrl/${product.productId}",
+        data: {
+          "productName": product.productName,
+          "stockQuantity": 0,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+        print(StackTrace.current);
+      }
+    }
+  }
+
   void updateProduct(String id, Products product, Products oldProduct) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -211,26 +300,30 @@ class ProductController {
       var response = await Dio().put(
         "$_productUrl/$id",
         data: {
-          "productName": product.productName.isNotEmpty
+          "productName": product.productName != ""
               ? product.productName
               : oldProduct.productName,
-          "productDetails": product.productDetails.isNotEmpty
+          "productDetails": product.productDetails != ""
               ? product.productDetails
               : oldProduct.productDetails,
-          "productPhoto": product.productPhoto.isNotEmpty
+          "productPhoto": product.productPhoto != ""
               ? product.productPhoto
               : oldProduct.productPhoto,
-          "productPrice": product.productPrice,
-          "categories": [...product.category],
+          "productPrice": product.productPrice != 0
+              ? product.productPrice
+              : oldProduct.productPrice,
+          "categories": product.category != []
+              ? [...product.category]
+              : [...oldProduct.category],
           "stockQuantity": product.stockQuantity != 0
               ? product.stockQuantity
               : oldProduct.stockQuantity,
           "unitValue":
               product.unitValue != 0 ? product.unitValue : oldProduct.unitValue,
-          "measurementUnit": product.measurementUnit.isNotEmpty
+          "measurementUnit": product.measurementUnit != ""
               ? product.measurementUnit
               : oldProduct.measurementUnit,
-          "producerId": product.producerId.isNotEmpty
+          "producerId": product.producerId != ""
               ? product.producerId
               : oldProduct.producerId,
         },
@@ -238,6 +331,13 @@ class ProductController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
+      if (product.productPhoto != "") {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        String photoPath =
+            "productsPhotos/${oldProduct.productName}${oldProduct.producerId}.jpg";
+        Reference photoRef = storage.ref().child(photoPath);
+        await photoRef.delete();
+      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');

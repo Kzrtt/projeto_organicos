@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PasswordController {
-  final String _authUrl = "http://192.168.1.159:27017/auth";
+  final String _authUrl = "https://api-production-696d.up.railway.app/auth";
 
   void forgotPassword(String email, BuildContext context) async {
     try {

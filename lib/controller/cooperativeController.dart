@@ -17,10 +17,12 @@ import '../model/productInBox.dart';
 import '../model/products.dart';
 
 class CooperativeController with ChangeNotifier {
-  final String _baseUrl = "http://192.168.1.159:27017/auth";
-  final String _cooperativeUrl = "http://192.168.1.159:27017/cooperative";
-  final String _producerUrl = "http://192.168.1.159:27017/producer";
-  final String _sellUrl = "http://192.168.1.159:27017/sell";
+  final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
+  final String _cooperativeUrl =
+      "https://api-production-696d.up.railway.app/cooperative";
+  final String _producerUrl =
+      "https://api-production-696d.up.railway.app/producer";
+  final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
   List<Producers> _producers = [];
   List<ClientFeedback> _feedbackList = [];
   List<Sell> _sells = [];
@@ -107,6 +109,9 @@ class CooperativeController with ChangeNotifier {
       String? id = prefs.getString('cooperativeId');
       var response = await Dio().get(
         "$_sellUrl/list_products_by_date",
+        data: {
+          "cooperativeId": id,
+        },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

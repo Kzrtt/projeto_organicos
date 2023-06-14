@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projeto_organicos/model/measurementUnit.dart';
 
-class measurementUnitController {
-  String _baseUrl = "http://192.168.1.159:27017/measurementUnit";
+class MeasurementUnitController {
+  String _baseUrl =
+      "https://api-production-696d.up.railway.app/measurementUnit";
   List<Measurement> _list = [];
 
   Future<List<Measurement>> getAllmeasurementUnits() async {

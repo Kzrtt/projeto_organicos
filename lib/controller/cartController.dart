@@ -9,8 +9,8 @@ import '../model/productInBox.dart';
 import '../model/user.dart';
 
 class CartController {
-  final String _userUrl = "http://192.168.1.159:27017/user";
-  final String _sellUrl = "http://192.168.1.159:27017/sell";
+  final String _userUrl = "https://api-production-696d.up.railway.app/user";
+  final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
 
   List<Map<String, dynamic>> boxCart = [];
   List<Map<String, dynamic>> cart = [];

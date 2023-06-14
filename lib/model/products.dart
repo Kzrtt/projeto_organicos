@@ -8,7 +8,7 @@ class Products {
   final num productPrice;
   final List<String> category;
   final num stockQuantity;
-  final int unitValue;
+  final num unitValue;
   final String measurementUnit;
   final String cooperativeId;
   final String producerId;

@@ -19,4 +19,5 @@ class ProducerAppRoutes {
   static const ADDFEEDBACKCOOP = "/add-feedback-cooperative";
   static const UPDATEPRODUCT = "/update-product";
   static const SEARCHPRODUCTS = "/search-products";
+  static const UPDATEBOX = "/update-box";
 }

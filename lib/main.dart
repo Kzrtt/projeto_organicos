@@ -15,6 +15,7 @@ import 'package:projeto_organicos/screens/producer/openSellsDetails.dart';
 import 'package:projeto_organicos/screens/producer/producerHomeTab.dart';
 import 'package:projeto_organicos/screens/producer/selectProductsToBox.dart';
 import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
+import 'package:projeto_organicos/screens/producer/updateBoxScreen.dart';
 import 'package:projeto_organicos/screens/producer/updateProductScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
@@ -79,6 +80,7 @@ class _MyAppState extends State<MyApp> {
           ProducerAppRoutes.UPDATEPRODUCT: (ctx) => const UpdateProductScreen(),
           ProducerAppRoutes.SEARCHPRODUCTS: (ctx) =>
               const SelectProductsToBox(),
+          ProducerAppRoutes.UPDATEBOX: (ctx) => UpdateBoxScreen(),
         },
       ),
     );

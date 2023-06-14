@@ -3,7 +3,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:projeto_organicos/components/productInfosDialog.dart';
+import 'package:projeto_organicos/components/quantityDialog.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
+import 'package:projeto_organicos/controller/measurementUnitController.dart';
 import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/controller/productController.dart';
 import 'package:projeto_organicos/model/producers.dart';
@@ -15,6 +18,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../components/nameAndIcon.dart';
 import '../../model/box.dart';
+import '../../model/category.dart';
+import '../../model/measurementUnit.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({Key? key}) : super(key: key);
@@ -27,6 +32,8 @@ class _ProductListScreenState extends State<ProductListScreen>
     with SingleTickerProviderStateMixin {
   List<Products> _productList = [];
   List<Box> _boxList = [];
+  List<Measurement> measurementList = [];
+  List<Category> categoryList = [];
   Validators validators = Validators();
   final _updateBoxFormKey = GlobalKey<FormState>();
   final _updateFormKey = GlobalKey<FormState>();
@@ -34,6 +41,7 @@ class _ProductListScreenState extends State<ProductListScreen>
   final TextEditingController _boxDetailsController = TextEditingController();
   final TextEditingController _boxPriceController = TextEditingController();
   TabController? _tabController;
+  int quantidade = 1;
 
   @override
   void initState() {
@@ -41,6 +49,18 @@ class _ProductListScreenState extends State<ProductListScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     ProductController controller = ProductController();
+    MeasurementUnitController measurementUnitController =
+        MeasurementUnitController();
+    measurementUnitController.getAllmeasurementUnits().then((value) {
+      setState(() {
+        measurementList = value;
+      });
+    });
+    controller.getAllCategorys().then((value) {
+      setState(() {
+        categoryList = value;
+      });
+    });
     controller.getAllProducts().then((value) {
       setState(() {
         _productList = value;
@@ -65,7 +85,22 @@ class _ProductListScreenState extends State<ProductListScreen>
               child: Card(
                 child: ListTile(
                   leading: InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      var response = Navigator.of(context).pushNamed(
+                        ProducerAppRoutes.UPDATEBOX,
+                        arguments: item,
+                      ) as Box;
+                      if (response.boxName != "") {
+                        for (var element in _boxList) {
+                          if (element.id == response.id) {
+                            setState(() {
+                              _boxList[_boxList.indexOf(element)] = response;
+                            });
+                            break;
+                          }
+                        }
+                      }
+                    },
                     child: const Icon(
                       Icons.edit,
                       color: Color.fromRGBO(108, 168, 129, 0.7),
@@ -129,13 +164,15 @@ class _ProductListScreenState extends State<ProductListScreen>
                         ProducerAppRoutes.UPDATEPRODUCT,
                         arguments: item,
                       ) as Products;
-                      for (var element in _productList) {
-                        if (element.productId == response.productId) {
-                          setState(() {
-                            _productList[_productList.indexOf(element)] =
-                                response;
-                          });
-                          break;
+                      if (response.productName != "") {
+                        for (var element in _productList) {
+                          if (element.productId == response.productId) {
+                            setState(() {
+                              _productList[_productList.indexOf(element)] =
+                                  response;
+                            });
+                            break;
+                          }
                         }
                       }
                     },
@@ -146,16 +183,35 @@ class _ProductListScreenState extends State<ProductListScreen>
                   ),
                   title: Text(item.productName),
                   trailing: InkWell(
-                    onTap: () {
-                      ProductController controller = ProductController();
-                      controller.deleteProduct(
-                          item.productId, item.productName);
-                      setState(() {
-                        _productList.removeWhere(
-                            (element) => element.productId == item.productId);
-                      });
+                    onLongPress: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SingleChildScrollView(
+                            child: ProductsInfoDialog(
+                              product: item,
+                              constraints: constraints,
+                              measurementList: measurementList,
+                              categoryList: categoryList,
+                            ),
+                          );
+                        },
+                      );
                     },
-                    child: const Icon(Icons.delete, color: Colors.red),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return QuantidadeDialog(
+                            product: item,
+                          );
+                        },
+                      );
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      color: Color.fromRGBO(108, 168, 129, 0.7),
+                    ),
                   ),
                   subtitle: RichText(
                     text: TextSpan(
