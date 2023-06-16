@@ -7,7 +7,7 @@ class QuantityProvider extends ChangeNotifier {
       : quantity = initialQuantity ?? [];
 
   void decreaseQuantity(int index) {
-    if (quantity[index] > 1) {
+    if (quantity[index] > 0) {
       quantity[index] -= 1;
       notifyListeners();
     }

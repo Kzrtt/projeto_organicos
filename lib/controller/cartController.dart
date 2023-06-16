@@ -13,6 +13,7 @@ import '../model/user.dart';
 
 class CartController {
   final String _userUrl = "https://api-production-696d.up.railway.app/user";
+  // final String _userUrl = "http://192.168.1.159:27017/user";
   final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
 
   List<Map<String, dynamic>> boxCart = [];
@@ -20,7 +21,7 @@ class CartController {
   List<Map<String, dynamic>> cartProductsInfo = [];
   List<Map<String, dynamic>> boxCartInfo = [];
 
-  void emptyCart() async {
+  Future<void> emptyCart() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
@@ -256,13 +257,13 @@ class CartController {
         return boxCartInfo;
       }
       return boxCartInfo;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e');
+        print('Erro inesperado: $e, $stackTrace');
       }
       return boxCartInfo;
     }
@@ -335,13 +336,13 @@ class CartController {
         return boxCart;
       }
       return boxCart;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e');
+        print('Erro inesperado: $e, $stackTrace');
       }
       return boxCart;
     }
@@ -442,7 +443,6 @@ class CartController {
       String? id = prefs.getString('userId');
       List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
       List<Map<String, dynamic>> cart = await getAllProductsFromCart();
-
       List<Map<String, dynamic>> produtosNaBox = [];
       for (var element in produtos) {
         produtosNaBox.add({
@@ -474,13 +474,13 @@ class CartController {
         produtosNaBox = [];
         print('sucesso');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e');
+        print('Erro inesperado: $e, $stackTrace');
       }
     }
   }

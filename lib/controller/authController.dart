@@ -6,8 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class AuthController {
-  // final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
-  final String _baseUrl = "http://192.168.1.159:27017/auth";
+  final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
 
   void createClient(User user, String dietType, BuildContext context) async {
     try {

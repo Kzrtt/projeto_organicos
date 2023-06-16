@@ -15,6 +15,8 @@ class BoxScreen extends StatefulWidget {
 }
 
 class _BoxScreenState extends State<BoxScreen> {
+  bool isLoadingAddToCart = false;
+
   @override
   Widget build(BuildContext context) {
     Box box = ModalRoute.of(context)?.settings.arguments as Box;
@@ -256,6 +258,9 @@ class _BoxScreenState extends State<BoxScreen> {
                           SizedBox(height: constraints.maxHeight * .05),
                           InkWell(
                             onTap: () async {
+                              setState(() {
+                                isLoadingAddToCart = true;
+                              });
                               CartController controller = CartController();
                               List<Map<String, dynamic>> produtos = [];
                               for (var i = 0; i < box.produtos.length; i++) {
@@ -269,43 +274,33 @@ class _BoxScreenState extends State<BoxScreen> {
                                   "quantity": provider.quantity[i],
                                 });
                               }
-                              await controller.getAllBoxesFromCart().then(
+                              controller
+                                  .addBoxToCart(
+                                box,
+                                produtos,
+                                1,
+                                context,
+                              )
+                                  .then(
                                 (value) {
-                                  if (value.isNotEmpty) {
-                                    print('achou');
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                            "Só é possivel comprar uma box",
-                                          ),
-                                          content: SizedBox(
-                                            child: Text(
-                                              "Por enquanto só é possivel comprar uma box, nossa equipe já está trabalhando nisso!",
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ).then((value) {
-                                      Navigator.pop(context);
-                                    });
-                                  } else {
-                                    controller.addBoxToCart(
-                                      box,
-                                      produtos,
-                                      1,
-                                      context,
-                                    );
-                                    Navigator.of(context).pop();
-                                  }
+                                  setState(() {
+                                    isLoadingAddToCart = false;
+                                  });
+                                  Navigator.of(context).pop();
                                 },
                               );
                             },
-                            child: CommonButton(
-                              constraints: constraints,
-                              text: "Adicioar ao Carrinho",
-                            ),
+                            child: isLoadingAddToCart
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                      color: const Color.fromRGBO(
+                                          113, 227, 154, 1),
+                                    ),
+                                  )
+                                : CommonButton(
+                                    constraints: constraints,
+                                    text: "Adicioar ao Carrinho",
+                                  ),
                           ),
                         ],
                       ),

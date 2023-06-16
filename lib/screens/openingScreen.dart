@@ -214,10 +214,15 @@ class _OpeningScreenState extends State<OpeningScreen> {
                               SharedPreferences _prefs =
                                   await SharedPreferences.getInstance();
                               String? userId = _prefs.getString('userId');
+                              DateTime now = DateTime.now();
+                              DateTime tokenDate = now.add(Duration(days: 7));
                               userController.getClient(userId).then((value) {
                                 User user = value;
                                 userState.setUser(user);
-                                AuthenticateUser.saveUser(user);
+                                AuthenticateUser.saveUser(
+                                  user,
+                                  tokenDate,
+                                );
                                 Navigator.of(context).pushReplacementNamed(
                                   AppRoutes.HOMETAB,
                                 );
@@ -232,12 +237,17 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   await SharedPreferences.getInstance();
                               String? cooperativeId =
                                   _prefs.getString("cooperativeId");
+                              DateTime now = DateTime.now();
+                              DateTime tokenDate = now.add(Duration(days: 7));
                               _cprovider
                                   .getCooperative(cooperativeId)
                                   .then((value) {
                                 Cooperative cooperative = value;
                                 cooperativeState.setCooperative(cooperative);
-                                AuthenticateUser.saveCooperative(cooperative);
+                                AuthenticateUser.saveCooperative(
+                                  cooperative,
+                                  tokenDate,
+                                );
                                 Navigator.of(context).pushReplacementNamed(
                                   ProducerAppRoutes.PRODUCERHOMETAB,
                                 );

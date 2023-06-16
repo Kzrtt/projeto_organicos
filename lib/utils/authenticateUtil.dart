@@ -13,24 +13,27 @@ class AuthenticateUser {
   static final String key = "loggedUser";
   static final String coopKey = "loggedCooperative";
 
-  static saveUser(User user) async {
+  static saveUser(User user, DateTime tokenDateLimit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(
       key,
       jsonEncode({
         "user": user.toJson(),
         "isAuth": true,
+        "tokenDate": tokenDateLimit.toString(),
       }),
     );
   }
 
-  static saveCooperative(Cooperative cooperative) async {
+  static saveCooperative(
+      Cooperative cooperative, DateTime tokenDateLimit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(
       coopKey,
       jsonEncode({
         "cooperative": cooperative.toJson(),
         "isAuth": true,
+        "tokenDate": tokenDateLimit.toString(),
       }),
     );
   }
@@ -43,25 +46,35 @@ class AuthenticateUser {
     List<dynamic> response = [];
     if (jsonResponse != null) {
       var decodedResponse = jsonDecode(jsonResponse);
-      final userState = Provider.of<UserState>(
-        context,
-        listen: false,
-      );
-      userState.setUser(User.fromJson(decodedResponse['user']));
-      response.add(decodedResponse['isAuth']);
-      response.add('user');
+      String tokenDateLimitString = decodedResponse['tokenDate'];
+      DateTime tokenDateLimit = DateTime.parse(tokenDateLimitString);
+      if (tokenDateLimit.isAfter(DateTime.now())) {
+        final userState = Provider.of<UserState>(
+          context,
+          listen: false,
+        );
+        userState.setUser(User.fromJson(decodedResponse['user']));
+        response.add(decodedResponse['isAuth']);
+        response.add('user');
+        return response;
+      }
       return response;
     } else if (jsonResponseCoop != null) {
       var decodedResponse = jsonDecode(jsonResponseCoop);
-      final cooperativeState = Provider.of<CooperativeState>(
-        context,
-        listen: false,
-      );
-      cooperativeState.setCooperative(
-        Cooperative.fromJson(decodedResponse['cooperative']),
-      );
-      response.add(decodedResponse['isAuth']);
-      response.add('cooperative');
+      String tokenDateLimitString = decodedResponse['tokenDate'];
+      DateTime tokenDateLimit = DateTime.parse(tokenDateLimitString);
+      if (tokenDateLimit.isAfter(DateTime.now())) {
+        final cooperativeState = Provider.of<CooperativeState>(
+          context,
+          listen: false,
+        );
+        cooperativeState.setCooperative(
+          Cooperative.fromJson(decodedResponse['cooperative']),
+        );
+        response.add(decodedResponse['isAuth']);
+        response.add('cooperative');
+        return response;
+      }
       return response;
     }
     return response;

@@ -17,6 +17,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
   List<Box> _boxes = [];
   List<Box> _filteredItems = [];
   final TextEditingController _searchController = TextEditingController();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
         if (element.boxQuantity > 0) {
           setState(() {
             _boxes.add(element);
+            isLoading = false;
           });
         }
       }
@@ -105,219 +107,262 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                 ),
               ),
               SizedBox(height: constraints.maxHeight * .03),
-              SizedBox(
-                height: constraints.maxHeight * .7,
-                width: constraints.maxWidth,
-                child: ListView.builder(
-                  itemCount: _filteredItems.length,
-                  itemBuilder: (context, index) {
-                    Box item = _filteredItems[index];
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
-                          AppRoutes.BOXSCREEN,
-                          arguments: item,
-                        );
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.all(constraints.maxHeight * .02),
-                        child: Container(
-                          height: constraints.maxHeight * .3,
-                          width: constraints.maxWidth * .9,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+              isLoading
+                  ? Column(
+                      children: [
+                        SizedBox(height: constraints.maxHeight * .3),
+                        Center(
+                          child: CircularProgressIndicator(
+                            color: const Color.fromRGBO(113, 227, 154, 1),
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        height: constraints.maxHeight * .24,
-                                        width: constraints.maxWidth * .45,
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20.0),
-                                            bottomLeft: Radius.circular(20.0),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(
-                                              constraints.maxHeight * .02),
-                                          child: Container(
-                                            height: constraints.maxHeight * .3,
-                                            width: constraints.maxWidth * .4,
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                        ),
+                      ],
+                    )
+                  : SizedBox(
+                      height: constraints.maxHeight * .7,
+                      width: constraints.maxWidth,
+                      child: ListView.builder(
+                        itemCount: _filteredItems.length,
+                        itemBuilder: (context, index) {
+                          Box item = _filteredItems[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                AppRoutes.BOXSCREEN,
+                                arguments: item,
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(constraints.maxHeight * .02),
+                              child: Container(
+                                height: constraints.maxHeight * .3,
+                                width: constraints.maxWidth * .9,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Container(
+                                              height:
+                                                  constraints.maxHeight * .24,
+                                              width: constraints.maxWidth * .45,
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(20.0),
+                                                  bottomLeft:
+                                                      Radius.circular(20.0),
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.all(
+                                                    constraints.maxHeight *
+                                                        .02),
+                                                child: Container(
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          .3,
+                                                  width:
+                                                      constraints.maxWidth * .4,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: item.boxPhoto != ""
+                                                      ? Image.network(
+                                                          item.boxPhoto,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Center(),
+                                                ),
+                                              ),
                                             ),
-                                            child: item.boxPhoto != ""
-                                                ? Image.network(
-                                                    item.boxPhoto,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : Center(),
+                                            SizedBox(
+                                                height: constraints.maxHeight *
+                                                    .001),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                            height: constraints.maxWidth * .05),
+                                        Container(
+                                          height: constraints.maxHeight * .24,
+                                          width: constraints.maxWidth * .4,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(20.0),
+                                              bottomRight:
+                                                  Radius.circular(20.0),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              top: constraints.maxHeight * .025,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  item.boxName,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        constraints.maxHeight *
+                                                            .02,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  item.boxDetails,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        constraints.maxHeight *
+                                                            .019,
+                                                    color: const Color.fromRGBO(
+                                                        0, 0, 0, 0.68),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          .03,
+                                                ),
+                                                SizedBox(
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          .10,
+                                                  width: constraints.maxWidth,
+                                                  child: ListView.builder(
+                                                    itemCount:
+                                                        item.produtos.length < 3
+                                                            ? item
+                                                                .produtos.length
+                                                            : 3,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      var products =
+                                                          item.produtos[index];
+                                                      return Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: constraints
+                                                                  .maxWidth *
+                                                              .001,
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.circle,
+                                                              size: constraints
+                                                                      .maxHeight *
+                                                                  .01,
+                                                            ),
+                                                            SizedBox(
+                                                                width: constraints
+                                                                        .maxWidth *
+                                                                    .02),
+                                                            Text(
+                                                              "${truncateString(products.product.productName, 14)} ",
+                                                            ),
+                                                            Text(
+                                                              "${products.quantity.toString()}${products.product.measurementUnit}",
+                                                            ),
+                                                            SizedBox(
+                                                                height: constraints
+                                                                        .maxHeight *
+                                                                    .02),
+                                                            item.produtos
+                                                                        .length >
+                                                                    3
+                                                                ? Text(
+                                                                    "Mostrar mais...",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          constraints.maxHeight *
+                                                                              .02,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: const Color
+                                                                              .fromRGBO(
+                                                                          113,
+                                                                          227,
+                                                                          154,
+                                                                          1),
+                                                                    ),
+                                                                  )
+                                                                : Center()
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          .01,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .001),
-                                    ],
-                                  ),
-                                  SizedBox(height: constraints.maxWidth * .05),
-                                  Container(
-                                    height: constraints.maxHeight * .24,
-                                    width: constraints.maxWidth * .4,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(20.0),
-                                        bottomRight: Radius.circular(20.0),
-                                      ),
+                                      ],
                                     ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        top: constraints.maxHeight * .025,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal:
+                                              constraints.maxWidth * .12),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            item.boxName,
+                                            "${item.boxQuantity} unidades",
+                                            style: TextStyle(
+                                              fontSize:
+                                                  constraints.maxHeight * .02,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              height:
+                                                  constraints.maxHeight * .01),
+                                          Text(
+                                            "R\$${item.boxPrice}",
                                             style: TextStyle(
                                               fontSize:
                                                   constraints.maxHeight * .02,
                                               fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            item.boxDetails,
-                                            style: TextStyle(
-                                              fontSize:
-                                                  constraints.maxHeight * .019,
                                               color: const Color.fromRGBO(
-                                                  0, 0, 0, 0.68),
-                                              fontWeight: FontWeight.w600,
+                                                  113, 227, 154, 1),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: constraints.maxHeight * .03,
-                                          ),
-                                          SizedBox(
-                                            height: constraints.maxHeight * .10,
-                                            width: constraints.maxWidth,
-                                            child: ListView.builder(
-                                              itemCount:
-                                                  item.produtos.length < 3
-                                                      ? item.produtos.length
-                                                      : 3,
-                                              itemBuilder: (context, index) {
-                                                var products =
-                                                    item.produtos[index];
-                                                return Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: constraints.maxWidth *
-                                                        .001,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.circle,
-                                                        size: constraints
-                                                                .maxHeight *
-                                                            .01,
-                                                      ),
-                                                      SizedBox(
-                                                          width: constraints
-                                                                  .maxWidth *
-                                                              .02),
-                                                      Text(
-                                                        "${truncateString(products.product.productName, 14)} ",
-                                                      ),
-                                                      Text(
-                                                        "${products.quantity.toString()}${products.product.measurementUnit}",
-                                                      ),
-                                                      SizedBox(
-                                                          height: constraints
-                                                                  .maxHeight *
-                                                              .02),
-                                                      item.produtos.length > 3
-                                                          ? Text(
-                                                              "Mostrar mais...",
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    constraints
-                                                                            .maxHeight *
-                                                                        .02,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: const Color
-                                                                        .fromRGBO(
-                                                                    113,
-                                                                    227,
-                                                                    154,
-                                                                    1),
-                                                              ),
-                                                            )
-                                                          : Center()
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: constraints.maxHeight * .01,
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: constraints.maxWidth * .12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${item.boxQuantity} unidades",
-                                      style: TextStyle(
-                                        fontSize: constraints.maxHeight * .02,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                        height: constraints.maxHeight * .01),
-                                    Text(
-                                      "R\$${item.boxPrice}",
-                                      style: TextStyle(
-                                        fontSize: constraints.maxHeight * .02,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color.fromRGBO(
-                                            113, 227, 154, 1),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              )
+                    )
             ],
           ),
         );
