@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/screens/client/productScreen.dart';
@@ -45,7 +48,12 @@ class CartController {
     }
   }
 
-  void createSell(String addressId, String deliveryDate) async {
+  Future<bool> createSell(
+    String addressId,
+    String deliveryDate,
+    String deliveryType,
+    BuildContext context,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
@@ -64,13 +72,17 @@ class CartController {
             "boxes": [...boxes],
           },
           "deliveryDate": deliveryDate,
+          "deliveryType": deliveryType,
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
+      emptyCart();
       if (response.data.containsKey('sell')) {
-        emptyCart();
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
       if (e is DioError) {
@@ -81,6 +93,7 @@ class CartController {
         print('Erro inesperado: $e');
       }
     }
+    return false;
   }
 
   void incrementOrSubtractQuantity(Products product, String operation) async {
@@ -334,7 +347,7 @@ class CartController {
     }
   }
 
-  void removeBoxFromCart(String boxId) async {
+  Future<void> removeBoxFromCart(String boxId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
@@ -396,8 +409,33 @@ class CartController {
     }
   }
 
-  void addBoxToCart(
-      Box box, List<Map<String, dynamic>> produtos, int quantity) async {
+  Future<void> updateBoxValues(
+    Box box,
+    List<Map<String, dynamic>> produtos,
+    int quantity,
+    BuildContext context,
+  ) async {
+    try {
+      await removeBoxFromCart(box.id).then((value) async {
+        await addBoxToCart(box, produtos, quantity, context);
+      });
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
+  Future<void> addBoxToCart(
+    Box box,
+    List<Map<String, dynamic>> produtos,
+    int quantity,
+    BuildContext context,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('userToken');
@@ -406,10 +444,10 @@ class CartController {
       List<Map<String, dynamic>> cart = await getAllProductsFromCart();
 
       List<Map<String, dynamic>> produtosNaBox = [];
-      for (var element in box.produtos) {
+      for (var element in produtos) {
         produtosNaBox.add({
-          "productId": element.product.productId,
-          "quantity": element.quantity,
+          "productId": element['productId'],
+          "quantity": element['quantity'],
         });
       }
 
@@ -419,6 +457,7 @@ class CartController {
         "quantity": 1,
       });
 
+      print("quantidade: ${boxCart[0]['boxProducts'][0]['quantity']}");
       var response = await Dio().put(
         "$_userUrl/$id",
         data: {
@@ -431,7 +470,10 @@ class CartController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      produtosNaBox = [];
+      if (response.data.containsKey('user')) {
+        produtosNaBox = [];
+        print('sucesso');
+      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');

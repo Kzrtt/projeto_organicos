@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:projeto_organicos/model/adress.dart';
 import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/category.dart';
@@ -9,14 +6,12 @@ import 'package:projeto_organicos/model/feedback.dart';
 import 'package:projeto_organicos/model/productInBox.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/model/sell.dart';
-import 'package:projeto_organicos/screens/client/signUpScreen.dart';
-import 'package:projeto_organicos/utils/appRoutes.dart';
+
 import 'package:projeto_organicos/utils/userState.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 class UserController {
-  final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
   final String _userUrl = "https://api-production-696d.up.railway.app/user";
   final String _categoryUrl =
       "https://api-production-696d.up.railway.app/category";
@@ -40,6 +35,36 @@ class UserController {
     isSubscriber: false,
     isNutritious: false,
   );
+
+  Future<List<String>> getUserDiet() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      var response = await Dio().get(
+        "$_userUrl/$id",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      List<String> userDiets = [];
+      if (response.data.containsKey('user')) {
+        for (var element in response.data['user']['diets']) {
+          userDiets.add(element['_id']);
+        }
+      }
+      return userDiets;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      throw Exception(e);
+    }
+  }
 
   Future<Map<String, dynamic>> searchCep(String cep) async {
     try {
@@ -363,6 +388,7 @@ class UserController {
                 status: element['status'],
                 sellDate: element['sellDate'],
                 deliveryDate: element['deliveryDate'],
+                deliveryType: element['deliveryType'],
                 cooperatives: cooperatives,
               );
               _sells.add(sell);
@@ -446,38 +472,58 @@ class UserController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      if (response.data.containsKey('products')) {
-        for (var element in response.data['products']) {
-          if (element['active'] == true) {
-            List<String> categories = [];
-            for (var e in element['categories']) {
-              categories.add(e['categoryName']);
+      List<String> userDiets = await getUserDiet();
+      try {
+        if (response.data.containsKey('products')) {
+          for (var element in response.data['products']) {
+            if (element['active'] == true && element['stockQuantity'] > 0) {
+              List<String> categories = [];
+              List<String> productDiets = [];
+              int categoryQuantity = 0;
+              for (var e in element['categories']) {
+                categories.add(e['categoryName']);
+                categoryQuantity++;
+                for (var diet in e['diets']) {
+                  productDiets.add(diet);
+                }
+              }
+              Products products = Products(
+                productId: element['_id'],
+                productName: element['productName'],
+                category: categories,
+                productPhoto: element['productPhoto'],
+                productPrice: element['productPrice'],
+                stockQuantity: element['stockQuantity'],
+                unitValue: element['unitValue'],
+                productDetails: element['productDetails'],
+                cooperativeId: element['cooperativeId'],
+                producerId: element['producerId'],
+                measurementUnit: element['measurementUnit']['measurementUnit'],
+              );
+              int matchingDiets = 0;
+              for (var diet in productDiets) {
+                if (userDiets.contains(diet)) {
+                  matchingDiets++;
+                }
+              }
+
+              if (matchingDiets >= categoryQuantity) {
+                _productList.add(products);
+              }
             }
-            Products products = Products(
-              productId: element['_id'],
-              productName: element['productName'],
-              category: categories,
-              productPhoto: element['productPhoto'],
-              productPrice: element['productPrice'],
-              stockQuantity: element['stockQuantity'],
-              unitValue: element['unitValue'],
-              productDetails: element['productDetails'],
-              cooperativeId: element['cooperativeId'],
-              producerId: element['producerId'],
-              measurementUnit: element['measurementUnit']['measurementUnit'],
-            );
-            _productList.add(products);
           }
         }
+      } catch (e, stackTrace) {
+        print(stackTrace);
       }
       return _productList;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (e is DioError) {
         print('Erro de requisição:');
         print('Status code: ${e.response?.statusCode}');
         print('Mensagem: ${e.response?.data}');
       } else {
-        print('Erro inesperado: $e');
+        print('Erro inesperado: $e, stackTrace: $stackTrace');
       }
       return _productList;
     }
@@ -806,93 +852,6 @@ class UserController {
         print('Erro inesperado: $e');
       }
       return user;
-    }
-  }
-
-  void createClient(User user, String dietType, BuildContext context) async {
-    try {
-      var response = await Dio().post(
-        "$_baseUrl/sign_up",
-        data: {
-          "userName": user.userName,
-          "userCpf": user.userCpf,
-          "userEmail": user.userEmail,
-          "userCell": user.userCell,
-          "password": user.password,
-          "userBirthDate": user.birthdate,
-          "isSubscriber": false,
-          "isNutritionist": false,
-          "diets": dietType,
-        },
-      );
-      if (response.data.containsKey('error')) {
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text(response.data["error"]),
-          ),
-        );
-      } else if (response.data.containsKey('token')) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text("Usuário cadastrado com sucesso!"),
-          ),
-        );
-      }
-    } catch (e) {
-      if (e is DioError) {
-        print('Erro de requisição:');
-        print('Status code: ${e.response?.statusCode}');
-        print('Mensagem: ${e.response?.data}');
-      } else {
-        print('Erro inesperado: $e');
-      }
-    }
-  }
-
-  Future<String> login(
-      String email, String password, BuildContext context) async {
-    try {
-      final SharedPreferences _prefs = await SharedPreferences.getInstance();
-      var response = await Dio().post(
-        "$_baseUrl/authenticate/",
-        data: {
-          "email": email,
-          "password": password,
-        },
-      );
-      if (response.data["error"] == "User not found") {
-        return "erro";
-      } else if (response.data["error"] == "Invalid password") {
-        print("senha errada");
-        return "erro";
-      }
-      if (response.data.containsKey('user')) {
-        String userToken = response.data["token"];
-        String userId = response.data['user']['_id'];
-        await _prefs.setString("userToken", userToken);
-        await _prefs.setString("userId", userId);
-        return "telaCliente";
-      } else if (response.data.containsKey('cooperative')) {
-        String cooperativeToken = response.data["token"];
-        String cooperativeId = response.data['cooperative']['_id'];
-        await _prefs.setString("cooperativeToken", cooperativeToken);
-        await _prefs.setString("cooperativeId", cooperativeId);
-        return "telaCooperativa";
-      }
-      print(response.data);
-      return "erro";
-    } catch (e) {
-      if (e is DioError) {
-        print('Erro de requisição:');
-        print('Status code: ${e.response?.statusCode}');
-        print('Mensagem: ${e.response?.data}');
-      } else {
-        print('Erro inesperado: $e');
-      }
-      return "erro";
     }
   }
 }

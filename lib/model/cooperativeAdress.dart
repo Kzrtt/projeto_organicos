@@ -12,4 +12,24 @@ class CooperativeAdress {
     required this.state,
     required this.zipCode,
   });
+
+  static CooperativeAdress fromJson(Map<String, dynamic> json) {
+    return CooperativeAdress(
+      complement: json['complement'],
+      street: json['street'],
+      city: json['city'],
+      state: json['state'],
+      zipCode: json['zipCode'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'complement': complement,
+      'street': street,
+      'city': city,
+      'state': state,
+      'zipCode': zipCode,
+    };
+  }
 }

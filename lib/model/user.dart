@@ -26,4 +26,36 @@ class User with ChangeNotifier {
     this.diets = const [],
     this.feedbacks = const [],
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userName': userName,
+      'userCpf': userCpf,
+      'userEmail': userEmail,
+      'userCell': userCell,
+      'password': password,
+      'birthdate': birthdate,
+      'isSubscriber': isSubscriber,
+      'isNutritious': isNutritious,
+      'diets': diets,
+      'adresses': adresses,
+      'feedbacks': feedbacks,
+    };
+  }
+
+  static User fromJson(Map<String, dynamic> json) {
+    return User(
+      userName: json['userName'],
+      userCpf: json['userCpf'],
+      userEmail: json['userEmail'],
+      userCell: json['userCell'],
+      password: json['password'],
+      birthdate: json['birthdate'],
+      isSubscriber: json['isSubscriber'],
+      isNutritious: json['isNutritious'],
+      diets: List<String>.from(json['diets']),
+      adresses: List<String>.from(json['adresses']),
+      feedbacks: List<String>.from(json['feedbacks']),
+    );
+  }
 }

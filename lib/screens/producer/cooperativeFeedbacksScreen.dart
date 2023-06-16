@@ -19,6 +19,7 @@ class CooperativeFeedbacksScreen extends StatefulWidget {
 
 class _CooperativeFeedbacksScreenState
     extends State<CooperativeFeedbacksScreen> {
+  bool isLoading = true;
   String _selectedItem = "";
   final List<String> _items = ["item 1", "item 2", "item 3"];
   final TextEditingController _feedbackController = TextEditingController();
@@ -26,7 +27,7 @@ class _CooperativeFeedbacksScreenState
   List<ClientFeedback> _feedbacks = [];
   List<bool> isExpandedList = List.generate(5, (index) => false);
 
-  void loadFeedbacks() async {
+  Future<void> loadFeedbacks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     CooperativeController cooperativeController = CooperativeController();
     String? cooperativeId = prefs.getString("cooperativeId");
@@ -45,7 +46,11 @@ class _CooperativeFeedbacksScreenState
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadFeedbacks();
+    loadFeedbacks().then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   Widget _textField1(double height, double width, BoxConstraints constraints,
@@ -93,82 +98,98 @@ class _CooperativeFeedbacksScreenState
                     text: "Feedbacks",
                   ),
                   SizedBox(height: constraints.maxHeight * .03),
-                  SizedBox(
-                    height: constraints.maxHeight * .8,
-                    child: ListView.builder(
-                      itemCount: _feedbacks.length,
-                      itemBuilder: (context, index) {
-                        var item = _feedbacks[index];
-                        return Column(
+                  isLoading
+                      ? Column(
                           children: [
-                            Padding(
-                              padding:
-                                  EdgeInsets.all(constraints.maxHeight * .015),
-                              child: Card(
-                                child: ListTile(
-                                  leading: const Icon(
-                                    Icons.favorite,
-                                    color: Color.fromRGBO(108, 168, 129, 0.7),
-                                  ),
-                                  title: Text(item.title),
-                                  trailing: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isExpandedList[index] =
-                                            !isExpandedList[index];
-                                      });
-                                    },
-                                    child: Icon(
-                                      isExpandedList[index]
-                                          ? Icons.expand_less
-                                          : Icons.expand_more,
-                                    ),
-                                  ),
-                                  subtitle: isExpandedList[index]
-                                      ? SizedBox(
-                                          height: constraints.maxHeight * .25,
-                                          width: constraints.maxWidth,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                height:
-                                                    constraints.maxHeight * .02,
-                                              ),
-                                              Text(
-                                                "pergunta: ${item.message}",
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    constraints.maxHeight * .02,
-                                              ),
-                                              Text(
-                                                "resposta: ${item.response}",
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : Column(
-                                          children: [
-                                            SizedBox(
-                                              height:
-                                                  constraints.maxHeight * .035,
-                                              width: constraints.maxWidth,
-                                              child: Text(
-                                                "data: ${item.data.substring(0, 10)}",
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                ),
+                            SizedBox(height: constraints.maxHeight * .3),
+                            Center(
+                              child: CircularProgressIndicator(
+                                color: const Color.fromRGBO(113, 227, 154, 1),
                               ),
                             ),
                           ],
-                        );
-                      },
-                    ),
-                  ),
+                        )
+                      : SizedBox(
+                          height: constraints.maxHeight * .8,
+                          child: ListView.builder(
+                            itemCount: _feedbacks.length,
+                            itemBuilder: (context, index) {
+                              var item = _feedbacks[index];
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                        constraints.maxHeight * .015),
+                                    child: Card(
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.favorite,
+                                          color: Color.fromRGBO(
+                                              108, 168, 129, 0.7),
+                                        ),
+                                        title: Text(item.title),
+                                        trailing: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              isExpandedList[index] =
+                                                  !isExpandedList[index];
+                                            });
+                                          },
+                                          child: Icon(
+                                            isExpandedList[index]
+                                                ? Icons.expand_less
+                                                : Icons.expand_more,
+                                          ),
+                                        ),
+                                        subtitle: isExpandedList[index]
+                                            ? SizedBox(
+                                                height:
+                                                    constraints.maxHeight * .25,
+                                                width: constraints.maxWidth,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: constraints
+                                                              .maxHeight *
+                                                          .02,
+                                                    ),
+                                                    Text(
+                                                      "pergunta: ${item.message}",
+                                                    ),
+                                                    SizedBox(
+                                                      height: constraints
+                                                              .maxHeight *
+                                                          .02,
+                                                    ),
+                                                    Text(
+                                                      "resposta: ${item.response}",
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : Column(
+                                                children: [
+                                                  SizedBox(
+                                                    height:
+                                                        constraints.maxHeight *
+                                                            .035,
+                                                    width: constraints.maxWidth,
+                                                    child: Text(
+                                                      "data: ${item.data.substring(0, 10)}",
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                   SizedBox(height: constraints.maxHeight * .045),
                 ],
               ),

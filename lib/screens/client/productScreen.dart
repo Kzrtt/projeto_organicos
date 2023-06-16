@@ -213,10 +213,21 @@ class _ProductScreenState extends State<ProductScreen> {
                           ),
                           IconButton(
                             onPressed: () {
-                              if (value <= product.stockQuantity) {
+                              if (value < product.stockQuantity) {
                                 setState(() {
                                   value += 1;
                                 });
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Temos apenas ${product.unitValue * product.stockQuantity}${product.measurementUnit} de ${product.productName} em estoque",
+                                      ),
+                                    );
+                                  },
+                                );
                               }
                             },
                             icon: const Icon(Icons.add),

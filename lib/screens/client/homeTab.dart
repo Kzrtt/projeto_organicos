@@ -88,7 +88,6 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     final userState = Provider.of<UserState>(context);
-    final Future<FirebaseApp> _initialize = Firebase.initializeApp();
     User? user = userState.getUser;
 
     late final List<Widget> _baseScreens = [
@@ -97,7 +96,9 @@ class _HomeTabState extends State<HomeTab> {
         callbackFunction: changePage,
       ),
       const SearchScreen(),
-      const CartScreen(),
+      CartScreen(
+        callbackFunction: changePage,
+      ),
       ProfileScreen(
         callbackFunction: changePage,
         user: user,

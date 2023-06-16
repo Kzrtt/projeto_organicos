@@ -106,7 +106,7 @@ class Validators {
       return "Por favor, insira seu nome";
     } else if (name!.length < 3) {
       return "O nome deve conter mais que 3 letras";
-    } else if (!RegExp(r'^[A-Za-z ]+$').hasMatch(name)) {
+    } else if (!RegExp(r'^[A-Za-zÀ-ú ]+$').hasMatch(name)) {
       return "Somente letras são permitidas neste campo";
     }
     return null;

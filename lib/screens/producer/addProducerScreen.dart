@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
@@ -61,7 +62,7 @@ class _AddProducerScreenState extends State<AddProducerScreen> {
   final TextEditingController _cellController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   var maskFormatterBirth = MaskTextInputFormatter(
-      mask: '####-##-##', filter: {'#': RegExp(r'[0-9]')});
+      mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterCpf = MaskTextInputFormatter(
       mask: '###.###.###-##', filter: {'#': RegExp(r'[0-9]')});
   var maskFormatterPhone = MaskTextInputFormatter(
@@ -167,12 +168,21 @@ class _AddProducerScreenState extends State<AddProducerScreen> {
                   if (_addProducerForm.currentState!.validate()) {
                     CooperativeController cooperativeController =
                         CooperativeController();
+
+                    final inputFormat = DateFormat("dd/MM/yyyy");
+                    DateTime dateOfBirth =
+                        inputFormat.parse(_birthDateController.text);
+
+                    final outputFormat = DateFormat("yyyy-MM-dd");
+                    final outputDate = outputFormat.format(dateOfBirth);
+                    dateOfBirth = DateTime.parse(outputDate);
+
                     Producers producer = Producers(
                       producerId: "",
                       producerName: _nameController.text,
                       producerCell: _cellController.text,
                       producerCpf: _cpfController.text,
-                      birthDate: _birthDateController.text,
+                      birthDate: dateOfBirth.toString(),
                     );
                     cooperativeController.createProducer(
                       producer,

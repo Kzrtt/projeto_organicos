@@ -19,6 +19,7 @@ class _OpenSellsState extends State<OpenSells> {
   List<Sell> _sells = [];
   List<Products> _products = [];
   List<Map<String, dynamic>> neededProduts = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _OpenSellsState extends State<OpenSells> {
     controller.getAllSells().then((value) {
       setState(() {
         _sells = value;
+        isLoading = false;
       });
     });
     controller.getAllNeededProducts().then((value) {
@@ -53,110 +55,124 @@ class _OpenSellsState extends State<OpenSells> {
               icon: Icons.star,
               text: "Pedidos Abertos",
             ),
-            SizedBox(
-              height: constraints.maxHeight * .9,
-              width: constraints.maxWidth,
-              child: ListView.builder(
-                itemCount: neededProduts.length,
-                itemBuilder: (context, index) {
-                  var item = neededProduts[index];
-                  return Padding(
-                    padding: EdgeInsets.all(constraints.maxHeight * .02),
-                    child: Container(
-                      height: constraints.maxHeight *
-                              neededProduts[index]['products'].length /
-                              10 +
-                          71,
-                      width: constraints.maxWidth * .8,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SizedBox(
-                        height: constraints.maxHeight *
-                                neededProduts[index]['products'].length /
-                                10 +
-                            71,
-                        width: constraints.maxWidth * .8,
-                        child: Column(
-                          children: [
-                            Container(
-                              height: constraints.maxHeight * .08,
-                              width: constraints.maxWidth,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: constraints.maxWidth * .05,
-                                  vertical: constraints.maxHeight * .02,
-                                ),
-                                child: Text(
-                                  "Data para Entrega: ${item['date']}",
-                                  style: const TextStyle(
-                                    color: Color.fromRGBO(0, 0, 0, 0.58),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: constraints.maxHeight * .04),
-                            SizedBox(
-                              height: constraints.maxHeight *
-                                  neededProduts[index]['products'].length /
-                                  12,
-                              width: constraints.maxWidth * .8,
-                              child: ListView.builder(
-                                itemCount: item['products'].length,
-                                itemBuilder: (context, index) {
-                                  var i = item['products'][index];
-                                  return Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "${i['product'].productName}",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  constraints.maxHeight * .023,
-                                              color: const Color.fromRGBO(
-                                                  0, 0, 0, 0.58),
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${i['quantity'] * i['product'].unitValue}${i['product'].measurementUnit}",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  constraints.maxHeight * .023,
-                                              color: const Color.fromRGBO(
-                                                  0, 0, 0, 0.58),
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: constraints.maxHeight * .025),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+            isLoading
+                ? Column(
+                    children: [
+                      SizedBox(height: constraints.maxHeight * .3),
+                      Center(
+                        child: CircularProgressIndicator(
+                          color: const Color.fromRGBO(113, 227, 154, 1),
                         ),
                       ),
+                    ],
+                  )
+                : SizedBox(
+                    height: constraints.maxHeight * .9,
+                    width: constraints.maxWidth,
+                    child: ListView.builder(
+                      itemCount: neededProduts.length,
+                      itemBuilder: (context, index) {
+                        var item = neededProduts[index];
+                        return Padding(
+                          padding: EdgeInsets.all(constraints.maxHeight * .02),
+                          child: Container(
+                            height: constraints.maxHeight *
+                                neededProduts[index]['products'].length /
+                                10,
+                            width: constraints.maxWidth * .8,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: SizedBox(
+                              height: constraints.maxHeight *
+                                  neededProduts[index]['products'].length /
+                                  10,
+                              width: constraints.maxWidth * .8,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: constraints.maxHeight * .08,
+                                    width: constraints.maxWidth,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: constraints.maxWidth * .05,
+                                        vertical: constraints.maxHeight * .02,
+                                      ),
+                                      child: Text(
+                                        "Data para Entrega: ${item['date']}",
+                                        style: const TextStyle(
+                                          color: Color.fromRGBO(0, 0, 0, 0.58),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: constraints.maxHeight * .04),
+                                  SizedBox(
+                                    height: constraints.maxHeight *
+                                        neededProduts[index]['products']
+                                            .length /
+                                        20,
+                                    width: constraints.maxWidth * .8,
+                                    child: ListView.builder(
+                                      itemCount: item['products'].length,
+                                      itemBuilder: (context, index) {
+                                        var i = item['products'][index];
+                                        return Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "${i['product'].productName}",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        constraints.maxHeight *
+                                                            .023,
+                                                    color: const Color.fromRGBO(
+                                                        0, 0, 0, 0.58),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "${i['quantity'] * i['product'].unitValue}${i['product'].measurementUnit}",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        constraints.maxHeight *
+                                                            .023,
+                                                    color: const Color.fromRGBO(
+                                                        0, 0, 0, 0.58),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                                height: constraints.maxHeight *
+                                                    .025),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
           ],
         );
       },

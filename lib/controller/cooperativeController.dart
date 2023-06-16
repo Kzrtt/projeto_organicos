@@ -289,6 +289,7 @@ class CooperativeController with ChangeNotifier {
                 status: element['status'],
                 sellDate: element['sellDate'],
                 deliveryDate: element['deliveryDate'],
+                deliveryType: element['deliveryType'],
                 cooperatives: cooperatives,
               );
               _sells.add(sell);
@@ -662,7 +663,7 @@ class CooperativeController with ChangeNotifier {
           "cooperativeEmail": cooperative.cooperativeEmail,
           "cooperativeCnpj": cooperative.cooperativeCnpj,
           "cooperativePhone": cooperative.cooperativePhone,
-          "cooperativeAdress": {
+          "cooperativeAddress": {
             "complement": adress.complement,
             "street": adress.street,
             "city": adress.city,

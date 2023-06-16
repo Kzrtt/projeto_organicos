@@ -1,5 +1,6 @@
 class AppRoutes {
   static const OPENINGSCREEN = "/";
+  static const LOGINSCREEN = "/login-screen";
   static const HOMETAB = "/hometab";
   static const SIGNUPSCREEN = "/sign-up-screen";
   static const ADDADRESS = "/add-adress-screen";

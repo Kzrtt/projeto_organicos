@@ -2,16 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projeto_organicos/controller/authController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
+import 'package:projeto_organicos/utils/authenticateUtil.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/userState.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../model/user.dart';
+import '../model/user.dart';
 
 class OpeningScreen extends StatefulWidget {
   const OpeningScreen({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class _OpeningScreenState extends State<OpeningScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool obscureText = true;
+  bool isLoginLoading = false;
 
   Widget _textField1(double height, double width, BoxConstraints constraints,
       String text, TextEditingController controller) {
@@ -191,10 +194,14 @@ class _OpeningScreenState extends State<OpeningScreen> {
                         SizedBox(width: constraints.maxWidth * .08),
                         InkWell(
                           onTap: () async {
-                            UserController _provider = UserController();
+                            setState(() {
+                              isLoginLoading = true;
+                            });
+                            AuthController controller = AuthController();
+                            UserController userController = UserController();
                             CooperativeController _cprovider =
                                 CooperativeController();
-                            String response = await _provider.login(
+                            String response = await controller.login(
                               emailController.text,
                               passwordController.text,
                               context,
@@ -207,9 +214,10 @@ class _OpeningScreenState extends State<OpeningScreen> {
                               SharedPreferences _prefs =
                                   await SharedPreferences.getInstance();
                               String? userId = _prefs.getString('userId');
-                              _provider.getClient(userId).then((value) {
+                              userController.getClient(userId).then((value) {
                                 User user = value;
                                 userState.setUser(user);
+                                AuthenticateUser.saveUser(user);
                                 Navigator.of(context).pushReplacementNamed(
                                   AppRoutes.HOMETAB,
                                 );
@@ -229,11 +237,15 @@ class _OpeningScreenState extends State<OpeningScreen> {
                                   .then((value) {
                                 Cooperative cooperative = value;
                                 cooperativeState.setCooperative(cooperative);
+                                AuthenticateUser.saveCooperative(cooperative);
                                 Navigator.of(context).pushReplacementNamed(
                                   ProducerAppRoutes.PRODUCERHOMETAB,
                                 );
                               });
                             } else {
+                              setState(() {
+                                isLoginLoading = false;
+                              });
                               showDialog(
                                 context: context,
                                 builder: (_) => AlertDialog(
@@ -242,24 +254,36 @@ class _OpeningScreenState extends State<OpeningScreen> {
                               );
                             }
                           },
-                          child: Container(
-                            height: constraints.maxHeight * .06,
-                            width: constraints.maxWidth * .5,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: Color.fromRGBO(83, 242, 166, 0.47),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Iniciar",
-                                style: TextStyle(
-                                  fontSize: constraints.maxHeight * .025,
-                                  color: Colors.white,
+                          child: isLoginLoading
+                              ? Row(
+                                  children: [
+                                    SizedBox(width: constraints.maxWidth * .2),
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                        color: const Color.fromRGBO(
+                                            113, 227, 154, 1),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(
+                                  height: constraints.maxHeight * .06,
+                                  width: constraints.maxWidth * .5,
+                                  decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                    color: Color.fromRGBO(83, 242, 166, 0.47),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Iniciar",
+                                      style: TextStyle(
+                                        fontSize: constraints.maxHeight * .025,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
                       ],
                     ),

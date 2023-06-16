@@ -169,6 +169,7 @@ class _ProducerProfileScreenState extends State<ProducerProfileScreen> {
                                                   .getInstance();
                                           prefs.remove('cooperativeId');
                                           prefs.remove('cooperativeToken');
+                                          prefs.remove('loggedCooperative');
                                           Navigator.of(context)
                                               .pushReplacementNamed(
                                             AppRoutes.OPENINGSCREEN,

@@ -42,6 +42,7 @@ class _ProductListScreenState extends State<ProductListScreen>
   final TextEditingController _boxPriceController = TextEditingController();
   TabController? _tabController;
   int quantidade = 1;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -69,6 +70,9 @@ class _ProductListScreenState extends State<ProductListScreen>
     controller.getAllBoxes().then((value) {
       setState(() {
         _boxList = value;
+        setState(() {
+          isLoading = false;
+        });
       });
     });
   }
@@ -268,17 +272,28 @@ class _ProductListScreenState extends State<ProductListScreen>
                 ),
               ),
               SizedBox(height: constraints.maxHeight * .02),
-              SizedBox(
-                height: constraints.maxHeight * .7,
-                width: constraints.maxWidth,
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    productList(constraints),
-                    boxList(constraints),
-                  ],
-                ),
-              ),
+              isLoading
+                  ? Column(
+                      children: [
+                        SizedBox(height: constraints.maxHeight * .3),
+                        Center(
+                          child: CircularProgressIndicator(
+                            color: const Color.fromRGBO(113, 227, 154, 1),
+                          ),
+                        ),
+                      ],
+                    )
+                  : SizedBox(
+                      height: constraints.maxHeight * .7,
+                      width: constraints.maxWidth,
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          productList(constraints),
+                          boxList(constraints),
+                        ],
+                      ),
+                    ),
             ],
           ),
         );

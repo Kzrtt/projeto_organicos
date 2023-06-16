@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Category> categorias = [];
   List<Box> boxes = [];
   bool isLoading = true;
+  late User user;
 
   @override
   void initState() {

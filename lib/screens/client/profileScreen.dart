@@ -168,6 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 .getInstance();
                                         prefs.remove('userId');
                                         prefs.remove('userToken');
+                                        prefs.remove('loggedUser');
                                         Navigator.of(context)
                                             .pushReplacementNamed(
                                           AppRoutes.OPENINGSCREEN,

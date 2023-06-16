@@ -3,6 +3,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/smallButton.dart';
 import 'package:projeto_organicos/controller/passwordController.dart';
+import 'package:projeto_organicos/utils/validators.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -11,13 +12,20 @@ class ForgotPassword extends StatefulWidget {
   State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-Widget _textField1(double height, double width, BoxConstraints constraints,
-    String text, TextEditingController controller) {
+Widget _textField1(
+  double height,
+  double width,
+  BoxConstraints constraints,
+  String text,
+  TextEditingController controller,
+  String? Function(String?) validator,
+) {
   return SizedBox(
     height: height,
     width: width,
-    child: TextField(
+    child: TextFormField(
       controller: controller,
+      validator: validator,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -48,10 +56,13 @@ Widget thinDivider(BoxConstraints constraints) {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
+  Validators validators = Validators();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final emailFormKey = GlobalKey<FormState>();
+  final passwordsKey = GlobalKey<FormState>();
   bool isEmailSent = false;
   String token = "";
 
@@ -99,8 +110,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     ? Column(
                         children: [
                           SizedBox(height: constraints.maxHeight * .05),
-                          _textField1(
-                              55, 350, constraints, 'E-mail', emailController),
+                          Form(
+                            key: emailFormKey,
+                            child: _textField1(
+                              55,
+                              350,
+                              constraints,
+                              'E-mail',
+                              emailController,
+                              validators.emailValidator,
+                            ),
+                          ),
                           SizedBox(height: constraints.maxHeight * .03),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -114,15 +134,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  PasswordController controller =
-                                      PasswordController();
-                                  controller.forgotPassword(
-                                    emailController.text,
-                                    context,
-                                  );
-                                  setState(() {
-                                    isEmailSent = true;
-                                  });
+                                  if (emailFormKey.currentState!.validate()) {
+                                    PasswordController controller =
+                                        PasswordController();
+                                    controller.forgotPassword(
+                                      emailController.text,
+                                      context,
+                                    );
+                                    setState(() {
+                                      isEmailSent = true;
+                                    });
+                                  }
                                 },
                                 child: SmallButton(
                                   constraints: constraints,
@@ -169,34 +191,55 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                           ),
                           SizedBox(height: constraints.maxHeight * .05),
-                          _textField1(55, 350, constraints, 'Nova Senha',
-                              passwordController),
-                          SizedBox(height: constraints.maxHeight * .03),
-                          _textField1(55, 350, constraints, 'Confirmar Senha',
-                              confirmPasswordController),
+                          Form(
+                            key: passwordsKey,
+                            child: Column(
+                              children: [
+                                _textField1(
+                                  55,
+                                  350,
+                                  constraints,
+                                  'Nova Senha',
+                                  passwordController,
+                                  validators.passwordValidator,
+                                ),
+                                SizedBox(height: constraints.maxHeight * .03),
+                                _textField1(
+                                  55,
+                                  350,
+                                  constraints,
+                                  'Confirmar Senha',
+                                  confirmPasswordController,
+                                  validators.passwordValidator,
+                                ),
+                              ],
+                            ),
+                          ),
                           SizedBox(height: constraints.maxHeight * .08),
                           InkWell(
                             onTap: () {
-                              if (passwordController.text ==
-                                  confirmPasswordController.text) {
-                                PasswordController controller =
-                                    PasswordController();
-                                controller.resetPassword(
-                                  emailController.text,
-                                  token.toUpperCase(),
-                                  passwordController.text,
-                                  context,
-                                );
-                                Navigator.of(context).pop();
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return const AlertDialog(
-                                      title: Text("As senhas não batem"),
-                                    );
-                                  },
-                                );
+                              if (passwordsKey.currentState!.validate()) {
+                                if (passwordController.text ==
+                                    confirmPasswordController.text) {
+                                  PasswordController controller =
+                                      PasswordController();
+                                  controller.resetPassword(
+                                    emailController.text,
+                                    token.toUpperCase(),
+                                    passwordController.text,
+                                    context,
+                                  );
+                                  Navigator.of(context).pop();
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return const AlertDialog(
+                                        title: Text("As senhas não batem"),
+                                      );
+                                    },
+                                  );
+                                }
                               }
                             },
                             child: CommonButton(

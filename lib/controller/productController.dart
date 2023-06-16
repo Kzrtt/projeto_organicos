@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/model/category.dart';
 import 'package:projeto_organicos/model/productInBox.dart';
@@ -13,6 +15,7 @@ import '../model/products.dart';
 class ProductController {
   String _productUrl = "https://api-production-696d.up.railway.app/product";
   String _categoryUrl = "https://api-production-696d.up.railway.app/category";
+  String _dietsUrl = "https://api-production-696d.up.railway.app/diet";
   List<Category> _categoryList = [];
   List<Products> _productList = [];
   List<Box> _boxList = [];
@@ -47,7 +50,7 @@ class ProductController {
       String ref = 'productsPhotos/$string.jpg';
       return storage.ref(ref).putFile(file);
     } on FirebaseException catch (e) {
-      throw Exception("erro");
+      throw Exception(e);
     }
   }
 
@@ -65,6 +68,35 @@ class ProductController {
       arquivos.add(await element.getDownloadURL());
     }
     return arquivos;
+  }
+
+  Future<List<String>> getAllDiets() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      List<String> diets = [];
+      var response = await Dio().get(
+        _dietsUrl,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('diets')) {
+        for (var element in response.data['diets']) {
+          diets.add(element['_id']);
+        }
+      }
+      return diets;
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+      throw Exception(e);
+    }
   }
 
   void updateBox(Box newBox, Box oldBox) async {
@@ -198,7 +230,7 @@ class ProductController {
     }
   }
 
-  void createBox(Box box) async {
+  Future<bool> createBox(Box box) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('cooperativeToken');
@@ -228,6 +260,11 @@ class ProductController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
+      if (response.data.containsKey('box')) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');
@@ -237,6 +274,7 @@ class ProductController {
         print('Erro inesperado: $e');
         print(StackTrace.current);
       }
+      throw Exception(e);
     }
   }
 
@@ -428,7 +466,7 @@ class ProductController {
     }
   }
 
-  void createProduct(Products product) async {
+  Future<bool> createProduct(Products product, BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("cooperativeToken");
@@ -449,8 +487,10 @@ class ProductController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      if (!response.data.containsKey('product')) {
-        print("erro");
+      if (response.data.containsKey('product')) {
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
       if (e is DioError) {
@@ -460,6 +500,7 @@ class ProductController {
       } else {
         print('Erro inesperado: $e');
       }
+      throw Exception(e);
     }
   }
 

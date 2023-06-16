@@ -7,6 +7,8 @@ import 'package:projeto_organicos/model/cooperativeAdress.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/utils/validators.dart';
 
+import '../../controller/userController.dart';
+
 class SignUpCooperativa extends StatefulWidget {
   const SignUpCooperativa({Key? key}) : super(key: key);
 
@@ -87,7 +89,7 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
       height: height,
       width: width,
       child: TextFormField(
-        inputFormatters: [isCnpj ? maskFormatterCnpj : maskedFormatterCep],
+        inputFormatters: isCnpj ? [maskedFormatterCep] : [],
         validator: validator,
         controller: controller,
         decoration: InputDecoration(
@@ -105,6 +107,26 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
           hintText: text,
           hintStyle: TextStyle(
             fontSize: constraints.maxHeight * .02,
+          ),
+          suffixIcon: GestureDetector(
+            onTap: () {
+              UserController controller = UserController();
+              controller
+                  .searchCep(
+                _zipCodeController.text.replaceAll(RegExp(r'\D'), ''),
+              )
+                  .then((value) {
+                setState(() {
+                  _streetController.text = value['logradouro'];
+                  _stateController.text = value['uf'];
+                  _cityController.text = value['localidade'];
+                });
+              });
+            },
+            child: Icon(
+              Icons.search,
+              color: const Color.fromRGBO(83, 242, 166, 1),
+            ),
           ),
         ),
       ),
@@ -145,6 +167,58 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
         ),
       ),
     );
+  }
+
+  Widget _textField4(
+    double height,
+    double width,
+    BoxConstraints constraints,
+    String text,
+    TextEditingController controller,
+    String? Function(String?) validator,
+    bool isCnpj,
+  ) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: TextFormField(
+        inputFormatters: isCnpj ? [maskedFormatterCep] : [maskFormatterCnpj],
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color.fromRGBO(83, 242, 166, 1),
+              width: constraints.maxWidth * .01,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+          hintText: text,
+          hintStyle: TextStyle(
+            fontSize: constraints.maxHeight * .02,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void searchCep() {
+    UserController controller = UserController();
+    controller
+        .searchCep(
+      _zipCodeController.text.replaceAll(RegExp(r'\D'), ''),
+    )
+        .then((value) {
+      setState(() {
+        _streetController.text = value['logradouro'];
+        _stateController.text = value['uf'];
+        _cityController.text = value['localidade'];
+      });
+    });
   }
 
   @override
@@ -229,9 +303,6 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                         setState(() =>
                                             _currentStep = _currentStep + 1);
                                       } else if (_currentStep == 2) {
-                                        setState(() =>
-                                            _currentStep = _currentStep + 1);
-                                      } else if (_currentStep == 3) {
                                         if (_passwordController.text ==
                                                 _confirmPasswordController
                                                     .text &&
@@ -340,14 +411,15 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                 _emailController,
                                 _validators.emailValidator,
                               ),
-                              _textField2(
-                                  55,
-                                  330,
-                                  constraints,
-                                  "Cnpj",
-                                  _cnpjController,
-                                  _validators.cpnjValidator,
-                                  true),
+                              _textField4(
+                                55,
+                                330,
+                                constraints,
+                                "Cnpj",
+                                _cnpjController,
+                                _validators.cpnjValidator,
+                                false,
+                              ),
                               _textField3(
                                 55,
                                 330,
@@ -366,6 +438,15 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                           key: _adressFormKey,
                           child: Column(
                             children: [
+                              _textField2(
+                                55,
+                                330,
+                                constraints,
+                                "Cep",
+                                _zipCodeController,
+                                _validators.cepValidator,
+                                true,
+                              ),
                               _textField1(
                                 55,
                                 330,
@@ -398,22 +479,9 @@ class _SignUpCooperativaState extends State<SignUpCooperativa> {
                                 _stateController,
                                 _validators.adressValidator,
                               ),
-                              _textField2(
-                                55,
-                                330,
-                                constraints,
-                                "Cep",
-                                _zipCodeController,
-                                _validators.cepValidator,
-                                false,
-                              ),
                             ],
                           ),
                         ),
-                      ),
-                      const Step(
-                        title: Text("Foto"),
-                        content: Center(),
                       ),
                       Step(
                         title: const Text("Senha"),

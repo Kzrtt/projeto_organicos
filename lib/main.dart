@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_organicos/screens/client/addAdressScreen.dart';
 import 'package:projeto_organicos/screens/client/addFeedbackScreen.dart';
 import 'package:projeto_organicos/screens/client/boxScreen.dart';
-import 'package:projeto_organicos/screens/client/forgotPassword.dart';
+import 'package:projeto_organicos/screens/forgotPassword.dart';
 import 'package:projeto_organicos/screens/client/homeTab.dart';
 import 'package:projeto_organicos/screens/client/paymentScreen.dart';
 import 'package:projeto_organicos/screens/client/productScreen.dart';
@@ -17,6 +17,7 @@ import 'package:projeto_organicos/screens/producer/selectProductsToBox.dart';
 import 'package:projeto_organicos/screens/producer/signUpCooperativa.dart';
 import 'package:projeto_organicos/screens/producer/updateBoxScreen.dart';
 import 'package:projeto_organicos/screens/producer/updateProductScreen.dart';
+import 'package:projeto_organicos/screens/splashScreen.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
@@ -26,7 +27,7 @@ import 'package:projeto_organicos/utils/userState.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screens/client/openingScreen.dart';
+import 'screens/openingScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => UserState()),
         ChangeNotifierProvider(create: (_) => CooperativeState()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => QuantityProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -63,7 +65,8 @@ class _MyAppState extends State<MyApp> {
         routes: {
           //rotas para trocar as páginas
           //Página inicial: HomeTab, as outras páginas são abertas dentro do body dela
-          AppRoutes.OPENINGSCREEN: (ctx) => const OpeningScreen(),
+          AppRoutes.OPENINGSCREEN: (ctx) => const SplashScreen(),
+          AppRoutes.LOGINSCREEN: (ctx) => const OpeningScreen(),
           AppRoutes.HOMETAB: (ctx) => const HomeTab(),
           AppRoutes.SIGNUPSCREEN: (ctx) => const SignUpScreen(),
           AppRoutes.ADDADRESS: (ctx) => const AddAdressScreen(),

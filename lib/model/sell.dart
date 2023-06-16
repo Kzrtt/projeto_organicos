@@ -6,6 +6,7 @@ class Sell {
   final Map<String, dynamic> address;
   final String sellDate;
   final String deliveryDate;
+  final String deliveryType;
   final List<String> cooperatives;
 
   Sell({
@@ -17,5 +18,6 @@ class Sell {
     required this.sellDate,
     required this.cooperatives,
     required this.deliveryDate,
+    required this.deliveryType,
   });
 }

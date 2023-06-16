@@ -20,8 +20,9 @@ class _BoxScreenState extends State<BoxScreen> {
     Box box = ModalRoute.of(context)?.settings.arguments as Box;
 
     return ChangeNotifierProvider(
-      create: (_) =>
-          QuantityProvider(List.generate(box.produtos.length, (index) => 1)),
+      create: (_) => QuantityProvider(
+        initialQuantity: List.generate(box.produtos.length, (index) => 1),
+      ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromRGBO(238, 238, 238, 1),
@@ -158,7 +159,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                                     Text(item
                                                         .product.productName),
                                                     Text(
-                                                      "Quantidade: ${item.product.unitValue}${item.product.measurementUnit}",
+                                                      "Quantidade Max: ${item.product.unitValue * item.quantity}${item.product.measurementUnit}",
                                                     ),
                                                   ],
                                                 ),
@@ -182,7 +183,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                                           Icons.remove),
                                                     ),
                                                     Text(
-                                                      "${quantityProvider.quantity[index]} uni",
+                                                      "${quantityProvider.quantity[index] * item.product.unitValue}${item.measurementUnity}",
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                       ),
@@ -268,12 +269,38 @@ class _BoxScreenState extends State<BoxScreen> {
                                   "quantity": provider.quantity[i],
                                 });
                               }
-                              controller.addBoxToCart(
-                                box,
-                                produtos,
-                                1,
+                              await controller.getAllBoxesFromCart().then(
+                                (value) {
+                                  if (value.isNotEmpty) {
+                                    print('achou');
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            "Só é possivel comprar uma box",
+                                          ),
+                                          content: SizedBox(
+                                            child: Text(
+                                              "Por enquanto só é possivel comprar uma box, nossa equipe já está trabalhando nisso!",
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).then((value) {
+                                      Navigator.pop(context);
+                                    });
+                                  } else {
+                                    controller.addBoxToCart(
+                                      box,
+                                      produtos,
+                                      1,
+                                      context,
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                },
                               );
-                              Navigator.of(context).pop();
                             },
                             child: CommonButton(
                               constraints: constraints,

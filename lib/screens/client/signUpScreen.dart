@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:projeto_organicos/controller/authController.dart';
 import 'package:projeto_organicos/model/user.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/utils/validators.dart';
@@ -12,7 +13,7 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-enum DietType { vegan, carnivore, vegetarian }
+enum DietType { vegan, onivoro, vegetarian }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   int _step = 0;
@@ -242,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         if (passwordController.text ==
                                             confirmPasswordController.text) {
                                           String diet = "";
-                                          if (_type == DietType.carnivore) {
+                                          if (_type == DietType.onivoro) {
                                             diet = "6466b39050187706d6d3f2a6";
                                           } else if (_type == DietType.vegan) {
                                             diet = "6466b3a950187706d6d3f2a7";
@@ -272,9 +273,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             isSubscriber: false,
                                             isNutritious: false,
                                           );
-                                          UserController provider =
-                                              UserController();
-                                          provider.createClient(
+                                          AuthController controller =
+                                              AuthController();
+                                          controller.createClient(
                                             userData,
                                             diet,
                                             context,
@@ -397,7 +398,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         content: Column(
                           children: [
                             _dietOption("Vegano", DietType.vegan),
-                            _dietOption("Carnivoro", DietType.carnivore),
+                            _dietOption("Onivoro", DietType.onivoro),
                             _dietOption("Vegetariano", DietType.vegetarian),
                           ],
                         ),

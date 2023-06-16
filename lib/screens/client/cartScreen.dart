@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:projeto_organicos/components/boxAlertDialog.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
 import 'package:projeto_organicos/components/myDialog.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/box.dart';
+import 'package:projeto_organicos/model/productInBox.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/cartProvider.dart';
 import 'package:provider/provider.dart';
@@ -17,20 +19,29 @@ import '../../utils/appRoutes.dart';
 import '../../utils/quantityProvider.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  final void Function(int newValue) callbackFunction;
+  const CartScreen({
+    Key? key,
+    required this.callbackFunction,
+  }) : super(key: key);
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
+  num subTotal = 0;
+  double taxa = 1.00;
+  bool isLoadingSell = false;
   final DateFormat _dateFormat = DateFormat('YYYY/MM/DD');
   String _selectedDate = "";
   String _selectedItem = "";
+  String _selectedDelivery = "";
   List<Adress> addresses = [];
   List<String> addressesId = [];
   List<Map<String, dynamic>> cartMongodb = [];
   List<Map<String, dynamic>> boxCartMongodb = [];
+  List<Map<String, dynamic>> boxCartWithRightQuantities = [];
   Adress defaultAddress = Adress(
     adressId: "",
     nickname: "",
@@ -75,6 +86,11 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     super.initState();
     CartController cartController = CartController();
+    cartController.getAllBoxesFromCart().then((value) {
+      setState(() {
+        boxCartWithRightQuantities = value;
+      });
+    });
     cartController.getAllProductsInfo().then((value) {
       cartMongodb = value;
       final provider = Provider.of<CartProvider>(context, listen: false);
@@ -84,11 +100,23 @@ class _CartScreenState extends State<CartScreen> {
         temp.add(element['quantity']);
       }
       provider.setQuantity(temp);
+      for (var i = 0; i < cartMongodb.length; i++) {
+        setState(() {
+          subTotal += cartMongodb[i]['product'].productPrice *
+              cartMongodb[i]['quantity'];
+        });
+      }
     });
     cartController.getAllBoxesInfo().then((value) {
       setState(() {
         boxCartMongodb = value;
       });
+      for (var i = 0; i < boxCartMongodb.length; i++) {
+        setState(() {
+          subTotal +=
+              boxCartMongodb[i]['box'].boxPrice * boxCartMongodb[i]['quantity'];
+        });
+      }
     });
     loadAdresses().then((value) {
       setState(() {
@@ -103,16 +131,10 @@ class _CartScreenState extends State<CartScreen> {
     List<int> quantity = Provider.of<CartProvider>(context).getQuantity;
     List<String> items = addresses.map((e) => e.nickname).toList();
     List<String> dias = ['Terça', 'Sexta'];
-    num subTotal = 0;
-    for (var i = 0; i < cartMongodb.length; i++) {
-      subTotal +=
-          cartMongodb[i]['product'].productPrice * cartMongodb[i]['quantity'];
-    }
-
-    for (var i = 0; i < boxCartMongodb.length; i++) {
-      subTotal +=
-          boxCartMongodb[i]['box'].boxPrice * boxCartMongodb[i]['quantity'];
-    }
+    List<String> deliveryType = [
+      'Receber na minha sala (1R\$)',
+      'Buscar no bloco R (grátis)'
+    ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -380,7 +402,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                             quantity[index] =
                                                                                 quantity[index] - 1;
                                                                             subTotal =
-                                                                                subTotal - item.productPrice;
+                                                                                item.productPrice * quantity[index];
                                                                             CartController
                                                                                 controller =
                                                                                 CartController();
@@ -464,6 +486,11 @@ class _CartScreenState extends State<CartScreen> {
                                                                               quantity[index]) {
                                                                             quantity[index] =
                                                                                 quantity[index] + 1;
+                                                                            print(quantity[index]);
+                                                                            print(quantity[index] *
+                                                                                item.productPrice);
+                                                                            subTotal =
+                                                                                item.productPrice * quantity[index];
                                                                             CartController
                                                                                 controller =
                                                                                 CartController();
@@ -537,11 +564,28 @@ class _CartScreenState extends State<CartScreen> {
                                                         boxCartMongodb[index];
                                                     return InkWell(
                                                       onTap: () {
-                                                        Navigator.of(context)
-                                                            .pushNamed(
-                                                          AppRoutes.BOXSCREEN,
-                                                          arguments:
-                                                              item['box'],
+                                                        List<int> quantidades =
+                                                            [];
+                                                        for (var element
+                                                            in boxCartWithRightQuantities[
+                                                                    index][
+                                                                'boxProducts']) {
+                                                          quantidades.add(
+                                                              element['quantity']
+                                                                  as int);
+                                                        }
+                                                        item['box'];
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return BoxAlertDialog(
+                                                              box: item['box'],
+                                                              constraints:
+                                                                  constraints,
+                                                              quantidades:
+                                                                  quantidades,
+                                                            );
+                                                          },
                                                         );
                                                       },
                                                       child: Padding(
@@ -865,6 +909,70 @@ class _CartScreenState extends State<CartScreen> {
                                                 .toList(),
                                           ),
                                         ),
+                                        SizedBox(
+                                            height:
+                                                constraints.maxHeight * .04),
+                                        const Text(
+                                          "Método de Entrega:",
+                                          style: TextStyle(
+                                            color: Color.fromRGBO(0, 0, 0, .81),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                constraints.maxHeight * .02),
+                                        SizedBox(
+                                          width: constraints.maxWidth * .9,
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            value: _selectedDelivery.isNotEmpty
+                                                ? _selectedDelivery
+                                                : null,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white,
+                                                    width:
+                                                        constraints.maxWidth *
+                                                            .03),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  Radius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                            hint: const Text(
+                                              "Escolha o modo de entrega",
+                                            ),
+                                            onChanged: (value) {
+                                              if (value ==
+                                                  'Buscar no bloco R (grátis)') {
+                                                setState(() {
+                                                  taxa = 0;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  taxa = 1;
+                                                });
+                                              }
+                                              setState(() {
+                                                _selectedDelivery =
+                                                    value.toString();
+                                              });
+                                            },
+                                            items: deliveryType
+                                                .map(
+                                                  (item) => DropdownMenuItem(
+                                                    value: item,
+                                                    child: Text(item),
+                                                  ),
+                                                )
+                                                .toList(),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -915,7 +1023,7 @@ class _CartScreenState extends State<CartScreen> {
                                         SizedBox(
                                             height:
                                                 constraints.maxHeight * .01),
-                                        const Row(
+                                        Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
@@ -928,7 +1036,7 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "R\$10.00",
+                                              "R\$${taxa.toStringAsFixed(2)}",
                                               style: TextStyle(
                                                 color: Color.fromRGBO(
                                                     0, 0, 0, .51),
@@ -953,7 +1061,7 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "R\$${(subTotal + 10).toStringAsFixed(2)}",
+                                              "R\$${(subTotal + taxa).toStringAsFixed(2)}",
                                               style: const TextStyle(
                                                 color: Color.fromRGBO(
                                                     0, 0, 0, .81),
@@ -968,6 +1076,9 @@ class _CartScreenState extends State<CartScreen> {
                                   SizedBox(height: constraints.maxHeight * .05),
                                   InkWell(
                                     onTap: () {
+                                      setState(() {
+                                        isLoadingSell = true;
+                                      });
                                       final provider =
                                           Provider.of<CartProvider>(
                                         context,
@@ -1005,19 +1116,63 @@ class _CartScreenState extends State<CartScreen> {
                                           .split('T')[0];
 
                                       if (nextDay != DateTime.now()) {
-                                        controller.createSell(
+                                        controller
+                                            .createSell(
                                           addressesId[index],
                                           date,
-                                        );
-                                        Navigator.of(context).pushNamed(
-                                          AppRoutes.PAYMENTSCREEN,
-                                        );
+                                          _selectedDelivery,
+                                          context,
+                                        )
+                                            .then((value) {
+                                          if (value) {
+                                            setState(() {
+                                              isLoadingSell = false;
+                                            });
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                    "Pedido cadastrado com sucesso!",
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                            setState(() {
+                                              boxCartMongodb = [];
+                                              cartMongodb = [];
+                                            });
+                                            widget.callbackFunction(3);
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                    "Erro ao realizar o pedido",
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                            setState(() {
+                                              boxCartMongodb = [];
+                                              cartMongodb = [];
+                                            });
+                                          }
+                                        });
                                       }
                                     },
-                                    child: CommonButton(
-                                      constraints: constraints,
-                                      text: "Efetuar Pagamento",
-                                    ),
+                                    child: isLoadingSell
+                                        ? Center(
+                                            child: CircularProgressIndicator(
+                                              color: const Color.fromRGBO(
+                                                  113, 227, 154, 1),
+                                            ),
+                                          )
+                                        : CommonButton(
+                                            constraints: constraints,
+                                            text: "Finalizar Pedido",
+                                          ),
                                   ),
                                 ],
                               ),

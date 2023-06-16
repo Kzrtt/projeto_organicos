@@ -262,8 +262,27 @@ class _AddProductScreenState extends State<AddProductScreen>
                             boxQuantity: int.parse(_boxStockQuantity.text),
                             produtos: _produtosNaBox,
                           );
-                          controller.createBox(box);
-                          print("criou box");
+                          controller.createBox(box).then((value) {
+                            if (value) {
+                              showDialog(
+                                context: context,
+                                builder: (_) {
+                                  return AlertDialog(
+                                    title: Text("Box Criada com sucesso"),
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (_) {
+                                  return AlertDialog(
+                                    title: Text("Erro ao criar a box"),
+                                  );
+                                },
+                              );
+                            }
+                          });
                           widget.callbackFunction(2);
                         }
                       },
@@ -519,7 +538,29 @@ class _AddProductScreenState extends State<AddProductScreen>
                             producerId: _p[index].producerId,
                             measurementUnit: _measurementList[index2].id,
                           );
-                          controller.createProduct(product);
+                          controller.createProduct(product, context).then(
+                            (value) async {
+                              if (value) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return AlertDialog(
+                                      title: Text("Produto Criado com sucesso"),
+                                    );
+                                  },
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return AlertDialog(
+                                      title: Text("Erro ao criar o produto"),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          );
                           widget.callbackFunction(2);
                         }
                       },

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class QuantityProvider extends ChangeNotifier {
   List<int> quantity;
 
-  QuantityProvider(List<int> initialQuantity) : quantity = initialQuantity;
+  QuantityProvider({List<int>? initialQuantity})
+      : quantity = initialQuantity ?? [];
 
   void decreaseQuantity(int index) {
     if (quantity[index] > 1) {

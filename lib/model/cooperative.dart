@@ -20,4 +20,30 @@ class Cooperative {
     required this.cooperativeProfilePhoto,
     required this.cooperativePhone,
   });
+
+  static Cooperative fromJson(Map<String, dynamic> json) {
+    return Cooperative(
+      cooperativeId: json['cooperativeId'],
+      cooperativeEmail: json['cooperativeEmail'],
+      password: json['password'],
+      cooperativeName: json['cooperativeName'],
+      cooperativeCnpj: json['cooperativeCnpj'],
+      cooperativeAdress: CooperativeAdress.fromJson(json['cooperativeAdress']),
+      cooperativeProfilePhoto: json['cooperativeProfilePhoto'],
+      cooperativePhone: json['cooperativePhone'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cooperativeId': cooperativeId,
+      'cooperativeEmail': cooperativeEmail,
+      'password': password,
+      'cooperativeName': cooperativeName,
+      'cooperativeCnpj': cooperativeCnpj,
+      'cooperativeAdress': cooperativeAdress.toJson(),
+      'cooperativeProfilePhoto': cooperativeProfilePhoto,
+      'cooperativePhone': cooperativePhone,
+    };
+  }
 }

@@ -36,7 +36,7 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
       height: widget.constraints.maxHeight *
               (widget.sell.products.length + (widget.sell.boxes.length * 3.5)) /
               10 +
-          220,
+          240,
       width: widget.constraints.maxWidth * .9,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -105,6 +105,19 @@ class _SellBoxClientEditionState extends State<SellBoxClientEdition> {
                     children: <TextSpan>[
                       TextSpan(
                         text: widget.sell.address['street'],
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: widget.constraints.maxHeight * .01),
+                Text.rich(
+                  TextSpan(
+                    text: 'Método de Entrega: ',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: widget.sell.deliveryType,
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
                     ],
