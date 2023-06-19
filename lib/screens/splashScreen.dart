@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
 import 'package:projeto_organicos/utils/authenticateUtil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +14,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     Future.wait(
       [
         AuthenticateUser.isAuth(context),
@@ -23,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
       ],
     ).then((value) {
       print(value);
-      if (value[0].isEmpty) {
+      if (value[0].isEmpty || value[0] == null) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.LOGINSCREEN);
       } else {
         if (value[0][1] == 'user') {

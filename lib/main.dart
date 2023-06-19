@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Projeto Orgânicos',
+        title: 'Vita',
         theme: ThemeData(
           visualDensity: VisualDensity.comfortable,
           primaryColor: const Color.fromRGBO(83, 242, 166, 0.69),

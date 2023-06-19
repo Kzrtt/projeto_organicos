@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/model/cooperative.dart';
 import 'package:projeto_organicos/model/user.dart';
 import 'package:projeto_organicos/utils/cooperativeState.dart';
@@ -46,37 +45,27 @@ class AuthenticateUser {
     List<dynamic> response = [];
     if (jsonResponse != null) {
       var decodedResponse = jsonDecode(jsonResponse);
-      String tokenDateLimitString = decodedResponse['tokenDate'];
-      DateTime tokenDateLimit = DateTime.parse(tokenDateLimitString);
-      if (tokenDateLimit.isAfter(DateTime.now())) {
-        final userState = Provider.of<UserState>(
-          context,
-          listen: false,
-        );
-        userState.setUser(User.fromJson(decodedResponse['user']));
-        response.add(decodedResponse['isAuth']);
-        response.add('user');
-        return response;
-      }
+      final userState = Provider.of<UserState>(
+        context,
+        listen: false,
+      );
+      userState.setUser(User.fromJson(decodedResponse['user']));
+      response.add(decodedResponse['isAuth']);
+      response.add('user');
+
       return response;
     } else if (jsonResponseCoop != null) {
       var decodedResponse = jsonDecode(jsonResponseCoop);
-      String tokenDateLimitString = decodedResponse['tokenDate'];
-      DateTime tokenDateLimit = DateTime.parse(tokenDateLimitString);
-      if (tokenDateLimit.isAfter(DateTime.now())) {
-        final cooperativeState = Provider.of<CooperativeState>(
-          context,
-          listen: false,
-        );
-        Cooperative coop = Cooperative.fromJson(decodedResponse['cooperative']);
-        print(coop.cooperativeName);
-        cooperativeState.setCooperative(
-          Cooperative.fromJson(decodedResponse['cooperative']),
-        );
-        response.add(decodedResponse['isAuth']);
-        response.add('cooperative');
-        return response;
-      }
+      final cooperativeState = Provider.of<CooperativeState>(
+        context,
+        listen: false,
+      );
+      cooperativeState.setCooperative(
+        Cooperative.fromJson(decodedResponse['cooperative']),
+      );
+      response.add(decodedResponse['isAuth']);
+      response.add('cooperative');
+
       return response;
     }
     return response;
