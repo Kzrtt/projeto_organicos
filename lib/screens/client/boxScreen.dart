@@ -7,6 +7,8 @@ import 'package:projeto_organicos/model/box.dart';
 import 'package:projeto_organicos/utils/quantityProvider.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/smallButton.dart';
+
 class BoxScreen extends StatefulWidget {
   const BoxScreen({Key? key}) : super(key: key);
 
@@ -14,8 +16,19 @@ class BoxScreen extends StatefulWidget {
   State<BoxScreen> createState() => _BoxScreenState();
 }
 
+Widget thinDivider(BoxConstraints constraints) {
+  return Center(
+    child: Container(
+      height: 0.8,
+      width: constraints.maxWidth * .7,
+      color: Color.fromRGBO(83, 242, 166, 1),
+    ),
+  );
+}
+
 class _BoxScreenState extends State<BoxScreen> {
   bool isLoadingAddToCart = false;
+  int value = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +75,7 @@ class _BoxScreenState extends State<BoxScreen> {
           builder: (context, constraints) {
             return SingleChildScrollView(
               child: SizedBox(
-                height: constraints.maxHeight * 1.2,
+                height: constraints.maxHeight * 2,
                 width: constraints.maxWidth,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,6 +129,23 @@ class _BoxScreenState extends State<BoxScreen> {
                     SizedBox(height: constraints.maxHeight * .03),
                     Padding(
                       padding: EdgeInsets.symmetric(
+                        horizontal: constraints.maxWidth * .11,
+                      ),
+                      child: Text(
+                        box.boxDetails,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: constraints.maxHeight * .025,
+                          color: const Color.fromRGBO(0, 0, 0, 0.68),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: constraints.maxHeight * .05),
+                    thinDivider(constraints),
+                    SizedBox(height: constraints.maxHeight * .03),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
                         horizontal: constraints.maxHeight * .06,
                       ),
                       child: Column(
@@ -130,9 +160,8 @@ class _BoxScreenState extends State<BoxScreen> {
                           ),
                           SizedBox(
                             height: constraints.maxHeight *
-                                    box.produtos.length /
-                                    10 +
-                                50,
+                                box.produtos.length /
+                                15,
                             width: constraints.maxWidth,
                             child: ListView.builder(
                               itemCount: box.produtos.length,
@@ -170,7 +199,7 @@ class _BoxScreenState extends State<BoxScreen> {
                                                 height:
                                                     constraints.maxHeight * .1,
                                                 width:
-                                                    constraints.maxWidth * .34,
+                                                    constraints.maxWidth * .35,
                                                 child: Row(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
@@ -217,6 +246,9 @@ class _BoxScreenState extends State<BoxScreen> {
                               },
                             ),
                           ),
+                          SizedBox(height: constraints.maxHeight * .05),
+                          thinDivider(constraints),
+                          SizedBox(height: constraints.maxHeight * .05),
                           Text(
                             "Fotos dos produtos: ",
                             style: TextStyle(
@@ -226,7 +258,7 @@ class _BoxScreenState extends State<BoxScreen> {
                           ),
                           SizedBox(height: constraints.maxHeight * .03),
                           SizedBox(
-                            height: constraints.maxHeight * .1,
+                            height: constraints.maxHeight * .2,
                             width: constraints.maxWidth,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
@@ -237,8 +269,8 @@ class _BoxScreenState extends State<BoxScreen> {
                                   children: [
                                     SizedBox(width: constraints.maxWidth * .05),
                                     Container(
-                                      height: constraints.maxHeight * .12,
-                                      width: constraints.maxWidth * .2,
+                                      height: constraints.maxHeight * .4,
+                                      width: constraints.maxWidth * .3,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
                                         color: Colors.grey,
@@ -256,51 +288,101 @@ class _BoxScreenState extends State<BoxScreen> {
                             ),
                           ),
                           SizedBox(height: constraints.maxHeight * .05),
-                          InkWell(
-                            onTap: () async {
-                              setState(() {
-                                isLoadingAddToCart = true;
-                              });
-                              CartController controller = CartController();
-                              List<Map<String, dynamic>> produtos = [];
-                              for (var i = 0; i < box.produtos.length; i++) {
-                                final provider = Provider.of<QuantityProvider>(
-                                  context,
-                                  listen: false,
-                                );
-                                produtos.add({
-                                  "productId":
-                                      box.produtos[i].product.productId,
-                                  "quantity": provider.quantity[i],
-                                });
-                              }
-                              controller
-                                  .addBoxToCart(
-                                box,
-                                produtos,
-                                1,
-                                context,
-                              )
-                                  .then(
-                                (value) {
-                                  setState(() {
-                                    isLoadingAddToCart = false;
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            },
-                            child: isLoadingAddToCart
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                      color: const Color.fromRGBO(
-                                          113, 227, 154, 1),
-                                    ),
-                                  )
-                                : CommonButton(
-                                    constraints: constraints,
-                                    text: "Adicioar ao Carrinho",
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      if (value > 0) {
+                                        setState(() {
+                                          value--;
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.remove),
                                   ),
+                                  Text(
+                                    "$value Uni",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      if (value < box.boxQuantity) {
+                                        setState(() {
+                                          value++;
+                                        });
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                "Temos apenas ${box.boxQuantity} unidades da ${box.boxName} em estoque",
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    icon: const Icon(Icons.add),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: constraints.maxWidth * .05),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isLoadingAddToCart = true;
+                                  });
+                                  CartController controller = CartController();
+                                  List<Map<String, dynamic>> produtos = [];
+                                  for (var i = 0;
+                                      i < box.produtos.length;
+                                      i++) {
+                                    final provider =
+                                        Provider.of<QuantityProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+                                    produtos.add({
+                                      "productId":
+                                          box.produtos[i].product.productId,
+                                      "quantity": provider.quantity[i],
+                                    });
+                                  }
+                                  controller
+                                      .addBoxToCart(
+                                    box,
+                                    produtos,
+                                    value,
+                                    context,
+                                  )
+                                      .then(
+                                    (value) {
+                                      setState(() {
+                                        isLoadingAddToCart = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                },
+                                child: isLoadingAddToCart
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: const Color.fromRGBO(
+                                              113, 227, 154, 1),
+                                        ),
+                                      )
+                                    : SmallButton(
+                                        constraints: constraints,
+                                        text: "Adicionar",
+                                        color: true,
+                                      ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

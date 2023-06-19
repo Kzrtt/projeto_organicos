@@ -68,6 +68,8 @@ class AuthenticateUser {
           context,
           listen: false,
         );
+        Cooperative coop = Cooperative.fromJson(decodedResponse['cooperative']);
+        print(coop.cooperativeName);
         cooperativeState.setCooperative(
           Cooperative.fromJson(decodedResponse['cooperative']),
         );

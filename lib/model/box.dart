@@ -7,6 +7,7 @@ class Box {
   final num boxQuantity;
   final num boxPrice;
   final String boxPhoto;
+  final int boughtQuantity;
   final List<ProductInBox> produtos;
 
   const Box({
@@ -16,6 +17,7 @@ class Box {
     required this.boxPhoto,
     required this.boxPrice,
     required this.boxQuantity,
+    required this.boughtQuantity,
     required this.produtos,
   });
 }

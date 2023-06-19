@@ -37,13 +37,16 @@ class _BoxAlertDialogState extends State<BoxAlertDialog> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => QuantityProvider(initialQuantity: widget.quantidades),
+      create: (_) => QuantityProvider(
+        initialQuantity: widget.quantidades,
+        initialBoxQuantity: widget.box.boughtQuantity,
+      ),
       child: Consumer<QuantityProvider>(
         builder: (context, quantityProvider, _) {
           return AlertDialog(
             title: Text(widget.box.boxName),
             content: SizedBox(
-              height: widget.constraints.maxHeight * .6,
+              height: widget.constraints.maxHeight * .54,
               width: widget.constraints.maxWidth,
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -63,7 +66,7 @@ class _BoxAlertDialogState extends State<BoxAlertDialog> {
                       height: widget.constraints.maxHeight *
                               widget.box.produtos.length /
                               10 +
-                          50,
+                          35,
                       width: widget.constraints.maxWidth,
                       child: ListView.builder(
                         itemCount: widget.box.produtos.length,
@@ -116,10 +119,14 @@ class _BoxAlertDialogState extends State<BoxAlertDialog> {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              quantityProvider.increaseQuantity(
-                                                index,
-                                                item.quantity,
-                                              );
+                                              if (quantityProvider.boxQuantity <
+                                                  widget.box.boxQuantity) {
+                                                quantityProvider
+                                                    .increaseQuantity(
+                                                  index,
+                                                  item.quantity,
+                                                );
+                                              }
                                             },
                                             icon: const Icon(Icons.add),
                                           ),
@@ -138,58 +145,80 @@ class _BoxAlertDialogState extends State<BoxAlertDialog> {
                       ),
                     ),
                     SizedBox(height: widget.constraints.maxHeight * .05),
-                    InkWell(
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        CartController controller = CartController();
-                        List<Map<String, dynamic>> produtos = [];
-                        List<int> newQuantities = [];
-                        for (var i = 0; i < widget.box.produtos.length; i++) {
-                          final provider = Provider.of<QuantityProvider>(
-                            context,
-                            listen: false,
-                          );
-                          produtos.add({
-                            "productId":
-                                widget.box.produtos[i].product.productId,
-                            "quantity": provider.quantity[i],
-                          });
-                          newQuantities.add(provider.quantity[i]);
-                        }
-                        await controller
-                            .updateBoxValues(
-                          widget.box,
-                          produtos,
-                          1,
-                          context,
-                        )
-                            .then(
-                          (value) {
-                            Navigator.of(context).pop(newQuantities);
-                          },
-                        ).whenComplete(() {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
-                      },
-                      child: isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                color: const Color.fromRGBO(113, 227, 154, 1),
-                              ),
-                            )
-                          : CommonButton(
-                              constraints: widget.constraints,
-                              text: "Alterar Quantidades",
+                    isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: const Color.fromRGBO(113, 227, 154, 1),
                             ),
-                    ),
+                          )
+                        : Center(),
                   ],
                 ),
               ),
             ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Salvar',
+                  style: TextStyle(
+                    color: const Color.fromRGBO(113, 227, 154, 1),
+                  ),
+                ),
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  CartController controller = CartController();
+                  List<Map<String, dynamic>> produtos = [];
+                  List<int> newQuantities = [];
+                  for (var i = 0; i < widget.box.produtos.length; i++) {
+                    final provider = Provider.of<QuantityProvider>(
+                      context,
+                      listen: false,
+                    );
+                    produtos.add({
+                      "productId": widget.box.produtos[i].product.productId,
+                      "quantity": provider.quantity[i],
+                    });
+                    newQuantities.add(provider.quantity[i]);
+                  }
+
+                  if (quantityProvider.boxQuantity !=
+                      widget.box.boughtQuantity) {
+                    controller.increaseQuantity(
+                      widget.box,
+                      quantityProvider.boxQuantity,
+                    );
+                  }
+
+                  await controller
+                      .updateBoxValues(
+                    widget.box,
+                    produtos,
+                    widget.box.boughtQuantity,
+                    context,
+                  )
+                      .then(
+                    (value) {
+                      Navigator.of(context).pop(true);
+                    },
+                  ).whenComplete(() {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
           );
         },
       ),

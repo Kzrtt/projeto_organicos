@@ -260,6 +260,7 @@ class _AddProductScreenState extends State<AddProductScreen>
                             boxPrice:
                                 double.parse(_recommendedPriceController.text),
                             boxQuantity: int.parse(_boxStockQuantity.text),
+                            boughtQuantity: 0,
                             produtos: _produtosNaBox,
                           );
                           controller.createBox(box).then((value) {
@@ -271,7 +272,9 @@ class _AddProductScreenState extends State<AddProductScreen>
                                     title: Text("Box Criada com sucesso"),
                                   );
                                 },
-                              );
+                              ).then((value) {
+                                widget.callbackFunction(2);
+                              });
                             } else {
                               showDialog(
                                 context: context,
@@ -280,10 +283,11 @@ class _AddProductScreenState extends State<AddProductScreen>
                                     title: Text("Erro ao criar a box"),
                                   );
                                 },
-                              );
+                              ).then((value) {
+                                widget.callbackFunction(2);
+                              });
                             }
                           });
-                          widget.callbackFunction(2);
                         }
                       },
                       child: Text(
@@ -548,7 +552,9 @@ class _AddProductScreenState extends State<AddProductScreen>
                                       title: Text("Produto Criado com sucesso"),
                                     );
                                   },
-                                );
+                                ).then((value) {
+                                  widget.callbackFunction(2);
+                                });
                               } else {
                                 showDialog(
                                   context: context,
@@ -557,11 +563,12 @@ class _AddProductScreenState extends State<AddProductScreen>
                                       title: Text("Erro ao criar o produto"),
                                     );
                                   },
-                                );
+                                ).then((value) {
+                                  widget.callbackFunction(2);
+                                });
                               }
                             },
                           );
-                          widget.callbackFunction(2);
                         }
                       },
                       child: Text(

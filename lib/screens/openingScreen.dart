@@ -121,12 +121,12 @@ class _OpeningScreenState extends State<OpeningScreen> {
               ),
               child: Column(
                 children: [
-                  SizedBox(height: constraints.maxHeight * .03),
+                  SizedBox(height: constraints.maxHeight * .05),
                   Row(
                     children: [
                       SizedBox(width: constraints.maxWidth * .03),
                       const Text(
-                        "Bem vindo ao OrganoTec Saúde",
+                        "Bem vindo ao Vita",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),

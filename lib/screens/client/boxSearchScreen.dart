@@ -136,7 +136,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                               padding:
                                   EdgeInsets.all(constraints.maxHeight * .02),
                               child: Container(
-                                height: constraints.maxHeight * .3,
+                                height: constraints.maxHeight * .35,
                                 width: constraints.maxWidth * .9,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -195,8 +195,8 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                         SizedBox(
                                             height: constraints.maxWidth * .05),
                                         Container(
-                                          height: constraints.maxHeight * .24,
-                                          width: constraints.maxWidth * .4,
+                                          height: constraints.maxHeight * .3,
+                                          width: constraints.maxWidth * .45,
                                           decoration: const BoxDecoration(
                                             borderRadius: BorderRadius.only(
                                               topRight: Radius.circular(20.0),
@@ -221,6 +221,10 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
+                                                SizedBox(
+                                                    height:
+                                                        constraints.maxHeight *
+                                                            .025),
                                                 Text(
                                                   item.boxDetails,
                                                   style: TextStyle(
@@ -235,7 +239,7 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                                 SizedBox(
                                                   height:
                                                       constraints.maxHeight *
-                                                          .03,
+                                                          .025,
                                                 ),
                                                 SizedBox(
                                                   height:
@@ -268,44 +272,18 @@ class _BoxSearchScreenState extends State<BoxSearchScreen> {
                                                               Icons.circle,
                                                               size: constraints
                                                                       .maxHeight *
-                                                                  .01,
+                                                                  .007,
                                                             ),
                                                             SizedBox(
                                                                 width: constraints
                                                                         .maxWidth *
                                                                     .02),
                                                             Text(
-                                                              "${truncateString(products.product.productName, 14)} ",
+                                                              "${truncateString(products.product.productName, 13)} ",
                                                             ),
                                                             Text(
-                                                              "${products.quantity.toString()}${products.product.measurementUnit}",
+                                                              "${products.quantity * products.product.unitValue} ${products.product.measurementUnit}",
                                                             ),
-                                                            SizedBox(
-                                                                height: constraints
-                                                                        .maxHeight *
-                                                                    .02),
-                                                            item.produtos
-                                                                        .length >
-                                                                    3
-                                                                ? Text(
-                                                                    "Mostrar mais...",
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          constraints.maxHeight *
-                                                                              .02,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: const Color
-                                                                              .fromRGBO(
-                                                                          113,
-                                                                          227,
-                                                                          154,
-                                                                          1),
-                                                                    ),
-                                                                  )
-                                                                : Center()
                                                           ],
                                                         ),
                                                       );

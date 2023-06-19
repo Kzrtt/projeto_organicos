@@ -259,6 +259,7 @@ class _UpdateBoxScreenState extends State<UpdateBoxScreen> {
                         boxQuantity: quantityController.text != ""
                             ? int.parse(quantityController.text)
                             : box.boxQuantity,
+                        boughtQuantity: 0,
                         produtos: box.produtos,
                       );
 

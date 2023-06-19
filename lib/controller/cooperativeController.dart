@@ -271,6 +271,7 @@ class CooperativeController with ChangeNotifier {
                 boxPhoto: element4['boxId']['boxPhoto'],
                 boxPrice: element4['boxId']['boxPrice'],
                 boxQuantity: element4['boxId']['stockQuantity'],
+                boughtQuantity: 0,
                 produtos: products,
               );
               boxes.add({
@@ -624,12 +625,13 @@ class CooperativeController with ChangeNotifier {
               ['cooperativeProfilePhoto'],
           cooperativePhone: response.data['cooperative']['cooperativePhone'],
           cooperativeAdress: CooperativeAdress(
-            complement: response.data['cooperative']['cooperativeAdress']
+            complement: response.data['cooperative']['cooperativeAddress']
                 ['complement'],
-            street: response.data['cooperative']['cooperativeAdress']['street'],
-            city: response.data['cooperative']['cooperativeAdress']['city'],
-            state: response.data['cooperative']['cooperativeAdress']['state'],
-            zipCode: response.data['cooperative']['cooperativeAdress']
+            street: response.data['cooperative']['cooperativeAddress']
+                ['street'],
+            city: response.data['cooperative']['cooperativeAddress']['city'],
+            state: response.data['cooperative']['cooperativeAddress']['state'],
+            zipCode: response.data['cooperative']['cooperativeAddress']
                 ['zipcode'],
           ),
         );

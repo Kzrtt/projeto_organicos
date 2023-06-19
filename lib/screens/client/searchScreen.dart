@@ -18,7 +18,8 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Category> _categorias = [];
   List<Products> _produtos = [];
   List<Products> _filteredItems = [];
-  List<String> _urlsFotos = [];
+  List<bool> _choiceChips = [];
+  List<Category> selectedCategories = [];
   final TextEditingController _searchController = TextEditingController();
   bool isLoading = true;
 
@@ -37,6 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     controller.getAllCategories().then((value) {
       setState(() {
+        _choiceChips = List.generate(value.length, (index) => false);
         _categorias = value;
         isLoading = false;
       });
@@ -57,6 +59,23 @@ class _SearchScreenState extends State<SearchScreen> {
       _filteredItems = _produtos
           .where((item) => item.productName.toLowerCase().contains(searchText))
           .toList();
+    });
+  }
+
+  void _filterByChoiceChip(List<Category> categories) {
+    setState(() {
+      _filteredItems = _produtos.where((item) {
+        return categories
+            .every((category) => item.category.contains(category.categoryName));
+      }).toList();
+
+      _choiceChips = List<bool>.filled(_categorias.length, false);
+      categories.forEach((category) {
+        int index = _categorias.indexOf(category);
+        if (index != -1) {
+          _choiceChips[index] = true;
+        }
+      });
     });
   }
 
@@ -117,18 +136,30 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemCount: _categorias.length,
                 itemBuilder: (context, index) {
                   var item = _categorias[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        AppRoutes.CATEGORYPRODUCTS,
-                        arguments: item,
-                      );
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: constraints.maxWidth * .01,
-                      ),
-                      child: Chip(label: Text(item.categoryName)),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * .01,
+                    ),
+                    child: ChoiceChip(
+                      label: Text(item.categoryName),
+                      selected: _choiceChips[index],
+                      selectedColor: const Color.fromRGBO(113, 227, 154, 1),
+                      onSelected: (value) {
+                        setState(() {
+                          _choiceChips[index] = !_choiceChips[index];
+                        });
+                        List<Category> selectedCategories = _categorias
+                            .where((category) =>
+                                _choiceChips[_categorias.indexOf(category)])
+                            .toList();
+                        if (selectedCategories.isNotEmpty) {
+                          _filterByChoiceChip(selectedCategories);
+                        } else {
+                          setState(() {
+                            _filteredItems = _produtos;
+                          });
+                        }
+                      },
                     ),
                   );
                 },
@@ -221,6 +252,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ),
                                         Text(
                                           item.productDetails,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize:
                                                 constraints.maxHeight * .019,

@@ -176,7 +176,7 @@ class _ProductsInfoDialogState extends State<ProductsInfoDialog> {
               category: categorias,
               productPhoto: widget.product.productPhoto,
               productPrice: priceController.text != ""
-                  ? int.parse(priceController.text)
+                  ? num.parse(priceController.text)
                   : widget.product.productPrice,
               stockQuantity: stockQuantity,
               unitValue: unitValueController.text != ""

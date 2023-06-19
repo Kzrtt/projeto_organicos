@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class Validators {
   String? precoValidate(String? preco) {
-    int precoInt = int.parse(preco!);
+    double precoInt = double.parse(preco!);
     if (precoInt < 0) {
       return "O valor deve ser maior que 0";
     } else if (preco == "") {
@@ -106,8 +106,19 @@ class Validators {
       return "Por favor, insira seu nome";
     } else if (name!.length < 3) {
       return "O nome deve conter mais que 3 letras";
-    } else if (!RegExp(r'^[A-Za-zÀ-ú ]+$').hasMatch(name)) {
+    } else if (!RegExp(r'^[A-Za-zÀ-ú\s]+$').hasMatch(name)) {
       return "Somente letras são permitidas neste campo";
+    }
+    return null;
+  }
+
+  String? detailsValidator(String? name) {
+    if (name == "") {
+      return "Por favor, insira os detalhes sobre o produto";
+    } else if (name!.length < 3) {
+      return "Os detalhes devem conter mais que 3 caracteres";
+    } else if (!RegExp(r'[A-Za-zÀ-ú\s,\d]+').hasMatch(name)) {
+      return "Somente letras, números e vírgulas são permitidos neste campo";
     }
     return null;
   }

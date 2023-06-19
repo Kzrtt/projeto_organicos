@@ -213,10 +213,14 @@ class UserController {
               boxName: element['boxName'],
               boxPhoto: element['boxPhoto'],
               boxPrice: element['boxPrice'],
+              boughtQuantity: 0,
               boxQuantity: element['stockQuantity'],
               produtos: produtos,
             );
-            _boxList.add(box);
+            if (element['active'] == true) {
+              _boxList.add(box);
+            }
+
             produtos = [];
           }
         } catch (e, stackTrace) {
@@ -370,6 +374,7 @@ class UserController {
                 boxPhoto: element4['boxId']['boxPhoto'],
                 boxPrice: element4['boxId']['boxPrice'],
                 boxQuantity: element4['boxId']['stockQuantity'],
+                boughtQuantity: element['boxId']['quantity'],
                 produtos: products,
               );
               boxes.add({

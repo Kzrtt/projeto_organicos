@@ -16,11 +16,6 @@ class CartController {
   // final String _userUrl = "http://192.168.1.159:27017/user";
   final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
 
-  List<Map<String, dynamic>> boxCart = [];
-  List<Map<String, dynamic>> cart = [];
-  List<Map<String, dynamic>> cartProductsInfo = [];
-  List<Map<String, dynamic>> boxCartInfo = [];
-
   Future<void> emptyCart() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -97,6 +92,43 @@ class CartController {
     return false;
   }
 
+  void incrementOrSubtractBoxQuantity(Box box, String operation) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      List<Map<String, dynamic>> userCart = await getAllProductsFromCart();
+      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
+      if (operation == "+") {
+        boxCart.firstWhere(
+            (element) => element['boxId'] == box.id)['quantity'] += 1;
+      } else if (operation == "-") {
+        boxCart.firstWhere(
+            (element) => element['boxId'] == box.id)['quantity'] -= 1;
+      }
+      var response = await Dio().put(
+        "$_userUrl/$id",
+        data: {
+          "cart": {
+            "products": [...userCart],
+            "boxes": [...boxCart],
+          },
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
   void incrementOrSubtractQuantity(Products product, String operation) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -115,7 +147,7 @@ class CartController {
         "$_userUrl/$id",
         data: {
           "cart": {
-            "products": [...cart],
+            "products": [...userCart],
             "boxes": [...boxCart],
           },
         },
@@ -139,6 +171,7 @@ class CartController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
+      List<Map<String, dynamic>> cartProductsInfo = [];
       var response = await Dio().get(
         "$_userUrl/cart/$id",
         options: Options(
@@ -187,7 +220,7 @@ class CartController {
       } else {
         print('Erro inesperado: $e');
       }
-      return cartProductsInfo;
+      throw Exception(e);
     }
   }
 
@@ -196,6 +229,7 @@ class CartController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
+      List<Map<String, dynamic>> boxCartInfo = [];
       var response = await Dio().get(
         "$_userUrl/cart/$id",
         options: Options(
@@ -242,11 +276,13 @@ class CartController {
                 boxPhoto: element['boxId']['boxPhoto'],
                 boxPrice: element['boxId']['boxPrice'],
                 boxQuantity: element['boxId']['stockQuantity'],
+                boughtQuantity: element['quantity'],
                 produtos: produtos,
               );
               boxCartInfo.add({
                 "box": box,
-                "quantity": box.boxQuantity,
+                "boxInCartId": element['_id'],
+                "quantity": box.boughtQuantity,
               });
               produtos = [];
             }
@@ -265,7 +301,7 @@ class CartController {
       } else {
         print('Erro inesperado: $e, $stackTrace');
       }
-      return boxCartInfo;
+      throw Exception(e);
     }
   }
 
@@ -274,6 +310,7 @@ class CartController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
+      List<Map<String, dynamic>> cart = [];
       var response = await Dio().get(
         "$_userUrl/$id",
         options: Options(
@@ -300,7 +337,7 @@ class CartController {
       } else {
         print('Erro inesperado: $e');
       }
-      return cart;
+      throw Exception(e);
     }
   }
 
@@ -309,6 +346,7 @@ class CartController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');
       String? token = prefs.getString('userToken');
+      List<Map<String, dynamic>> boxCart = [];
       var response = await Dio().get(
         "$_userUrl/$id",
         options: Options(
@@ -344,38 +382,7 @@ class CartController {
       } else {
         print('Erro inesperado: $e, $stackTrace');
       }
-      return boxCart;
-    }
-  }
-
-  Future<void> removeBoxFromCart(String boxId) async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('userToken');
-      String? id = prefs.getString('userId');
-      List<Map<String, dynamic>> cart = await getAllProductsFromCart();
-      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
-      boxCart.removeWhere((element) => element['boxId'] == boxId);
-      var response = await Dio().put(
-        "$_userUrl/$id",
-        data: {
-          "cart": {
-            "products": [...cart],
-            "boxes": [...boxCart],
-          },
-        },
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
-      );
-    } catch (e) {
-      if (e is DioError) {
-        print('Erro de requisição:');
-        print('Status code: ${e.response?.statusCode}');
-        print('Mensagem: ${e.response?.data}');
-      } else {
-        print('Erro inesperado: $e');
-      }
+      throw Exception(e);
     }
   }
 
@@ -417,8 +424,170 @@ class CartController {
     BuildContext context,
   ) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('userId');
+      String? token = prefs.getString('userToken');
+      List<Map<String, dynamic>> boxCart = [];
+      List<Map<String, dynamic>> cart = [];
+
       await removeBoxFromCart(box.id).then((value) async {
-        await addBoxToCart(box, produtos, quantity, context);
+        boxCart = await getAllBoxesFromCart();
+        cart = await getAllProductsFromCart();
+      });
+
+      //limpa o carrinho
+      await emptyCart().then((value) async {
+        List<Map<String, dynamic>> produtosNaBox = [];
+        for (var element in produtos) {
+          produtosNaBox.add({
+            "productId": element['productId'],
+            "quantity": element['quantity'],
+          });
+        }
+
+        //adiciona a nova box ao carrinho
+        boxCart.add({
+          "boxId": box.id,
+          "boxProducts": [...produtosNaBox],
+          "quantity": quantity,
+        });
+
+        var response = await Dio().put(
+          "$_userUrl/$id",
+          data: {
+            "cart": {
+              "boxes": [...boxCart],
+              "products": [...cart],
+            },
+          },
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ),
+        );
+        if (response.data.containsKey('user')) {
+          print('adicionou os valores ao carrinho');
+        }
+      });
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
+  bool hasSameProductQuantities(
+      Map<String, dynamic> boxX, List<Map<String, dynamic>> boxYProducts) {
+    var boxXProducts = boxX['boxProducts'];
+
+    if (boxXProducts.length != boxYProducts.length) {
+      return false;
+    }
+
+    for (var i = 0; i < boxXProducts.length; i++) {
+      var productX = boxXProducts[i];
+      var productY = boxYProducts[i];
+
+      var quantityX = productX['quantity'];
+      var quantityY = productY['quantity'];
+
+      if (quantityX != quantityY) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Future<void> increaseQuantity(Box box, int newQuantity) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
+      List<Map<String, dynamic>> cart = await getAllProductsFromCart();
+
+      Map<String, dynamic> boxX =
+          boxCart.singleWhere((element) => element['boxId'] == box.id);
+      boxX['quantity'] = newQuantity;
+
+      var response = await Dio().put(
+        "$_userUrl/$id",
+        data: {
+          "cart": {
+            "boxes": [...boxCart],
+            "products": [...cart],
+          },
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      if (response.data.containsKey('user')) {
+        print('sucesso');
+      }
+    } catch (e, stackTrace) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e, $stackTrace');
+      }
+    }
+  }
+
+  Future<void> removeBoxFromCart(String boxId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('userToken');
+      String? id = prefs.getString('userId');
+      var response = await Dio().get(
+        "$_userUrl/cart/$id",
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      List<Map<String, dynamic>> newBoxCart = [];
+      List<Map<String, dynamic>> productsCart = await getAllProductsFromCart();
+
+      emptyCart().then((value) async {
+        if (response.data.containsKey('cart')) {
+          for (var element in response.data['cart']['boxes']) {
+            if (element['_id'] != boxId) {
+              List<Map<String, dynamic>> productsInBox = [];
+              for (var element2 in element['boxProducts']) {
+                productsInBox.add({
+                  "productId": element2['productId'],
+                  "quantity": element2['quantity'],
+                });
+              }
+              newBoxCart.add({
+                "boxId": element['boxId']['_id'],
+                "boxProducts": [...productsInBox],
+                "quantity": element['quantity'],
+              });
+
+              productsInBox = [];
+            } else {}
+          }
+          var response2 = await Dio().put(
+            "$_userUrl/$id",
+            data: {
+              "cart": {
+                "products": [...productsCart],
+                "boxes": [...newBoxCart],
+              },
+            },
+            options: Options(
+              headers: {'Authorization': 'Bearer $token'},
+            ),
+          );
+        }
       });
     } catch (e) {
       if (e is DioError) {
@@ -444,20 +613,53 @@ class CartController {
       List<Map<String, dynamic>> boxCart = await getAllBoxesFromCart();
       List<Map<String, dynamic>> cart = await getAllProductsFromCart();
       List<Map<String, dynamic>> produtosNaBox = [];
-      for (var element in produtos) {
-        produtosNaBox.add({
-          "productId": element['productId'],
-          "quantity": element['quantity'],
+
+      if (boxCart.any((element) => element['boxId'] == box.id)) {
+        Map<String, dynamic> boxX =
+            boxCart.singleWhere((element) => element['boxId'] == box.id);
+        if (hasSameProductQuantities(boxX, produtos)) {
+          boxCart.removeWhere((element) => element['boxId'] == box.id);
+          for (var element in produtos) {
+            produtosNaBox.add({
+              "productId": element['productId'],
+              "quantity": element['quantity'],
+            });
+          }
+
+          boxCart.add({
+            "boxId": box.id,
+            "boxProducts": [...produtosNaBox],
+            "quantity": boxX['quantity'] + 1,
+          });
+        } else {
+          for (var element in produtos) {
+            produtosNaBox.add({
+              "productId": element['productId'],
+              "quantity": element['quantity'],
+            });
+          }
+
+          boxCart.add({
+            "boxId": box.id,
+            "boxProducts": [...produtosNaBox],
+            "quantity": quantity,
+          });
+        }
+      } else {
+        for (var element in produtos) {
+          produtosNaBox.add({
+            "productId": element['productId'],
+            "quantity": element['quantity'],
+          });
+        }
+
+        boxCart.add({
+          "boxId": box.id,
+          "boxProducts": [...produtosNaBox],
+          "quantity": quantity,
         });
       }
 
-      boxCart.add({
-        "boxId": box.id,
-        "boxProducts": [...produtosNaBox],
-        "quantity": 1,
-      });
-
-      print("quantidade: ${boxCart[0]['boxProducts'][0]['quantity']}");
       var response = await Dio().put(
         "$_userUrl/$id",
         data: {
@@ -485,7 +687,7 @@ class CartController {
     }
   }
 
-  void addProductToCart(String productId, int quantity) async {
+  Future<void> addProductToCart(String productId, int quantity) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('userId');

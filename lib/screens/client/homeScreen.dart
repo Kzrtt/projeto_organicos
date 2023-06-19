@@ -144,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           );
                                         },
                                         child: WhiteRoundedCornersBox(
-                                            text: item.boxName),
+                                          text: item.boxName,
+                                        ),
                                       ),
                                     );
                                   },

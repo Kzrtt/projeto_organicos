@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projeto_organicos/controller/cartController.dart';
 import 'package:projeto_organicos/controller/userController.dart';
 import 'package:projeto_organicos/screens/client/adressScreen.dart';
 import 'package:projeto_organicos/screens/client/boxSearchScreen.dart';

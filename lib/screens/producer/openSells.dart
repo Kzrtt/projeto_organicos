@@ -77,8 +77,9 @@ class _OpenSellsState extends State<OpenSells> {
                           padding: EdgeInsets.all(constraints.maxHeight * .02),
                           child: Container(
                             height: constraints.maxHeight *
-                                neededProduts[index]['products'].length /
-                                10,
+                                    neededProduts[index]['products'].length /
+                                    10 +
+                                85,
                             width: constraints.maxWidth * .8,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -120,7 +121,7 @@ class _OpenSellsState extends State<OpenSells> {
                                     height: constraints.maxHeight *
                                         neededProduts[index]['products']
                                             .length /
-                                        20,
+                                        10,
                                     width: constraints.maxWidth * .8,
                                     child: ListView.builder(
                                       itemCount: item['products'].length,

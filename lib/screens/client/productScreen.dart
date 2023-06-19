@@ -26,6 +26,7 @@ class _ProductScreenState extends State<ProductScreen> {
   int value = 1;
   int quantity = 0;
   List<Products> produtos = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -178,11 +179,12 @@ class _ProductScreenState extends State<ProductScreen> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: constraints.maxWidth * .14,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * .14,
                     ),
                     child: Text(
                       product.productDetails,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: constraints.maxHeight * .025,
                         color: const Color.fromRGBO(0, 0, 0, 0.68),
@@ -237,15 +239,29 @@ class _ProductScreenState extends State<ProductScreen> {
                       SizedBox(width: constraints.maxWidth * .05),
                       InkWell(
                         onTap: () {
+                          setState(() {
+                            isLoading = true;
+                          });
                           CartController controller = CartController();
-                          controller.addProductToCart(product.productId, value);
-                          Navigator.of(context).pop();
+                          controller
+                              .addProductToCart(product.productId, value)
+                              .then(
+                            (value) {
+                              Navigator.of(context).pop();
+                            },
+                          );
                         },
-                        child: SmallButton(
-                          constraints: constraints,
-                          text: "Adicionar",
-                          color: true,
-                        ),
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: const Color.fromRGBO(113, 227, 154, 1),
+                                ),
+                              )
+                            : SmallButton(
+                                constraints: constraints,
+                                text: "Adicionar",
+                                color: true,
+                              ),
                       ),
                     ],
                   ),

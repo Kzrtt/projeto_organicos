@@ -6,12 +6,19 @@ class CartProvider with ChangeNotifier {
   CartController controller = CartController();
   List<Products> produtos = [];
   List<int> quantidades = [];
+  List<int> boxQuantity = [];
 
   List<Products> get getCart => produtos;
   List<int> get getQuantity => quantidades;
+  List<int> get getBoxQuantity => boxQuantity;
 
   void setCart(List<Products> newCart) {
     produtos = newCart;
+    notifyListeners();
+  }
+
+  void setBoxQuantities(List<int> newQuantities) {
+    boxQuantity = newQuantities;
     notifyListeners();
   }
 

@@ -209,6 +209,7 @@ class ProductController {
             boxPhoto: element['boxPhoto'],
             boxPrice: element['boxPrice'],
             boxQuantity: element['stockQuantity'],
+            boughtQuantity: 0,
             produtos: products,
           );
           if (element['active'] == true) {
