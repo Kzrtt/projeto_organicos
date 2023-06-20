@@ -16,6 +16,7 @@ class QuantidadeDialog extends StatefulWidget {
 
 class _QuantidadeDialogState extends State<QuantidadeDialog> {
   int quantidade = 1;
+  bool isLoading = false;
 
   void incrementar() {
     setState(() {
@@ -41,36 +42,40 @@ class _QuantidadeDialogState extends State<QuantidadeDialog> {
           color: Color.fromRGBO(0, 0, 0, 0.58),
         ),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "1 unidade = ${widget.product.unitValue}${widget.product.measurementUnit}",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(0, 0, 0, 0.58),
+      content: isLoading
+          ? CircularProgressIndicator(
+              color: const Color.fromRGBO(113, 227, 154, 1),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "1 unidade = ${widget.product.unitValue}${widget.product.measurementUnit}",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(0, 0, 0, 0.58),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: decrementar,
+                      icon: Icon(Icons.remove),
+                    ),
+                    Text(
+                      "$quantidade unidades",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    IconButton(
+                      onPressed: incrementar,
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: decrementar,
-                icon: Icon(Icons.remove),
-              ),
-              Text(
-                "$quantidade unidades",
-                style: TextStyle(fontSize: 18),
-              ),
-              IconButton(
-                onPressed: incrementar,
-                icon: Icon(Icons.add),
-              ),
-            ],
-          ),
-        ],
-      ),
       actions: [
         TextButton(
           child: Text('Cancelar'),
@@ -84,9 +89,18 @@ class _QuantidadeDialogState extends State<QuantidadeDialog> {
         TextButton(
           child: Text('Confirmar'),
           onPressed: () {
+            setState(() {
+              isLoading = true;
+            });
             ProductController controller = ProductController();
-            controller.updateQuantity(widget.product, quantidade);
-            Navigator.of(context).pop(quantidade);
+            controller.updateQuantity(widget.product, quantidade).then(
+              (value) {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.of(context).pop(quantidade);
+              },
+            );
           },
           style: TextButton.styleFrom(
             foregroundColor: Color.fromRGBO(108, 168, 129, 0.7),

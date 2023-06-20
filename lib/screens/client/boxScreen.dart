@@ -158,6 +158,7 @@ class _BoxScreenState extends State<BoxScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                          SizedBox(height: constraints.maxHeight * .02),
                           SizedBox(
                             height: constraints.maxHeight *
                                 box.produtos.length /

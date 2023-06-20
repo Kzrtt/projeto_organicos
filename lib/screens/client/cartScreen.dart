@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:projeto_organicos/components/boxAlertDialog.dart';
 import 'package:projeto_organicos/components/boxesInCart.dart';
 import 'package:projeto_organicos/components/commonButton.dart';
+import 'package:projeto_organicos/components/customAppBar.dart';
 import 'package:projeto_organicos/components/myDialog.dart';
 import 'package:projeto_organicos/components/nameAndIcon.dart';
 import 'package:projeto_organicos/components/productsInCart.dart';
@@ -167,6 +168,15 @@ class _CartScreenState extends State<CartScreen> {
     load();
   }
 
+  void clearCart() {
+    CartController controller = CartController();
+    controller.emptyCart();
+    setState(() {
+      cartMongodb = [];
+      boxCartMongodb = [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Products> cart = Provider.of<CartProvider>(context).getCart;
@@ -194,18 +204,21 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   child: Column(
                     children: [
-                      NameAndIcon(
+                      SizedBox(height: constraints.maxHeight * .03),
+                      CustomAppBar(
                         constraints: constraints,
                         icon: Icons.shopping_cart,
                         text: "Carrinho",
+                        callback: clearCart,
+                        secondIcon: Icons.delete,
+                        secondIconColor: Colors.red,
                       ),
                       SizedBox(height: constraints.maxHeight * .03),
                       cartMongodb.isNotEmpty || boxCartMongodb.isNotEmpty
                           ? SizedBox(
-                              height: constraints.maxHeight * 1.5,
+                              height: constraints.maxHeight * 1.6,
                               width: constraints.maxWidth,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   cartMongodb.isNotEmpty
                                       ? ProductsInCart(
@@ -227,7 +240,9 @@ class _CartScreenState extends State<CartScreen> {
                                           load: load,
                                         )
                                       : Center(),
-                                  SizedBox(height: constraints.maxHeight * .03),
+                                  SizedBox(
+                                    height: constraints.maxHeight * .015,
+                                  ),
                                   thinDivider(constraints),
                                   SizedBox(height: constraints.maxHeight * .05),
                                   Center(
@@ -610,6 +625,9 @@ class _CartScreenState extends State<CartScreen> {
                           : Center(
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: constraints.maxHeight * .065,
+                                  ),
                                   SvgPicture.asset(
                                     'assets/images/undraw_shopping_app.svg',
                                     height: constraints.maxHeight * .3,

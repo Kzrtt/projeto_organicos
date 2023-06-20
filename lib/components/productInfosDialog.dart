@@ -27,6 +27,7 @@ class _ProductsInfoDialogState extends State<ProductsInfoDialog> {
   final TextEditingController unitValueController = TextEditingController();
   final TextEditingController stockQuantityController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  bool isLoading = false;
 
   Widget _textField1(
     double height,
@@ -74,52 +75,58 @@ class _ProductsInfoDialogState extends State<ProductsInfoDialog> {
           color: Color.fromRGBO(0, 0, 0, 0.58),
         ),
       ),
-      content: SizedBox(
-        height: widget.constraints.maxHeight * .7,
-        width: widget.constraints.maxWidth * .9,
-        child: Column(
-          children: [
-            _textField1(
-              .1,
-              .9,
-              widget.constraints,
-              "Unidade de Valor: ${widget.product.unitValue.toString()}",
-              unitValueController,
-              (p0) => null,
-            ),
-            SizedBox(height: widget.constraints.maxHeight * .03),
-            _textField1(
-              .1,
-              .9,
-              widget.constraints,
-              "Quantidade em Estoque: ${widget.product.stockQuantity.toString()}",
-              stockQuantityController,
-              (p0) => null,
-            ),
-            SizedBox(height: widget.constraints.maxHeight * .03),
-            _textField1(
-              .1,
-              .9,
-              widget.constraints,
-              "Preço: ${widget.product.productPrice.toString()}",
-              priceController,
-              (p0) => null,
-            ),
-            SizedBox(height: widget.constraints.maxHeight * .05),
-            InkWell(
-              onTap: () {
-                ProductController controller = ProductController();
-                controller.clearStock(widget.product);
-                Navigator.of(context).pop();
-              },
-              child: CommonButton(
-                constraints: widget.constraints,
-                text: "Limpar Estoque",
+      content: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: const Color.fromRGBO(113, 227, 154, 1),
+              ),
+            )
+          : SizedBox(
+              height: widget.constraints.maxHeight * .7,
+              width: widget.constraints.maxWidth * .9,
+              child: Column(
+                children: [
+                  _textField1(
+                    .1,
+                    .9,
+                    widget.constraints,
+                    "Unidade de Valor: ${widget.product.unitValue.toString()}",
+                    unitValueController,
+                    (p0) => null,
+                  ),
+                  SizedBox(height: widget.constraints.maxHeight * .03),
+                  _textField1(
+                    .1,
+                    .9,
+                    widget.constraints,
+                    "Quantidade em Estoque: ${widget.product.stockQuantity.toString()}",
+                    stockQuantityController,
+                    (p0) => null,
+                  ),
+                  SizedBox(height: widget.constraints.maxHeight * .03),
+                  _textField1(
+                    .1,
+                    .9,
+                    widget.constraints,
+                    "Preço: ${widget.product.productPrice.toString()}",
+                    priceController,
+                    (p0) => null,
+                  ),
+                  SizedBox(height: widget.constraints.maxHeight * .05),
+                  InkWell(
+                    onTap: () {
+                      ProductController controller = ProductController();
+                      controller.clearStock(widget.product);
+                      Navigator.of(context).pop();
+                    },
+                    child: CommonButton(
+                      constraints: widget.constraints,
+                      text: "Limpar Estoque",
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
       actions: [
         TextButton(
           child: Text('Cancelar'),
@@ -133,6 +140,10 @@ class _ProductsInfoDialogState extends State<ProductsInfoDialog> {
         TextButton(
           child: Text('Confirmar'),
           onPressed: () {
+            setState(() {
+              isLoading = true;
+            });
+
             ProductController controller = ProductController();
 
             num newQuantity = 0;
@@ -188,12 +199,20 @@ class _ProductsInfoDialogState extends State<ProductsInfoDialog> {
               measurementUnit: measurementUnitId,
             );
 
-            controller.updateProduct(
+            controller
+                .updateProduct(
               widget.product.productId,
               newProduct,
               widget.product,
+            )
+                .then(
+              (value) {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.of(context).pop();
+              },
             );
-            Navigator.of(context).pop();
           },
           style: TextButton.styleFrom(
             foregroundColor: Color.fromRGBO(108, 168, 129, 0.7),

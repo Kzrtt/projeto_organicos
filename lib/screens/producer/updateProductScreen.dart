@@ -504,10 +504,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                       // Lógica para confirmar a exclusão da conta
                                       ProductController controller =
                                           ProductController();
-                                      controller.deleteProduct(
-                                        product.productId,
-                                        product.productName,
-                                      );
+                                      controller.deleteProduct(product);
                                       Navigator.of(context)
                                           .pushReplacementNamed(
                                         ProducerAppRoutes.PRODUCERHOMETAB,

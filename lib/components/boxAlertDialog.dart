@@ -45,117 +45,124 @@ class _BoxAlertDialogState extends State<BoxAlertDialog> {
         builder: (context, quantityProvider, _) {
           return AlertDialog(
             title: Text(widget.box.boxName),
-            content: SizedBox(
-              height: widget.constraints.maxHeight * .54,
-              width: widget.constraints.maxWidth,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: widget.constraints.maxHeight * .03,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Produtos: ",
-                      style: TextStyle(
-                        fontSize: widget.constraints.maxHeight * .024,
-                        fontWeight: FontWeight.w700,
-                      ),
+            content: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: const Color.fromRGBO(113, 227, 154, 1),
                     ),
-                    SizedBox(
-                      height: widget.constraints.maxHeight *
-                              widget.box.produtos.length /
-                              10 +
-                          35,
-                      width: widget.constraints.maxWidth,
-                      child: ListView.builder(
-                        itemCount: widget.box.produtos.length,
-                        itemBuilder: (context, index) {
-                          var item = widget.box.produtos[index];
-                          return Column(
-                            children: [
-                              Container(
-                                height: widget.constraints.maxHeight * .1,
-                                width: widget.constraints.maxWidth,
-                                child: Row(
+                  )
+                : SizedBox(
+                    height: widget.constraints.maxHeight * .55,
+                    width: widget.constraints.maxWidth,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: widget.constraints.maxHeight * .03,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Produtos: ",
+                            style: TextStyle(
+                              fontSize: widget.constraints.maxHeight * .024,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: widget.constraints.maxHeight * .02),
+                          Container(
+                            height: widget.constraints.maxHeight * .44,
+                            width: widget.constraints.maxWidth,
+                            child: ListView.builder(
+                              itemCount: widget.box.produtos.length,
+                              itemBuilder: (context, index) {
+                                var item = widget.box.produtos[index];
+                                return Column(
                                   children: [
                                     Container(
                                       height: widget.constraints.maxHeight * .1,
-                                      width: widget.constraints.maxWidth * .32,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(truncateText(
-                                            item.product.productName,
-                                            10,
-                                          )),
-                                          Text(
-                                            "Máximo: ${item.product.unitValue * item.quantity}${item.product.measurementUnit}",
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      height: widget.constraints.maxHeight * .1,
-                                      width: widget.constraints.maxWidth * .34,
+                                      width: widget.constraints.maxWidth,
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              quantityProvider
-                                                  .decreaseQuantity(index);
-                                            },
-                                            icon: const Icon(Icons.remove),
-                                          ),
-                                          Text(
-                                            "${quantityProvider.quantity[index] * item.product.unitValue}${item.measurementUnity}",
-                                            style: const TextStyle(
-                                              fontSize: 16,
+                                          Container(
+                                            height:
+                                                widget.constraints.maxHeight *
+                                                    .1,
+                                            width: widget.constraints.maxWidth *
+                                                .31,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(truncateText(
+                                                  item.product.productName,
+                                                  10,
+                                                )),
+                                                Text(
+                                                  "Máx: ${item.product.unitValue * item.quantity}${item.product.measurementUnit}",
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          IconButton(
-                                            onPressed: () {
-                                              if (quantityProvider.boxQuantity <
-                                                  widget.box.boxQuantity) {
-                                                quantityProvider
-                                                    .increaseQuantity(
-                                                  index,
-                                                  item.quantity,
-                                                );
-                                              }
-                                            },
-                                            icon: const Icon(Icons.add),
+                                          Container(
+                                            height:
+                                                widget.constraints.maxHeight *
+                                                    .1,
+                                            width: widget.constraints.maxWidth *
+                                                .35,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    quantityProvider
+                                                        .decreaseQuantity(
+                                                            index);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.remove),
+                                                ),
+                                                Text(
+                                                  "${quantityProvider.quantity[index] * item.product.unitValue}${item.measurementUnity}",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    if (quantityProvider
+                                                            .boxQuantity <
+                                                        widget
+                                                            .box.boxQuantity) {
+                                                      quantityProvider
+                                                          .increaseQuantity(
+                                                        index,
+                                                        item.quantity,
+                                                      );
+                                                    }
+                                                  },
+                                                  icon: const Icon(Icons.add),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                    SizedBox(
+                                      height:
+                                          widget.constraints.maxHeight * .02,
+                                    ),
                                   ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: widget.constraints.maxHeight * .02,
-                              ),
-                            ],
-                          );
-                        },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: widget.constraints.maxHeight * .05),
-                    isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: const Color.fromRGBO(113, 227, 154, 1),
-                            ),
-                          )
-                        : Center(),
-                  ],
-                ),
-              ),
-            ),
+                  ),
             actions: <Widget>[
               TextButton(
                 child: const Text(

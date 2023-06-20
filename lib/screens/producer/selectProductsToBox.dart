@@ -130,7 +130,9 @@ class _SelectProductsToBoxState extends State<SelectProductsToBox> {
                             Text(
                               'Quantidade: ${item.stockQuantity} unidades',
                             ),
-                            Text("Preço: \$${item.productPrice}"),
+                            Text(
+                              "Unidade de Medida: ${item.unitValue}${item.measurementUnit}",
+                            ),
                           ],
                         ),
                         trailing: Row(

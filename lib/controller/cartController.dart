@@ -13,7 +13,6 @@ import '../model/user.dart';
 
 class CartController {
   final String _userUrl = "https://api-production-696d.up.railway.app/user";
-  // final String _userUrl = "http://192.168.1.159:27017/user";
   final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
 
   Future<void> emptyCart() async {

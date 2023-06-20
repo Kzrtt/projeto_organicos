@@ -2,21 +2,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:projeto_organicos/components/productInfosDialog.dart';
+import 'package:projeto_organicos/components/productListAppBar.dart';
 import 'package:projeto_organicos/components/quantityDialog.dart';
 import 'package:projeto_organicos/controller/cooperativeController.dart';
 import 'package:projeto_organicos/controller/measurementUnitController.dart';
-import 'package:projeto_organicos/controller/producerController.dart';
 import 'package:projeto_organicos/controller/productController.dart';
-import 'package:projeto_organicos/model/producers.dart';
 import 'package:projeto_organicos/model/products.dart';
 import 'package:projeto_organicos/utils/appRoutes.dart';
-import 'package:projeto_organicos/utils/cooperativeState.dart';
 import 'package:projeto_organicos/utils/validators.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../components/nameAndIcon.dart';
 import '../../model/box.dart';
 import '../../model/category.dart';
 import '../../model/measurementUnit.dart';
@@ -35,20 +30,19 @@ class _ProductListScreenState extends State<ProductListScreen>
   List<Measurement> measurementList = [];
   List<Category> categoryList = [];
   Validators validators = Validators();
-  final _updateBoxFormKey = GlobalKey<FormState>();
-  final _updateFormKey = GlobalKey<FormState>();
-  final TextEditingController _boxNameController = TextEditingController();
-  final TextEditingController _boxDetailsController = TextEditingController();
-  final TextEditingController _boxPriceController = TextEditingController();
   TabController? _tabController;
   int quantidade = 1;
   bool isLoading = true;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+  Future<void> clearStock() async {
+    CooperativeController controller = CooperativeController();
+    controller.clearStock().then((value) => load());
+  }
+
+  void load() {
+    setState(() {
+      isLoading = true;
+    });
     ProductController controller = ProductController();
     MeasurementUnitController measurementUnitController =
         MeasurementUnitController();
@@ -75,6 +69,14 @@ class _ProductListScreenState extends State<ProductListScreen>
         });
       });
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    load();
   }
 
   Widget boxList(BoxConstraints constraints) {
@@ -200,7 +202,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                             ),
                           );
                         },
-                      );
+                      ).then((value) => load());
                     },
                     onTap: () {
                       showDialog(
@@ -210,7 +212,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                             product: item,
                           );
                         },
-                      );
+                      ).then((value) => load());
                     },
                     child: const Icon(
                       Icons.add,
@@ -253,12 +255,17 @@ class _ProductListScreenState extends State<ProductListScreen>
       builder: (context, constraints) {
         return SizedBox(
           height: constraints.maxHeight,
+          width: constraints.maxWidth,
           child: Column(
             children: [
-              NameAndIcon(
+              SizedBox(height: constraints.maxHeight * .02),
+              ProductListAppBar(
                 constraints: constraints,
                 icon: Icons.list,
                 text: "Seus Produtos",
+                callback: clearStock,
+                secondIconColor: Colors.red,
+                secondIcon: Icons.delete,
               ),
               SizedBox(height: constraints.maxHeight * .02),
               SizedBox(

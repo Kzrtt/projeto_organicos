@@ -20,6 +20,8 @@ class CooperativeController with ChangeNotifier {
   final String _baseUrl = "https://api-production-696d.up.railway.app/auth";
   final String _cooperativeUrl =
       "https://api-production-696d.up.railway.app/cooperative";
+  final String _productUrl =
+      "https://api-production-696d.up.railway.app/product";
   final String _producerUrl =
       "https://api-production-696d.up.railway.app/producer";
   final String _sellUrl = "https://api-production-696d.up.railway.app/sell";
@@ -62,6 +64,28 @@ class CooperativeController with ChangeNotifier {
         data: {
           "active": false,
         },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    } catch (e) {
+      if (e is DioError) {
+        print('Erro de requisição:');
+        print('Status code: ${e.response?.statusCode}');
+        print('Mensagem: ${e.response?.data}');
+      } else {
+        print('Erro inesperado: $e');
+      }
+    }
+  }
+
+  Future<void> clearStock() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('cooperativeId');
+      String? token = prefs.getString('cooperativeToken');
+      var response = await Dio().put(
+        "$_productUrl/reset_stock_quantity/$id",
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

@@ -279,7 +279,7 @@ class ProductController {
     }
   }
 
-  void updateQuantity(Products product, int newQuantity) async {
+  Future<void> updateQuantity(Products product, int newQuantity) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("cooperativeToken");
@@ -332,7 +332,11 @@ class ProductController {
     }
   }
 
-  void updateProduct(String id, Products product, Products oldProduct) async {
+  Future<void> updateProduct(
+    String id,
+    Products product,
+    Products oldProduct,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("cooperativeToken");
@@ -370,7 +374,7 @@ class ProductController {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      if (product.productPhoto != "") {
+      if (product.productPhoto != oldProduct.productPhoto) {
         FirebaseStorage storage = FirebaseStorage.instance;
         String photoPath =
             "productsPhotos/${oldProduct.productName}${oldProduct.producerId}.jpg";
@@ -389,20 +393,27 @@ class ProductController {
     }
   }
 
-  void deleteProduct(String productId, String productName) async {
+  void deleteProduct(Products product) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("cooperativeToken");
       var response = await Dio().put(
-        "$_productUrl/$productId",
+        "$_productUrl/${product.productId}",
         data: {
-          "productName": productName,
+          "productName": product.productName,
           "active": false,
         },
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
+      if (response.data['product']) {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        String photoPath =
+            "productsPhotos/${product.productName}${product.producerId}.jpg";
+        Reference photoRef = storage.ref().child(photoPath);
+        await photoRef.delete();
+      }
     } catch (e) {
       if (e is DioError) {
         print('Erro de requisição:');
